@@ -679,6 +679,14 @@ function Fury()
 				end
 			end
 
+	   elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
+			and UnitMana("player") >= 10
+			and CheckInteractDistance("target", 2)
+			and ActiveStance() ~= 2
+			and FuryCombat
+			and SpellReady(ABILITY_DEATH_WISH_FURY)) then
+			   Debug("Death Wish");
+			   CastSpellByName(ABILITY_DEATH_WISH_FURY);
 		elseif ((Fury_Configuration[MODE_HEADER_AOE]
 				or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] and FuryMortalStrike
 				and not SpellReady(ABILITY_MORTAL_STRIKE_FURY))
