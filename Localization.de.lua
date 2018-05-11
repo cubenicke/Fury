@@ -106,6 +106,7 @@ if (GetLocale() == "deDE") then
 	ITEM_GAUNTLETS4_FURY			= "Plattenstulpen des Kriegsherren";
 	ITEM_SHIELDS_FURY			= "Schilde";
 
+	MODE_HEADER_AOE				= "AoE";
 	SLASH_FURY_ENABLED			= "Aktiviert";
 	SLASH_FURY_DISABLED			= "Deaktiviert";
 	SLASH_FURY_DEFAULT			= "Grundeinstellung";

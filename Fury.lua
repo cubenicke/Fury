@@ -48,7 +48,9 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration["PrimaryStance"] == nil) then
 		Fury_Configuration["PrimaryStance"] = false; --Set this to the stance to fall back to after performing an attack requiring another stance
 	end
-
+	if (Fury_Configuration[MODE_HEADER_AOE] == nil) then
+		Fury_Configuration[MODE_HEADER_AOE] = false; -- Disable auto use of aoe (Disables OP, HS, BT, Exe, Enablse Cleave, Whirlwind)
+	end
 	--[[
 	if (WarriorButtonStandard_Configuration["InstantBuildTime"] == nil) then
 		WarriorButtonStandard_Configuration["InstantBuildTime"] = 2 --Set the time to spend building rage for upcoming 31 point instant attacks
@@ -155,7 +157,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration["HamstringHealth"] = 40;
 	Fury_Configuration["AutoAttack"] = true;
 	Fury_Configuration["PrimaryStance"] = false;
-
+	Fury_Configuration[MODE_HEADER_AOE] = false;
 	Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY] = true;
 	Fury_Configuration[RACIAL_BERSERKING_FURY] = true;
 	Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true;
@@ -379,6 +381,7 @@ function Fury()
 
 		elseif (Fury_Configuration[ABILITY_EXECUTE_FURY]
 			and Weapon()
+			and not Fury_Configuration[MODE_HEADER_AOE]
 			and UnitMana("player") >= FuryExecuteCost
 			and (ActiveStance() ~= 2 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
 			and (UnitHealth("target") / UnitHealthMax("target") * 100) < 20
@@ -404,6 +407,7 @@ function Fury()
 		elseif (Fury_Configuration[ABILITY_OVERPOWER_FURY]
 			and FuryOverpower
 			and Weapon()
+			and not Fury_Configuration[MODE_HEADER_AOE]
 			and UnitMana("player") >= 5
 			and (ActiveStance() == 1 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
 			and SpellReady(ABILITY_OVERPOWER_FURY)) then
@@ -451,6 +455,7 @@ function Fury()
 
 		elseif (Fury_Configuration[ABILITY_SHIELD_BASH_FURY]
 			and FurySpellInterrupt
+			and not Fury_Configuration[MODE_HEADER_AOE]
 			and UnitMana("player") >= 10
 			and Shield()
 			and (not UnitIsPlayer("target") or (UnitIsPlayer("target") and (UnitClass("target") ~= CLASS_ROGUE_FURY and UnitClass("target") ~= CLASS_WARRIOR_FURY and UnitClass("target") ~= CLASS_HUNTER_FURY)))
@@ -627,6 +632,7 @@ function Fury()
 		elseif (Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 			and FuryMortalStrike
 			and Weapon()
+			and not Fury_Configuration[MODE_HEADER_AOE]
 			and UnitMana("player") >= 30
 			and SpellReady(ABILITY_MORTAL_STRIKE_FURY)) then
 			Debug("Mortal Strike");
@@ -635,6 +641,7 @@ function Fury()
 
 		elseif (Fury_Configuration[ABILITY_BLOODTHIRST_FURY]
 			and FuryBloodthirst
+			and not Fury_Configuration[MODE_HEADER_AOE]
 			and UnitMana("player") >= 30
 			and SpellReady(ABILITY_BLOODTHIRST_FURY)) then
 			Debug("Bloodthirst");
@@ -649,7 +656,7 @@ function Fury()
 			CastSpellByName(ABILITY_SHIELD_SLAM_FURY);
 			FuryLastSpellCast = GetTime();
 		
-		elseif (Fury_Configuration[ABILITY_WHIRLWIND_FURY]
+		elseif ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] or Fury_Configuration[MODE_HEADER_AOE])
 			and CheckInteractDistance("target", 2)
 			and UnitMana("player") >= 25
 			and (ActiveStance() == 3 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
@@ -672,22 +679,31 @@ function Fury()
 				end
 			end
 
-		elseif (((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] and FuryMortalStrike and not SpellReady(ABILITY_MORTAL_STRIKE_FURY)) or not Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] or not FuryMortalStrike) and ((Fury_Configuration[ABILITY_BLOODTHIRST_FURY] and FuryBloodthirst and not SpellReady(ABILITY_BLOODTHIRST_FURY)) or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY] or not FuryBloodthirst) and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] and not SpellReady(ABILITY_WHIRLWIND_FURY)) or not Fury_Configuration[ABILITY_WHIRLWIND_FURY])) then
+		elseif ((Fury_Configuration[MODE_HEADER_AOE]
+				or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] and FuryMortalStrike
+				and not SpellReady(ABILITY_MORTAL_STRIKE_FURY))
+				or not Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] or not FuryMortalStrike)
+				and ((Fury_Configuration[ABILITY_BLOODTHIRST_FURY] and FuryBloodthirst
+				and not SpellReady(ABILITY_BLOODTHIRST_FURY))
+				or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY] or not FuryBloodthirst))
+				and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] and not SpellReady(ABILITY_WHIRLWIND_FURY))
+				or not Fury_Configuration[ABILITY_WHIRLWIND_FURY])) then
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			if (Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 				and Weapon()
+				and not Fury_Configuration[MODE_HEADER_AOE]
 				and UnitMana("player") >= FuryHeroicStrikeCost
-				and UnitMana("player") >= Fury_Configuration["NextAttackRage"]
+				and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
 				and SpellReady(ABILITY_HEROIC_STRIKE_FURY)) then
 				Debug("Heroic Strike");
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY);
 				--FuryLastSpellCast = GetTime();
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 			
-			elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
+			elseif ((Fury_Configuration[ABILITY_CLEAVE_FURY] or Fury_Configuration[MODE_HEADER_AOE])
 				and Weapon()
 				and UnitMana("player") >= 20
-				and UnitMana("player") >= Fury_Configuration["NextAttackRage"]
+				and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])) or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
 				and SpellReady(ABILITY_CLEAVE_FURY)) then
 				Debug("Cleave");
 				CastSpellByName(ABILITY_CLEAVE_FURY);
@@ -833,6 +849,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["PrimaryStance"] = 0;
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_NOSTANCE .. SLASH_FURY_DISABLED .. ".")
 		end
+
 	elseif (command == "ability") then
 		if (options == ABILITY_HEROIC_STRIKE_FURY and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]) then
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;

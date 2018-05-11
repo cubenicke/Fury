@@ -104,6 +104,7 @@ ITEM_GAUNTLETS3_FURY			= "Blood Guard's Plate Gloves";
 ITEM_GAUNTLETS4_FURY			= "General's Plate Gauntlets";
 ITEM_SHIELDS_FURY			= "Shields";
 
+MODE_HEADER_AOE				= "AoE";
 SLASH_FURY_ENABLED			= "enabled";
 SLASH_FURY_DISABLED			= "disabled";
 SLASH_FURY_DEFAULT			= "default";

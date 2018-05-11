@@ -105,6 +105,7 @@ if (GetLocale() == "frFR") then
 	ITEM_GAUNTLETS4_FURY			= "Gantelets de g\195\169n\195\169ral en plaques";
 	ITEM_SHIELDS_FURY			= "Boucliers";
 
+	MODE_HEADER_AOE				= "AoE";
 	SLASH_FURY_ENABLED			= "activ\195\169";
 	SLASH_FURY_DISABLED			= "d\195\169sactiv\195\169";
 	SLASH_FURY_DEFAULT			= "d\195\169faut";
