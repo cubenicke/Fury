@@ -144,6 +144,9 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration[ABILITY_WHIRLWIND_FURY] == nil) then
 		Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true;
 	end
+	if (Fury_Configuration[ITEM_JUJU_FLURRY] == nil) then
+		Fury_Configuration[ITEM_JUJU_FLURRY] = false;
+	end
 end
 
 function Fury_Configuration_Default()
@@ -179,6 +182,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_SHIELD_BASH_FURY] = true;
 	Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true;
 	Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true;
+	Fury_Configuration[ITEM_JUJU_FLURRY] = false;
 end
 
 --------------------------------------------------
@@ -360,6 +364,14 @@ function Fury_RunnerDetect(arg1, arg2)
 	if (arg1 == CHAT_RUNNER_FURY) then
 		Fury_Runners[arg2] = true;
 	end
+end
+
+function ItemReady(item)
+	local start, duration, enable = GetItemCooldown(item);
+	if (duration == 0) then
+	   return true;
+	end
+	return false;
 end
 
 function Fury()
@@ -691,7 +703,13 @@ function Fury()
 					FuryLastStanceCast = GetTime();
 				end
 			end
-
+	   elseif (FuryCombat
+			and not HasBuff("player", "INV_Misc_MonsterScales_17")
+			and CheckInteractDistance("target", 3)
+			and Fury_Configuration[ITEM_JUJU_FLURRY]
+			and ItemReady(ITEM_JUJU_FLURRY)) then
+			Debug(ITEM_JUJU_FLURRY);
+			UseContainerItemByNameOnPlayer(ITEM_JUJU_FLURRY);
 	   elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
 			and UnitMana("player") >= 10
 			and CheckInteractDistance("target", 2)
@@ -878,7 +896,16 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["PrimaryStance"] = 0;
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_NOSTANCE .. SLASH_FURY_DISABLED .. ".")
 		end
-
+	elseif (command == "juju") then
+		if (options ==  "flurry") then
+			if (Fury_Configuration[ITEM_JUJU_FLURRY]) then
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_FLURRY .. " disabled.")
+				Fury_Configuration[ITEM_JUJU_FLURRY] = false;
+			else
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_FLURRY .. " enabled.")
+				Fury_Configuration[ITEM_JUJU_FLURRY] = true;
+			end
+		end
 	elseif (command == "ability") then
 		if (options == ABILITY_HEROIC_STRIKE_FURY and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]) then
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;
