@@ -906,6 +906,8 @@ function Fury_SlashCommand(msg)
 				Fury_Configuration[ITEM_JUJU_FLURRY] = true;
 			end
 		end
+	elseif (command == "buffs") then
+		PrintEffects(options or "target");
 	elseif (command == "ability") then
 		if (options == ABILITY_HEROIC_STRIKE_FURY and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]) then
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;
