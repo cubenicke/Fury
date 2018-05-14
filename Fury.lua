@@ -203,20 +203,20 @@ local function Debug(msg)
 	end
 end
 
-function PrintEffects()
+function PrintEffects(target)
 	local id = 1;
-	if (UnitBuff("target", id)) then
+	if (UnitBuff(target, id)) then
 		Print("Buffs:");
-		while (UnitBuff("target", id)) do
-			Print(UnitBuff("target", id));
+		while (UnitBuff(target, id)) do
+			Print(UnitBuff(target, id));
 			id = id + 1;
 		end
 		id = 1;
 	end
-	if (UnitDebuff("target", id)) then
+	if (UnitDebuff(target, id)) then
 		Print("Debuffs:");
-		while (UnitDebuff("target", id)) do
-			Print(UnitDebuff("target", id));
+		while (UnitDebuff(target, id)) do
+			Print(UnitDebuff(target, id));
 			id = id + 1;
 		end
 	end
@@ -274,6 +274,19 @@ function HasBuff(unit, texturename)
 	return nil;
 end
 
+function UseContainerItemByNameOnPlayer(search)
+  for bag = 0,4 do
+    for slot = 1,GetContainerNumSlots(bag) do
+      local item = GetContainerItemLink(bag,slot)
+      if (item and string.find(item, search)) then
+        UseContainerItem(bag,slot)
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("player")
+		end
+      end
+    end
+  end
+end
 --------------------------------------------------
 
 function ActiveStance()
