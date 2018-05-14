@@ -755,6 +755,14 @@ function Fury_SlashCommand(msg)
 	end
 	if (command == nil or command == "") then
 		Fury();
+	elseif (command == "aoe") then
+		if (Fury_Configuration[MODE_HEADER_AOE]) then
+			Fury_Configuration[MODE_HEADER_AOE] = false;
+			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_DISABLED .. ".") 
+		else
+			Fury_Configuration[MODE_HEADER_AOE] = true;
+			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".") 
+		end
 	elseif (command == "toggle") then
 		if (Fury_Configuration["Enabled"]) then
 			Fury_Configuration["Enabled"] = false;
