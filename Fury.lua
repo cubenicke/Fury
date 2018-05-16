@@ -508,6 +508,7 @@ function Fury()
 			and (UnitIsPlayer("target") or (Fury_Runners[UnitName("target")] and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
 			and Weapon()
 			and not SnareDebuff()
+			and CheckInteractDistance("target", 3)
 			and UnitMana("player") >= HamstringCost()
 			and (ActiveStance() ~= 2 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
 			and SpellReady(ABILITY_HAMSTRING_FURY)) then
