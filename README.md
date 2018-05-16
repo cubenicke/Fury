@@ -1,5 +1,5 @@
 # Fury
-Fury Addon originally by Bhaerau, modifications for end game raiding in vanilla by cubenicke. 
+Fury Addon originally by Bhaerau, modifications for end game raiding in vanilla by cubenicke.
 
 ## Usage
 
@@ -25,15 +25,53 @@ To minimize threat build up in normal rotation
 ```
 /fury - uses Fury
 ```
-### Fight control
-```
-/fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike
-```
+### Logic
+    Dismount (Mounted only)
+    Berserker Rage (Feared only)
+    Execute
+    Overpower
+    Pummel / Shield Bash
+    Hamstring
+    Rend (PvP only)
+    Berserker Rage (PvE only)
+    Bloodrage
+    Berserking (Troll racial)
+    Disarm (PvP only)
+    Demoralizing Shout (PvE only)
+    Battle Shout
+    Mortal Strike / Bloodthirst
+    Whirlwind
+    Juju Flurry
+    Death Wish (on every cooldown)
+    Hamstring
+    Heroic Strike / Cleave
+
+### Abilities
+    Battle Shout
+    Berserker Rage
+    Bloodrage
+    Bloodthirst
+    Cleave
+    Disarm
+    Death Wish
+    Demoralizing Shout
+    Execute
+    Hamstring
+    Heroic Strike
+    Mortal Strike
+    Overpower
+    Pummel
+    Rend
+    Shield Bash
+    Whirlwind
+### Items
+    Juju Flurry
 ### operational Control
 ```
+/fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike
 /fury toggle - toggles Fury
-/fury help - prints help text
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on thread critical fights to decrease threat build up
+/fury juju flurry - enables buff on every cooldown
 ```
 ### Setup commands
 ```
@@ -48,6 +86,8 @@ To minimize threat build up in normal rotation
 ```
 ### Debugging
 ```
+/fury help [command] - prints help text
 /fury debug - toggles debug mode
 /fury attack - toggles the use of autoattack. Experimental.
+/fury buff <player|target> - shows buffs and debuffs for player or target
 ```

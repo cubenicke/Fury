@@ -943,6 +943,33 @@ function Fury_SlashCommand(msg)
 		else
 			Print(BINDING_HEADER_FURY .. ": " .. options .. " not found.")
 		end
+	elseif (command == "help") then
+		if (options == nil or options == "") then
+			Print(SLASH_FURY_HELP)
+		else
+			local helps = {
+			 ["ability"] = HELP_ABILITY,
+			 ["aoe"] = HELP_AOE,
+			 ["attack"] = HELP_ATTACK,
+			 ["attackrage"] = HELP_ATTACKRAGE,
+			 ["berserk"] = HELP_BERSERK,
+			 ["bloodrage"] = HELP_BLOODRAGE,
+			 ["dance"] = HELP_DANCE,
+			 ["debug"] = HELP_DEBUG,
+			 ["hamstring"] = HELP_HAMSTRING,
+			 ["juju"] = HELP_JUJU,
+			 ["help"] = HELP_HELP,
+			 ["rage"] = HELP_RAGE,
+			 ["stance"] = HELP_STANCE,
+			 ["threat"] = HELP_THREAT,
+			 ["toggle"] = HELP_TOGGLE
+			};
+			if (helps[options] ~= nil) then
+				Print(helps[options])
+			else
+				Print(HELP_UNKNOWN)
+			end
+		end
 	else
 		Print(SLASH_FURY_HELP)
 	end
