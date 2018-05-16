@@ -747,7 +747,17 @@ function Fury()
 				and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] and not SpellReady(ABILITY_WHIRLWIND_FURY))
 				or not Fury_Configuration[ABILITY_WHIRLWIND_FURY])) then
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
-			if (Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
+			if (Fury_Configuration[ABILITY_HAMSTRING_FURY]
+				and Weapon()
+				and not UnitIsPlayer("target")
+				and not Fury_Configuration[MODE_HEADER_AOE]
+				and CheckInteractDistance("target", 3)
+				and UnitMana("player") >= HamstringCost()
+				and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
+				and SpellReady(ABILITY_HAMSTRING_FURY))then
+					Debug("Hamstring");
+					CastSpellByName(ABILITY_HAMSTRING_FURY);
+			elseif (Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 				and Weapon()
 				and not Fury_Configuration[MODE_HEADER_AOE]
 				and UnitMana("player") >= FuryHeroicStrikeCost
