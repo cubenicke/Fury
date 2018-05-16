@@ -703,6 +703,24 @@ function Fury()
 					FuryLastStanceCast = GetTime();
 				end
 			end
+		elseif (FuryDanceDone
+			and FuryOldStance
+			and FuryLastStanceCast + 1.5 <= GetTime()
+			and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])) then
+			--Initiate stance dance
+			if (not Fury_Configuration["PrimaryStance"]) then
+				Debug("Old Stance (" .. FuryOldStance .. ")");
+				CastShapeshiftForm(FuryOldStance);
+			else
+				Debug("Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")");
+				CastShapeshiftForm(Fury_Configuration["PrimaryStance"]);
+			end
+			FuryLastStanceCast = GetTime();
+			if (FuryOldStance == ActiveStance() or Fury_Configuration["PrimaryStance"] == ActiveStance()) then
+				Debug("Variables cleared (Dance done)")
+				FuryOldStance = nil;
+				FuryDanceDone = nil;
+			end
 	   elseif (FuryCombat
 			and not HasBuff("player", "INV_Misc_MonsterScales_17")
 			and CheckInteractDistance("target", 3)
@@ -751,24 +769,6 @@ function Fury()
 			
 			end
 
-		elseif (FuryDanceDone
-			and FuryOldStance
-			and FuryLastStanceCast + 1.5 <= GetTime()
-			and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])) then
-			--Initiate stance dance
-			if (not Fury_Configuration["PrimaryStance"]) then
-				Debug("Old Stance (" .. FuryOldStance .. ")");
-				CastShapeshiftForm(FuryOldStance);
-			else
-				Debug("Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")");
-				CastShapeshiftForm(Fury_Configuration["PrimaryStance"]);
-			end
-			FuryLastStanceCast = GetTime();
-			if (FuryOldStance == ActiveStance() or Fury_Configuration["PrimaryStance"] == ActiveStance()) then
-				Debug("Variables cleared (Dance done)")
-				FuryOldStance = nil;
-				FuryDanceDone = nil;
-			end
 		end
 	end
 end	
