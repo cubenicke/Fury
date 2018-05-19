@@ -11,6 +11,9 @@
 --------------------------------------------------
 
 function Fury_Configuration_Init()
+
+	FURY_VERSION = "1.15.6";
+	
 	if (not Fury_Configuration) then
 		Fury_Configuration = { };
 	end
@@ -517,7 +520,7 @@ function Fury()
 			and (ActiveStance() ~= 2 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
 			and SpellReady(ABILITY_HAMSTRING_FURY)) then
 			if (ActiveStance() ~= 2) then
-				Debug("Hamstring");
+				Debug("Hamstring (Runner)");
 				if (FuryOldStance == 2) then
 					FuryDanceDone = true;
 				end
@@ -754,14 +757,11 @@ function Fury()
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			if (Fury_Configuration[ABILITY_HAMSTRING_FURY]
 				and Weapon()
-				and not UnitIsPlayer("target")
-				and not Fury_Configuration[MODE_HEADER_AOE]
-				and CheckInteractDistance("target", 3)
+				and not HasBuff("player", "Ability_GhoulFrenzy")
 				and UnitMana("player") >= HamstringCost()
-				and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
-				and SpellReady(ABILITY_HAMSTRING_FURY))then
-					Debug("Hamstring");
-					CastSpellByName(ABILITY_HAMSTRING_FURY);
+				and SpellReady(ABILITY_HAMSTRING_FURY)) then
+				Debug("Hamstring");
+				CastSpellByName(ABILITY_HAMSTRING_FURY);
 			elseif (Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 				and Weapon()
 				and not Fury_Configuration[MODE_HEADER_AOE]
@@ -956,6 +956,8 @@ function Fury_SlashCommand(msg)
 		else
 			Print(BINDING_HEADER_FURY .. ": " .. options .. " not found.")
 		end
+	elseif (command == "version") then
+		Print("Version "..FURY_VERSION);
 	elseif (command == "help") then
 		if (options == nil or options == "") then
 			Print(SLASH_FURY_HELP)
