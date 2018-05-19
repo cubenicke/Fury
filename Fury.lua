@@ -153,6 +153,12 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration[ITEM_JUJU_FLURRY] == nil) then
 		Fury_Configuration[ITEM_JUJU_FLURRY] = false;
 	end
+	if (not WWEnemies) then
+		WWEnemies = { Hist = {}, WWTime = 0, WWCount = nil, CleaveTime = 0, CleaveCount = nil};
+		for i = 0,5 do
+			WWEnemies.Hist[i] = 0
+		end
+	end
 end
 
 function Fury_Configuration_Default()
@@ -381,6 +387,18 @@ function ItemReady(item)
 	return false;
 end
 
+function addEnemyCount(Enemies)
+	for i=5,1,-1 do
+		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1];
+	end
+	WWEnemies.Hist[0] = Enemies;
+	Debug("Enemies "..Enemies);
+	if (Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE]) then
+		Debug("Disabling AoE");
+		Fury_Configuration[MODE_HEADER_AOE] = false;
+	end
+end
+
 function Fury()
 	if (Fury_Configuration["Enabled"] and not UnitIsCivilian("target") and UnitClass("player") == CLASS_WARRIOR_FURY and FuryTalents) then
 		if (Fury_Configuration["AutoAttack"] and not FuryAttack) then
@@ -397,6 +415,14 @@ function Fury()
 			if ((GetTime() - FurySpellInterrupt) > 2) then
 				FurySpellInterrupt = nil;
 			end
+		end
+
+		if (GetTime() - WWEnemies.CleaveTime > 1 and WWEnemies.CleaveCount ~= nil) then
+			addEnemyCount(WWEnemies.CleaveCount);
+			WWEnemies.CleaveCount = nil;
+		elseif (GetTime() - WWEnemies.WWTime > 1 and WWEnemies.WWCount ~= nil) then
+			addEnemyCount(WWEnemies.WWCount);
+			WWEnemies.WWCount = nil;
 		end
 
 		if (FuryMount) then
@@ -700,7 +726,9 @@ function Fury()
 					FuryDanceDone = true;
 				end				
 				CastSpellByName(ABILITY_WHIRLWIND_FURY);
+				WWEnemies.WWCount = 0;
 				FuryLastSpellCast = GetTime();
+				WWEnemies.WWTime = GetTime();
 			else
 				if (FuryLastStanceCast + 1.5 <= GetTime()) then
 					if (not FuryOldStance) then
@@ -1045,6 +1073,19 @@ function Fury_OnEvent(event)
 	elseif (event == "CHAT_MSG_SPELL_SELF_DAMAGE" and string.find(arg1, CHAT_INTERRUPT1_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT2_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT3_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT4_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT5_FURY)) then
 		--Check to see if Pummel/Shield Bash is used
 		FurySpellInterrupt = nil;
+	elseif ((event == "CHAT_MSG_SPELL_SELF_DAMAGE" or event == "CHAT_MSG_COMBAT_SELF_MISSES") and string.find(arg1, CHAT_WHIRLWIND_FURY)) then
+		if (WWEnemies.WWCount == nil) then
+			WWEnemies.WWCount = 1;
+		else
+			WWEnemies.WWCount = WWEnemies.WWCount + 1
+		end
+	elseif ((event == "CHAT_MSG_SPELL_SELF_DAMAGE" or event == "CHAT_MSG_COMBAT_SELF_MISSES") and string.find(arg1, CHAT_CLEAVE_FURY)) then
+		if (WWEnemies.CleaveCount == nil) then
+			WWEnemies.CleaveCount = 1;
+			WWEnemies.CleaveTime = GetTime();
+		else
+			WWEnemies.CleaveCount = WWEnemies.CleaveCount + 1
+		end
 	elseif (event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE") then
 		--Check to see if getting affected by breakable effects
 		if (arg1 == CHAT_SAP_FURY or arg1 == CHAT_GOUGE_FURY or arg1 == CHAT_REPENTANCE_FURY or arg1 == CHAT_ROCKET_HELM_FURY) then

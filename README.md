@@ -68,7 +68,7 @@ To minimize threat build up in normal rotation
     Juju Flurry
 ### operational Control
 ```
-/fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike
+/fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
 /fury toggle - toggles Fury
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on thread critical fights to decrease threat build up
 /fury juju flurry - enables buff on every cooldown

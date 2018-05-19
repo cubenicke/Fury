@@ -69,8 +69,10 @@ CHAT_CAST_FURY				= "(.+) begins to cast (.+).";
 CHAT_INTERRUPT1_FURY			= "You interrupt (.+).";
 CHAT_INTERRUPT2_FURY			= "Your Pummel was (.+) by (.+).";
 CHAT_INTERRUPT3_FURY			= "Your Shield Bash was (.+) by (.+).";
-CHAT_INTERRUPT4_FURY			= "Your Pummel missed (.+)."
-CHAT_INTERRUPT5_FURY			= "Your Shield Bash missed (.+)."
+CHAT_INTERRUPT4_FURY			= "Your Pummel missed (.+).";
+CHAT_INTERRUPT5_FURY			= "Your Shield Bash missed (.+).";
+CHAT_WHIRLWIND_FURY			= "Your Whirlwind (.+).";
+CHAT_CLEAVE_FURY                        = "Your Cleave (.+).";
 
 CHAT_FEAR_FURY				= "You are afflicted by Fear.";
 CHAT_INTIMIDATING_SHOUT_FURY		= "You are afflicted by Intimidating Shout.";
