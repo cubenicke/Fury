@@ -33,6 +33,9 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration["BloodrageHealth"] == nil) then
 		Fury_Configuration["BloodrageHealth"] = 50; --Set this to the minimum percent of health to have when using Bloodrage
 	end
+	if (Fury_Configuration["DeathWishHealth"] == nil) then
+		Fury_Configuration["DeathWishHealth"] = 60; --Set this to the minimum percent of health to have when using Death Wish
+	end
 	if (Fury_Configuration["NextAttackRage"] == nil) then
 		Fury_Configuration["NextAttackRage"] = 40; --Set this to the minimum rage to have to use next attack abilities (Cleave and Heroic Strike)
 	end
@@ -155,6 +158,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration["StanceChangeRage"] = 10;
 	Fury_Configuration["MaximumRage"] = 60;
 	Fury_Configuration["BloodrageHealth"] = 50;
+	Fury_Configuration["DeathwishHealth"] = 60;
 	Fury_Configuration["NextAttackRage"] = 40;
 	Fury_Configuration["BerserkHealth"] = 60;
 	Fury_Configuration["HamstringHealth"] = 40;
@@ -734,6 +738,7 @@ function Fury()
 			and CheckInteractDistance("target", 2)
 			and ActiveStance() ~= 2
 			and FuryCombat
+			and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
 			and SpellReady(ABILITY_DEATH_WISH_FURY)) then
 			   Debug("Death Wish");
 			   CastSpellByName(ABILITY_DEATH_WISH_FURY);
@@ -863,6 +868,14 @@ function Fury_SlashCommand(msg)
 		end
 		Fury_Configuration["BloodrageHealth"] = options;
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_BLOODRAGE .. options .. ".")
+	elseif (command == "deathwish") then
+		if (options == "" or tonumber(options) < 1) then
+			options = 1;
+		elseif (tonumber(options) > 100) then
+			options = 100;
+		end
+		Fury_Configuration["DeathWishHealth"] = options;
+		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEATHWISH .. options .. ".")
 	elseif (command == "hamstring") then
 		if (options == "" or tonumber(options) < 1) then
 			options = 1;

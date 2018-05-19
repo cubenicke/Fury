@@ -115,6 +115,7 @@ SLASH_FURY_DANCE			= "Rage allowed to be wasted when switching stance set to ";
 SLASH_FURY_RAGE				= "Maximum rage allowed when using abilities to gain rage set to ";
 SLASH_FURY_RAGE				= "Minimum rage required when using Heroic Strike or Cleave set to ";
 SLASH_FURY_BLOODRAGE			= "Minimum percent of health required when using Bloodrage set to ";
+SLASH_FURY_DEATHWISH			= "Minimum percent of health required when using Death Wish set to ";
 SLASH_FURY_HAMSTRING			= "Maximum percent of health allowed when using Hamstring on NPCs set to ";
 SLASH_FURY_LOWTHREAT			= "Low threat enabled, enabled Cleave.";
 SLASH_FURY_HIGHTHREAT			= "High threat enabled, enabled Heroic Strike.";

@@ -89,5 +89,5 @@ To minimize threat build up in normal rotation
 /fury help [command] - prints help text
 /fury debug - toggles debug mode
 /fury attack - toggles the use of autoattack. Experimental.
-/fury buff <player|target> - shows buffs and debuffs for player or target
+/fury buff [player|target] - shows buffs and debuffs for player or target
 ```
