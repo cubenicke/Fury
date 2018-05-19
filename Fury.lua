@@ -958,8 +958,21 @@ function Fury_SlashCommand(msg)
 				Fury_Configuration[ITEM_JUJU_FLURRY] = true;
 			end
 		end
-	elseif (command == "buffs") then
-		PrintEffects(options or "target");
+	elseif (command == "unit") then
+		if (options ~= nil and options ~= "") then
+			target = options;
+		elseif (UnitName("target") ~= nil) then
+			target = "target";
+		else
+			target = "player";
+		end
+		Print("Name: "..(UnitName(target) or "").."Class: "..(UnitClass(target) or ""));
+		if (UnitRace(target)) then
+			Print("Race: "..(UnitRace(target) or ""))
+		else
+			Print("Type: "..(UnitCreatureType(target) or ""))
+		end
+		PrintEffects(target);
 	elseif (command == "ability") then
 		if (options == ABILITY_HEROIC_STRIKE_FURY and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]) then
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;

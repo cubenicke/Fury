@@ -82,6 +82,7 @@ To minimize threat build up in normal rotation
 /fury bloodrage <number> - sets minimum percent of health required when using Bloodrage
 /fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs
 /fury berserk <number> - sets minimum percent of health required when using Berserk
+/fury deathwish <number> - sets minimum percent of health required when using Death Wish
 /fury stance <name> - sets stance to return to after switching stance. If default is selected it will return to your last used stance. If no stance is selected it will disable stance switching. Must use correct names with capitalization.
 ```
 ### Debugging
@@ -89,5 +90,5 @@ To minimize threat build up in normal rotation
 /fury help [command] - prints help text
 /fury debug - toggles debug mode
 /fury attack - toggles the use of autoattack. Experimental.
-/fury buff [player|target] - shows buffs and debuffs for player or target
+/fury unit [player|target] - shows buffs and debuffs for player or target
 ```
