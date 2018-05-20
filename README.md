@@ -67,8 +67,8 @@ To minimize threat build up in normal rotation
     Whirlwind
 
 ### Items
-    [Juju Flurry](https://classicdb.ch/?item=12450)
-    [Oil of Immolation](https://classicdb.ch/?item=8956)
+  * [Juju Flurry](https://classicdb.ch/?item=12450)
+  * [Oil of Immolation](https://classicdb.ch/?item=8956)
 
 ### operational Control
 ```
