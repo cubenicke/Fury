@@ -966,7 +966,7 @@ function Fury_SlashCommand(msg)
 		else
 			target = "player";
 		end
-		Print("Name: "..(UnitName(target) or "").."Class: "..(UnitClass(target) or ""));
+		Print("Name: "..(UnitName(target) or "").." Class: "..(UnitClass(target) or "").." Classification: "..(UnitClassification(target) or ""));
 		if (UnitRace(target)) then
 			Print("Race: "..(UnitRace(target) or ""))
 		else
