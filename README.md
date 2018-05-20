@@ -42,6 +42,7 @@ To minimize threat build up in normal rotation
     Mortal Strike / Bloodthirst
     Whirlwind
     Juju Flurry
+	Oil of Immolation
     Death Wish (on every cooldown)
     Hamstring
     Heroic Strike / Cleave
@@ -66,8 +67,8 @@ To minimize threat build up in normal rotation
     Whirlwind
 
 ### Items
-    Juju Flurry
-    Oil of Immolation
+    [Juju Flurry](https://classicdb.ch/?item=12450)
+    [Oil of Immolation](https://classicdb.ch/?item=8956)
 
 ### operational Control
 ```
