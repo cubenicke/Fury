@@ -12,7 +12,7 @@
 
 function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.15.6";
+	FURY_VERSION = "1.15.7";
 	
 	if (not Fury_Configuration) then
 		Fury_Configuration = { };
@@ -153,6 +153,9 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration[ITEM_JUJU_FLURRY] == nil) then
 		Fury_Configuration[ITEM_JUJU_FLURRY] = false;
 	end
+	if (Fury_Configuration[ITEM_OIL_OF_IMMOLATION] == nil) then
+		Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false;
+	end
 	if (not WWEnemies) then
 		WWEnemies = { Hist = {}, WWTime = 0, WWCount = nil, CleaveTime = 0, CleaveCount = nil};
 		for i = 0,5 do
@@ -196,6 +199,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true;
 	Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true;
 	Fury_Configuration[ITEM_JUJU_FLURRY] = false;
+	Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false;
 end
 
 --------------------------------------------------
@@ -764,6 +768,12 @@ function Fury()
 			and ItemReady(ITEM_JUJU_FLURRY)) then
 			Debug(ITEM_JUJU_FLURRY);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_FLURRY);
+	   elseif (FuryCombat
+			and not HasBuff("player", "Spell_Fire_Immolation")
+			and Fury_Configuration[ITEM_OIL_OF_IMMOLATION]
+			and ItemReady(ITEM_OIL_OF_IMMOLATION)) then
+			Debug(ITEM_OIL_OF_IMMOLATION);
+			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION);
 	   elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
 			and UnitMana("player") >= 10
 			and CheckInteractDistance("target", 2)
@@ -958,6 +968,14 @@ function Fury_SlashCommand(msg)
 				Fury_Configuration[ITEM_JUJU_FLURRY] = true;
 			end
 		end
+	elseif (command == "ooi") then
+			if (Fury_Configuration[ITEM_OIL_OF_IMMOLATION]) then
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_OIL_OF_IMMOLATION .. " disabled.")
+				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false;
+			else
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_OIL_OF_IMMOLATION .. " enabled.")
+				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = true;
+			end
 	elseif (command == "unit") then
 		if (options ~= nil and options ~= "") then
 			target = options;
@@ -1015,6 +1033,7 @@ function Fury_SlashCommand(msg)
 			 ["hamstring"] = HELP_HAMSTRING,
 			 ["juju"] = HELP_JUJU,
 			 ["help"] = HELP_HELP,
+			 ["ooi"] = HELP_OOI,
 			 ["rage"] = HELP_RAGE,
 			 ["stance"] = HELP_STANCE,
 			 ["threat"] = HELP_THREAT,

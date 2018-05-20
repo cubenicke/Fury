@@ -107,6 +107,8 @@ ITEM_GAUNTLETS4_FURY			= "General's Plate Gauntlets";
 ITEM_SHIELDS_FURY			= "Shields";
 
 ITEM_JUJU_FLURRY			= "Juju Flurry";
+ITEM_OIL_OF_IMMOLATION			= "Oil of Immolation";
+
 MODE_HEADER_AOE				= "AoE";
 SLASH_FURY_ENABLED			= "enabled";
 SLASH_FURY_DISABLED			= "disabled";
@@ -124,7 +126,7 @@ SLASH_FURY_HIGHTHREAT			= "High threat enabled, enabled Heroic Strike.";
 SLASH_FURY_TROLL			= "Maximum percent of health allowed when using Berserking set to ";
 SLASH_FURY_STANCE			= "Primary stance set to ";
 SLASH_FURY_NOSTANCE			= "Stance switching ";
-SLASH_FURY_HELP				= "use /fury help <cmd> to get more help, commands are: aoe, juju, threat, ability, dance, attackrage, rage, bloodrage, hamstring, berserk, stance, debug, attack";
+SLASH_FURY_HELP				= "use /fury help <cmd> to get more help, commands are: aoe, juju, threat, ability, dance, attackrage, rage, bloodrage, hamstring, berserk, stance, debug, attack, ooi";
 HELP_STANCE				= "/fury stance <name> - sets stance to return to after switching stance. If default is selected it will return to your last used stance. If no stance is selected it will disable stance switching. Must use correct names with capitalization.";
 HELP_ABILITY				= "/fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.";
 HELP_BERSERK				= "/fury berserk <number> - sets minimum percent of health required when using Berserk";
@@ -136,7 +138,8 @@ HELP_RAGE				= "/fury rage <number> - sets maximum rage allowed when using abili
 HELP_ATTACK				= "/fury attack - toggles the use of autoattack. Experimental.";
 HELP_AOE				= "/fury aoe - disables bloodthirst/mortal strike and enables Cleave";
 HELP_DANCE				= "/fury dance <number> - sets rage allowed to be wasted when switching stance (dancing)";
-HELP_DEBUG				= "/fury debug - writes";
+HELP_DEBUG				= "/fury debug - writes commands in log";
+HELP_OOI				= "/fury ooi - toggle use of Oil of Immolation";
 HELP_TOGGLE				= "/fury toggle - toggle if addon is active";
 HELP_JUJU				= "/fury juju <juju> - Supports flurry, toggles use of the <juju> on cooldown";
 HELP_HELP				= "/fury help - outputs available commands";
