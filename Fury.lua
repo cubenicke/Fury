@@ -781,7 +781,7 @@ function Fury()
 				and not SpellReady(ABILITY_BLOODTHIRST_FURY))
 				or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY] or not FuryBloodthirst))
 				and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] and not SpellReady(ABILITY_WHIRLWIND_FURY))
-				or not Fury_Configuration[ABILITY_WHIRLWIND_FURY])) then
+				or (not Fury_Configuration[ABILITY_WHIRLWIND_FURY] or not CheckInteractDistance("target", 2)))) then
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			if (Fury_Configuration[ABILITY_HAMSTRING_FURY]
 				and Weapon()
