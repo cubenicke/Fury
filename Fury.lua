@@ -1,7 +1,7 @@
 --[[
 	Fury
 
-	By: Bhaerau.
+	By: Bhaerau, extended by CubeNicke.
 ]]--
 
 --------------------------------------------------
@@ -153,6 +153,18 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration[ITEM_JUJU_FLURRY] == nil) then
 		Fury_Configuration[ITEM_JUJU_FLURRY] = false;
 	end
+	if (Fury_Configuration[ITEM_JUJU_POWER] == nil) then
+		Fury_Configuration[ITEM_JUJU_POWER] = false;
+	end
+	if (Fury_Configuration[ITEM_JUJU_MIGHT] == nil) then
+		Fury_Configuration[ITEM_JUJU_MIGHT] = false;
+	end
+	if (Fury_Configuration[ITEM_JUJU_CHILL] == nil) then
+		Fury_Configuration[ITEM_JUJU_CHILL] = true;
+	end
+	if (Fury_Configuration[ITEM_JUJU_POWER] == nil) then
+		Fury_Configuration[ITEM_JUJU_POWER] = false;
+	end
 	if (Fury_Configuration[ITEM_OIL_OF_IMMOLATION] == nil) then
 		Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false;
 	end
@@ -199,6 +211,10 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true;
 	Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true;
 	Fury_Configuration[ITEM_JUJU_FLURRY] = false;
+	Fury_Configuration[ITEM_JUJU_MIGHT] = false;
+	Fury_Configuration[ITEM_JUJU_POWER] = false;
+	Fury_Configuration[ITEM_JUJU_CHILL] = true;
+	Fury_Configuration[ITEM_JUJU_EMBER] = false;
 	Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false;
 end
 
@@ -295,6 +311,7 @@ function HasBuff(unit, texturename)
 	return nil;
 end
 
+
 function UseContainerItemByNameOnPlayer(search)
   for bag = 0,4 do
     for slot = 1,GetContainerNumSlots(bag) do
@@ -384,9 +401,9 @@ function Fury_RunnerDetect(arg1, arg2)
 end
 
 function ItemReady(item)
-	local start, duration, enable = GetItemCooldown(item);
+	local _, duration, _ = GetItemCooldown(item);
 	if (duration == 0) then
-	   return true;
+	  return true;
 	end
 	return false;
 end
@@ -398,7 +415,7 @@ function addEnemyCount(Enemies)
 	WWEnemies.Hist[0] = Enemies;
 	Debug("Enemies "..Enemies);
 	if (Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE]) then
-		Debug("Disabling AoE");
+		Print("Disabling AoE");
 		Fury_Configuration[MODE_HEADER_AOE] = false;
 	end
 end
@@ -545,7 +562,7 @@ function Fury()
 			and (UnitIsPlayer("target") or (Fury_Runners[UnitName("target")] and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
 			and Weapon()
 			and not SnareDebuff()
-			and CheckInteractDistance("target", 3)
+			and FuryAttack == true
 			and UnitMana("player") >= HamstringCost()
 			and (ActiveStance() ~= 2 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
 			and SpellReady(ABILITY_HAMSTRING_FURY)) then
@@ -686,7 +703,7 @@ function Fury()
 			and not HasDebuff("target", "Ability_Druid_DemoralizingRoar")
 			and UnitMana("player") >= 10
 			and not UnitIsPlayer("target")
-			and CheckInteractDistance("target", 2)
+			and FuryAttack == true
 			and SpellReady(ABILITY_DEMORALIZING_SHOUT_FURY)) then
 			Debug("Demoralizing Shout");
 			CastSpellByName(ABILITY_DEMORALIZING_SHOUT_FURY);
@@ -763,20 +780,50 @@ function Fury()
 			end
 	   elseif (FuryCombat
 			and not HasBuff("player", "INV_Misc_MonsterScales_17")
-			and CheckInteractDistance("target", 3)
+			and FuryAttack == true
 			and Fury_Configuration[ITEM_JUJU_FLURRY]
 			and ItemReady(ITEM_JUJU_FLURRY)) then
 			Debug(ITEM_JUJU_FLURRY);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_FLURRY);
 	   elseif (FuryCombat
-			and not HasBuff("player", "Spell_Fire_Immolation")
+			and FuryAttack == true
+			and Fury_Configuration[ITEM_JUJU_CHILL]
+			and not HasBuff("player", "INV_Misc_MonsterScales_09")
+			and (UnitName("target") == "Kel'Thuzad" or UnitName("target") == "Sapphiron")
+			and ItemReady(ITEM_JUJU_CHILL)) then
+			Debug(ITEM_JUJU_CHILL);
+			UseContainerItemByNameOnPlayer(ITEM_JUJU_CHILL);
+	   elseif (FuryCombat
+			and Fury_Configuration[ITEM_JUJU_EMBER]
+			and not HasBuff("player", "INV_Misc_MonsterScales_15")
+			and ItemReady(ITEM_JUJU_EMBER)) then
+			Debug(ITEM_JUJU_EMBER);
+			UseContainerItemByNameOnPlayer(ITEM_JUJU_EMBER);
+	   elseif (FuryCombat
+			and FuryAttack == true
+			and Fury_Configuration[ITEM_JUJU_MIGHT]
+			and not HasBuff("player", "INV_Misc_MonsterScales_07")
+			and not HasBuff("player", "INV_Potion_92") -- Winterfall Firewater
+			and ItemReady(ITEM_JUJU_MIGHT)) then
+			Debug(ITEM_JUJU_MIGHT);
+			UseContainerItemByNameOnPlayer(ITEM_JUJU_MIGHT);
+	   elseif (FuryCombat
+			and FuryAttack == true
+			and Fury_Configuration[ITEM_JUJU_POWER]
+			and not HasBuff("player", "INV_Misc_MonsterScales_11")
+			and not HasBuff("player", "INV_Potion_61") -- Elixir of Giants
+			and ItemReady(ITEM_JUJU_POWER)) then
+			Debug(ITEM_JUJU_POWER);
+			UseContainerItemByNameOnPlayer(ITEM_JUJU_POWER);
+	   elseif (FuryCombat
 			and Fury_Configuration[ITEM_OIL_OF_IMMOLATION]
+			and not HasBuff("player", "Spell_Fire_Immolation")
 			and ItemReady(ITEM_OIL_OF_IMMOLATION)) then
 			Debug(ITEM_OIL_OF_IMMOLATION);
 			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION);
 	   elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
 			and UnitMana("player") >= 10
-			and CheckInteractDistance("target", 2)
+			and FuryAttack == true
 			and ActiveStance() ~= 2
 			and FuryCombat
 			and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
@@ -967,6 +1014,40 @@ function Fury_SlashCommand(msg)
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_FLURRY .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_FLURRY] = true;
 			end
+		elseif (options == "chill") then
+			if (Fury_Configuration[ITEM_JUJU_CHILL]) then
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_CHILL .. " disabled.")
+				Fury_Configuration[ITEM_JUJU_CHILL] = false;
+			else
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_CHILL .. " enabled.")
+				Fury_Configuration[ITEM_JUJU_CHILL] = true;
+			end		
+		elseif (options == "might") then
+			if (Fury_Configuration[ITEM_JUJU_MIGHT]) then
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_MIGHT .. " disabled.")
+				Fury_Configuration[ITEM_JUJU_MIGHT] = false;
+			else
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_MIGHT .. " enabled.")
+				Fury_Configuration[ITEM_JUJU_MIGHT] = true;
+			end
+		elseif (options == "ember") then
+			if (Fury_Configuration[ITEM_JUJU_EMBER]) then
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_EMBER .. " disabled.")
+				Fury_Configuration[ITEM_JUJU_EMBER] = false;
+			else
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_EMBER .. " enabled.")
+				Fury_Configuration[ITEM_JUJU_EMBER] = true;
+			end		
+		elseif (options == "power") then
+			if (Fury_Configuration[ITEM_JUJU_POWER]) then
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_POWER .. " disabled.")
+				Fury_Configuration[ITEM_JUJU_POWER] = false;
+			else
+				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_POWER .. " enabled.")
+				Fury_Configuration[ITEM_JUJU_POWER] = true;
+			end		
+		else
+			Print(HELP_JUJU);
 		end
 	elseif (command == "ooi") then
 			if (Fury_Configuration[ITEM_OIL_OF_IMMOLATION]) then
@@ -976,6 +1057,12 @@ function Fury_SlashCommand(msg)
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_OIL_OF_IMMOLATION .. " enabled.")
 				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = true;
 			end
+	elseif (command == "where") then
+		Print("GetMinimapZoneText "..(GetMinimapZoneText() or ""));
+		Print("GetRealZoneText "..(GetRealZoneText() or ""));
+		Print("GetSubZoneText "..(GetSubZoneText() or ""));
+		Print("GetZonePVPInfo "..(GetZonePVPInfo() or ""));
+		Print("GetZoneText "..(GetZoneText() or ""));
 	elseif (command == "unit") then
 		if (options ~= nil and options ~= "") then
 			target = options;
@@ -1037,7 +1124,9 @@ function Fury_SlashCommand(msg)
 			 ["rage"] = HELP_RAGE,
 			 ["stance"] = HELP_STANCE,
 			 ["threat"] = HELP_THREAT,
-			 ["toggle"] = HELP_TOGGLE
+			 ["toggle"] = HELP_TOGGLE,
+			 ["unit"] = HELP_UNIT,
+			 ["where"] = HELP_WHERE
 			};
 			if (helps[options] ~= nil) then
 				Print(helps[options])
