@@ -42,7 +42,11 @@ To minimize threat build up in normal rotation
     Mortal Strike / Bloodthirst
     Whirlwind
     Juju Flurry
-	Oil of Immolation
+    Juju Chill
+    Juju Ember
+    Juju Might
+    Juju Power
+    Oil of Immolation
     Death Wish (on every cooldown)
     Hamstring
     Heroic Strike / Cleave
@@ -67,6 +71,10 @@ To minimize threat build up in normal rotation
     Whirlwind
 
 ### Items
+  * [Juju Chill](https://classicdb.ch/?item=12457) (Only Kel'Thuzad and Sapphiron)
+  * [Juju Ember](https://classicdb.ch/?item=12455)
+  * [Juju Might](https://classicdb.ch/?item=12460) Doesn't overrride [Winterfall Firewater](https://classicdb.ch/?item=12820)
+  * [Juju Power](https://classicdb.ch/?item=12451) Doesn't overrride [Elixir of Giants](https://classicdb.ch/?item=9206)
   * [Juju Flurry](https://classicdb.ch/?item=12450)
   * [Oil of Immolation](https://classicdb.ch/?item=8956)
 
@@ -75,12 +83,12 @@ To minimize threat build up in normal rotation
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
 /fury toggle - toggles Fury
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on thread critical fights to decrease threat build up
-/fury juju flurry - enables buff on every cooldown
+/fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
+/fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 ```
 ### Setup commands
 ```
-/fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 /fury dance <number> - sets rage allowed to be wasted when switching stance ("dancing")
 /fury attackrage <number> - sets minimum rage required when using Heroic Strike or Cleave
 /fury rage <number> - sets maximum rage allowed when using abilities to gain rage
@@ -93,7 +101,8 @@ To minimize threat build up in normal rotation
 ### Debugging
 ```
 /fury help [command] - prints help text
-/fury debug - toggles debug mode
 /fury attack - toggles the use of autoattack. Experimental.
+/fury debug - toggles debug mode
 /fury unit [player|target] - shows buffs and debuffs for player or target
+/fury where - info about whereabouts
 ```

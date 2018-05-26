@@ -259,6 +259,58 @@ function PrintEffects(target)
 	end
 end
 
+local res = {};
+res["fire"] = { 
+		--Naxxramas
+		"Grand Widow Faerlina",
+		"Thane Korth'azz",
+		--MC
+		"Ragnaros",
+		-- Onyxia
+		"Onyxia"
+	};
+res["frost"] = {
+		--Naxxramas
+		"Kel'Thuzad",
+		"Sapphiron"
+	};
+res["nature"] = {
+		--Naxxramas
+		"Heigan the Unclean",
+		"Loatheb",
+		"Princess Huhuran"
+	};
+res["shadow"] = {
+		"Loatheb",
+		"Baron Rivendare",
+		"Lady Blaumeux"
+	};
+res["arcane"] = {
+		--Naxxramas
+		"Gothik the Harvester",
+		--AQ40
+		"The Prophet Skeram",
+		"Emperor Vek'lor",
+		--MC
+		"Shazzrath"
+	};
+res["holy"] = {
+		--Naxxramas
+		"Sir Zeliek"
+	};
+
+function UseRes(type)
+	if UnitClassification() == "worldboss" then		
+		for _, name in pairs(res[type]) do
+			if UnitName("target") == name then
+				return true;
+			end
+		end
+	end
+	return false;
+end
+
+
 --------------------------------------------------
 
 function SpellId(spellname)
@@ -789,13 +841,14 @@ function Fury()
 			and FuryAttack == true
 			and Fury_Configuration[ITEM_JUJU_CHILL]
 			and not HasBuff("player", "INV_Misc_MonsterScales_09")
-			and (UnitName("target") == "Kel'Thuzad" or UnitName("target") == "Sapphiron")
+			and UseRes("frost")
 			and ItemReady(ITEM_JUJU_CHILL)) then
 			Debug(ITEM_JUJU_CHILL);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_CHILL);
 	   elseif (FuryCombat
 			and Fury_Configuration[ITEM_JUJU_EMBER]
 			and not HasBuff("player", "INV_Misc_MonsterScales_15")
+			and UseRes("fire")
 			and ItemReady(ITEM_JUJU_EMBER)) then
 			Debug(ITEM_JUJU_EMBER);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_EMBER);
