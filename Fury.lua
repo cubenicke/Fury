@@ -938,6 +938,7 @@ function Fury_SlashCommand(msg)
 	if (command) then
 		command = string.lower(command);
 	end
+	Print(msg);
 	if (command == nil or command == "") then
 		Fury();
 	elseif (command == "aoe") then

@@ -21,12 +21,13 @@ To minimize threat build up in normal rotation
 /fury threat
 ```
 
-### Macros
-To get a button to press create a macro
+### Usage
+Some commands exists as key bindings, but for commands most commands one has to write a macro to make them usable during combat.
+To get a button to press on the action bar, create a macro
     
     /fury juju power
 
-Then edit the macro file in a text editor **account/character/macros-cache.txt**, change the icon name to the correct one. See below for some icon names.
+Then edit the macro file in a text editor **WTF/<account>/<character>/macros-cache.txt**, change the icon name to the correct one. See below for some icon names.
 
     MACRO 16777224 "Power" INV_Misc_MonsterScales_11
         /fury juju power
@@ -88,7 +89,7 @@ Heroic Strike / Cleave
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_17.jpg) [Juju Flurry](https://classicdb.ch/?item=12450),INV_Misc_MonsterScales_17
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_07.jpg) [Juju Might](https://classicdb.ch/?item=12460),INV_Misc_MonsterScales_07 Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_92.jpg) [Winterfall Firewater](https://classicdb.ch/?item=12820)
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_11.jpg) [Juju Power](https://classicdb.ch/?item=12451),INV_Misc_MonsterScales_11 Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_61.jpg) [Elixir of Giants](https://classicdb.ch/?item=9206)
-  * ![](https://classicdb.ch/images/icons/small/spell_fire_immolation.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956), spell_fire_immolation
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956), inv_potion_11
 
 ### operational Control
 ```
