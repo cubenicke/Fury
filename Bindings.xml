@@ -8,4 +8,10 @@
 	<Binding name="FURY_WW" header="FURY">
 		Fury_SlashCommand("ability Whirlwind");
 	</Binding>
+	<Binding name="FURY_THREAT" header="FURY">
+		Fury_SlashCommand("threat");
+	</Binding>
+	<Binding name="FURY_DW" header="FURY">
+		Fury_SlashCommand("ability Death Wish");
+	</Binding>
 </Bindings>

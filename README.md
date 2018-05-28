@@ -1,42 +1,30 @@
 # Fury
-Fury Addon originally by Bhaerau, modifications for end game raiding in vanilla by cubenicke.
+Fury Addon originally by Bhaerau, modifications for end game raiding in vanilla by cubenicke. Purpose for the addon is to make a Fury warriors life easier while raiding in vanilla wow.
+Fury makes one button for the warrior rotation, but still makes it possible to adapt the rotation with manual settings to make it adapt for each fight. Also gives some aid with mid-fight buffs
+like Jujus.
 
 ## Usage
 
-In simplest form these two take you a long way
-```
-/fury
-```
-Toggle whirlwind, Cleave only rotation
-```
-/fury aoe
-```
+In key bindings, bind these actions to some keys available to you mid fight (Same commands can also be created as macros - to create a button on action bar)  
+Attack - One button Fury Warrior rotation. Spam it!  
+Toggle HS or Cleave - Dump excessing rage with Heroic Strike or Cleave. Useful in threat situations and for a AoE with single mob prio.  
+Toggle WW - Stops using Whirlwind during normal rotation, toggle it in CC situations. or Kel'Thuzad to don't do damage on Mind Controlled people.   
+Toggle DW - Enable it a bit into fights when you want your first Death Wish to fire off.  
 
-To improve game play one can also disable individual spells like Whirlwind to not break crowd controlled targets
-```
-/fury ability Whirlwind
-```
-To minimize threat build up in normal rotation
-```
-/fury threat
-```
-
-### Usage
-Some commands exists as key bindings, but for commands most commands one has to write a macro to make them usable during combat.
+### Usage as Macros
+Some commands exists as key bindings, but for most commands one has to write a macro to make them usable during combat.
 To get a button to press on the action bar, create a macro
     
     /fury juju power
 
-Then edit the macro file in a text editor **WTF/<account>/<character>/macros-cache.txt**, change the icon name to the correct one. See below for some icon names.
+To get the correct Icon for the macro, edit the macro file in a text editor **WTF/<account>/<character>/macros-cache.txt**, change the icon name to the correct one. See below for some icon names.
 
     MACRO 16777224 "Power" INV_Misc_MonsterScales_11
         /fury juju power
     END
 
 ## Reference
-```
-/fury - uses Fury
-```
+
 ### Logic
 Dismount (Mounted only)  
 Berserker Rage (Feared only)  
@@ -93,8 +81,9 @@ Heroic Strike / Cleave
 
 ### operational Control
 ```
+/fury - uses Fury
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
-/fury toggle - toggles Fury
+/fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on thread critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up

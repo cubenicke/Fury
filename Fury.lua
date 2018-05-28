@@ -894,10 +894,12 @@ function Fury()
 				or (not Fury_Configuration[ABILITY_WHIRLWIND_FURY] or not CheckInteractDistance("target", 2)))) then
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			if (Fury_Configuration[ABILITY_HAMSTRING_FURY]
+				and FuryFlurry
 				and Weapon()
 				and not HasBuff("player", "Ability_GhoulFrenzy")
 				and UnitMana("player") >= HamstringCost()
 				and SpellReady(ABILITY_HAMSTRING_FURY)) then
+				-- Try trigger Flurry with use of Hamstring to dump rage
 				Debug("Hamstring");
 				CastSpellByName(ABILITY_HAMSTRING_FURY);
 			elseif (Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
@@ -938,7 +940,6 @@ function Fury_SlashCommand(msg)
 	if (command) then
 		command = string.lower(command);
 	end
-	Print(msg);
 	if (command == nil or command == "") then
 		Fury();
 	elseif (command == "aoe") then
@@ -1307,6 +1308,13 @@ function Fury_OnEvent(event)
 				FuryBerserkerRage =  true;
 			else
 				FuryBerserkerRage = false;
+			end
+			--Check for Flurry
+			local _, _, _, _, currRank = GetTalentInfo(1, 16);
+			if (currRank > 0) then
+				FuryFlurry = true;
+			else
+				FuryFlurry = false;
 			end
 			--Check for Mortal Strike
 			local _, _, _, _, currRank = GetTalentInfo(1, 18);

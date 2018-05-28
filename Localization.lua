@@ -7,7 +7,8 @@
 BINDING_NAME_FURY			= "Attack";
 BINDING_NAME_FURY_AOE			= "Toggle AoE";
 BINDING_NAME_FURY_WW			= "Toggle Whirlwind";
-BINDING_NAME_FURY_THREAT		= "Toggle HS/Cleave usage";
+BINDING_NAME_FURY_THREAT		= "Toggle HS or Cleave";
+BINDING_NAME_FURY_DW                    = "Toggle Death Wish";
 BINDING_HEADER_FURY			= "Fury";
 
 CLASS_DRUID_FURY			= "Druid";
