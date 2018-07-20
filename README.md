@@ -84,7 +84,7 @@ Heroic Strike / Cleave
 /fury - uses Fury
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
 /fury toggle - toggles Fury on/off
-/fury threat - enables Cleave or Heroic Strike based on current settings, use on thread critical fights to decrease threat build up
+/fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.

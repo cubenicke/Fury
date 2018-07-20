@@ -24,6 +24,7 @@ Pummel
 Rend
 Shield Bash
 Whirlwind
+Death Wish
 
 Furthermore it also covers the talent Tactical Mastery, the PvP Plate Gauntlets (Hamstring improvement) and the Troll racial Berserking.
 
@@ -46,6 +47,7 @@ Demoralizing Shout (PvE only)
 Battle Shout
 Mortal Strike / Bloodthirst
 Whirlwind
+Death Wish (PVE only)
 Heroic Strike / Cleave
 
 ----------
@@ -58,6 +60,8 @@ Slash commands:
 /fury debug - toggles debug mode
 /fury attack - toggles the use of autoattack. Experimental.
 /fury threat - enables Cleave or Heroic Strike based on current settings
+/fury aoe - disables bloodthirst/mortal strike and enables Cleave
+/fury report - output settings
 
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 /fury dance <number> - sets rage allowed to be wasted when switching stance ("dancing")
