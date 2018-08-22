@@ -12,8 +12,8 @@
 
 function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.15.7";
-	
+	FURY_VERSION = "1.15.8";
+
 	if (not Fury_Configuration) then
 		Fury_Configuration = { };
 	end
@@ -224,14 +224,14 @@ end
 --
 --------------------------------------------------
 
-local function Print(msg) 
+local function Print(msg)
 	if (not DEFAULT_CHAT_FRAME) then
 		return;
 	end
 	DEFAULT_CHAT_FRAME:AddMessage(msg);
 end
 
-local function Debug(msg) 
+local function Debug(msg)
 	if (Fury_Configuration["Debug"]) then
 		if (not DEFAULT_CHAT_FRAME) then
 			return;
@@ -260,7 +260,7 @@ function PrintEffects(target)
 end
 
 local res = {};
-res["fire"] = { 
+res["fire"] = {
 		--Naxxramas
 		"Grand Widow Faerlina",
 		"Thane Korth'azz",
@@ -300,7 +300,7 @@ res["holy"] = {
 	};
 
 function UseRes(type)
-	if UnitClassification() == "worldboss" then		
+	if UnitClassification() == "worldboss" then
 		for _, name in pairs(res[type]) do
 			if UnitName("target") == name then
 				return true;
@@ -329,7 +329,7 @@ function SpellId(spellname)
 end
 
 function SpellReady(spellname)
-	local id = SpellId(spellname); 
+	local id = SpellId(spellname);
 	if (id) then
 		local start, duration = GetSpellCooldown(id, 0);
 		if (start == 0 and duration == 0 and FuryLastSpellCast + 1 <= GetTime()) then
@@ -365,17 +365,17 @@ end
 
 
 function UseContainerItemByNameOnPlayer(search)
-  for bag = 0,4 do
-    for slot = 1,GetContainerNumSlots(bag) do
-      local item = GetContainerItemLink(bag,slot)
-      if (item and string.find(item, search)) then
-        UseContainerItem(bag,slot)
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("player")
+	for bag = 0,4 do
+		for slot = 1,GetContainerNumSlots(bag) do
+			local item = GetContainerItemLink(bag,slot)
+			if (item and string.find(item, search)) then
+				UseContainerItem(bag,slot)
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("player")
+				end
+			end
 		end
-      end
-    end
-  end
+	end
 end
 --------------------------------------------------
 
@@ -452,7 +452,31 @@ function Fury_RunnerDetect(arg1, arg2)
 	end
 end
 
+function ItemExists(itemName)
+	for bag = 4, 0, -1 do
+		for slot = 1, GetContainerNumSlots(bag) do
+			local _, itemCount = GetContainerItemInfo(bag, slot);
+			if itemCount then
+				local itemLink = GetContainerItemLink(bag,slot)
+				local _, _, itemParse = strfind(itemLink, "(%d+):")
+				local queryName, _, _, _, _, _ = GetItemInfo(itemParse)
+				if queryName and queryName ~= "" then
+					if queryName == itemName then
+						return true;
+					end
+				end
+			end
+		end
+	end
+
+	return false;
+end
+
+
 function ItemReady(item)
+	if ItemExists(item) == false then
+		return false;
+	end
 	local _, duration, _ = GetItemCooldown(item);
 	if (duration == 0) then
 	  return true;
@@ -498,10 +522,12 @@ function Fury()
 			WWEnemies.WWCount = nil;
 		end
 
+		-- Dismount if mounted
 		if (FuryMount) then
 			Dismount();
 			FuryMount = nil;
 
+		-- Use Berserker rage to interrupt fears and ....
 		elseif (Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
 			and (FuryIncapacitate or FuryFear)
 			and ActiveStance() == 3
@@ -510,6 +536,7 @@ function Fury()
 			CastSpellByName(ABILITY_BERSERKER_RAGE_FURY);
 			FuryLastSpellCast = GetTime();
 
+		-- Execute, this will stance dance in prot mode?
 		elseif (Fury_Configuration[ABILITY_EXECUTE_FURY]
 			and Weapon()
 			and not Fury_Configuration[MODE_HEADER_AOE]
@@ -535,6 +562,7 @@ function Fury()
 				end
 			end
 
+		-- Overpower when available
 		elseif (Fury_Configuration[ABILITY_OVERPOWER_FURY]
 			and FuryOverpower
 			and Weapon()
@@ -560,6 +588,7 @@ function Fury()
 				end
 			end
 
+		-- Pummel if casting
 		elseif (Fury_Configuration[ABILITY_PUMMEL_FURY]
 			and FurySpellInterrupt
 			and UnitMana("player") >= 10
@@ -584,6 +613,7 @@ function Fury()
 				end
 			end
 
+		-- Shield bash to interrupt
 		elseif (Fury_Configuration[ABILITY_SHIELD_BASH_FURY]
 			and FurySpellInterrupt
 			and not Fury_Configuration[MODE_HEADER_AOE]
@@ -610,6 +640,7 @@ function Fury()
 				end
 			end
 
+		-- Cast hamstring to stop runners
 		elseif (Fury_Configuration[ABILITY_HAMSTRING_FURY]
 			and (UnitIsPlayer("target") or (Fury_Runners[UnitName("target")] and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
 			and Weapon()
@@ -636,6 +667,7 @@ function Fury()
 				end
 			end
 
+		-- Rend to antistealth
 		elseif (Fury_Configuration[ABILITY_REND_FURY]
 			and UnitIsPlayer("target")
 			and Weapon()
@@ -662,6 +694,7 @@ function Fury()
 				end
 			end
 
+		-- Berserker rage
 		elseif (Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
 			and FuryBerserkerRage
 			and not UnitIsPlayer("target")
@@ -673,7 +706,7 @@ function Fury()
 				Debug("Berserker Rage");
 				if (FuryOldStance ~= 3) then
 					FuryDanceDone = true;
-				end				
+				end
 				CastSpellByName(ABILITY_BERSERKER_RAGE_FURY);
 				FuryLastSpellCast = GetTime();
 			else
@@ -687,6 +720,7 @@ function Fury()
 				end
 			end
 
+		-- Stance dance
 		elseif (Fury_Configuration["PrimaryStance"]
 			and not FuryOldStance
 			and not FuryDanceDone
@@ -699,6 +733,7 @@ function Fury()
 			CastShapeshiftForm(Fury_Configuration["PrimaryStance"]);
 			FuryLastStanceCast = GetTime();
 
+		-- Bloodrage
 		elseif (Fury_Configuration[ABILITY_BLOODRAGE_FURY]
 			and UnitMana("player") <= tonumber(Fury_Configuration["MaximumRage"])
 			and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["BloodrageHealth"])
@@ -707,7 +742,8 @@ function Fury()
 			CastSpellByName(ABILITY_BLOODRAGE_FURY);
 			--FuryLastSpellCast = GetTime();
 			--No global cooldown, added anyway to ensure better flow
-		
+
+		-- Battle Shout
 		elseif (Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY]
 			and not HasBuff("player", "Ability_Warrior_BattleShout")
 			and UnitMana("player") >= 10
@@ -716,6 +752,7 @@ function Fury()
 			CastSpellByName(ABILITY_BATTLE_SHOUT_FURY);
 			FuryLastSpellCast = GetTime();
 
+		-- Racial berserking
 		elseif (Fury_Configuration[RACIAL_BERSERKING_FURY]
 			and UnitMana("player") >= 5
 			and (UnitHealth("player") / UnitHealthMax("player") * 100) <= tonumber(Fury_Configuration["BerserkHealth"])
@@ -725,8 +762,9 @@ function Fury()
 			CastSpellByName(RACIAL_BERSERKING_FURY);
 			FuryLastSpellCast = GetTime();
 
+		-- Disarm (PVP only)
 		elseif (Fury_Configuration[ABILITY_DISARM_FURY]
-			and Weapon()		
+			and Weapon()
 			and UnitIsPlayer("target")
 			and (UnitClass("target") == CLASS_HUNTER_FURY or UnitClass("target") == CLASS_PALADIN_FURY or UnitClass("target") == CLASS_ROGUE_FURY or UnitClass("target") == CLASS_SHAMAN_FURY or UnitClass("target") == CLASS_WARRIOR_FURY)
 			and UnitMana("player") >= 20
@@ -736,7 +774,7 @@ function Fury()
 				Debug("Disarm");
 				if (FuryOldStance ~= 2) then
 					FuryDanceDone = true;
-				end				
+				end
 				CastSpellByName(ABILITY_DISARM_FURY);
 				FuryLastSpellCast = GetTime();
 			else
@@ -748,8 +786,9 @@ function Fury()
 					CastShapeshiftForm(2);
 					FuryLastStanceCast = GetTime();
 				end
-			end		
-		
+			end
+
+		-- Demoralizing Shout (PVE only)
 		elseif (Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY]
 			and not HasDebuff("target", "Ability_Warrior_WarCry")
 			and not HasDebuff("target", "Ability_Druid_DemoralizingRoar")
@@ -761,6 +800,7 @@ function Fury()
 			CastSpellByName(ABILITY_DEMORALIZING_SHOUT_FURY);
 			FuryLastSpellCast = GetTime();
 
+		-- Mortal Strike
 		elseif (Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 			and FuryMortalStrike
 			and Weapon()
@@ -769,8 +809,9 @@ function Fury()
 			and SpellReady(ABILITY_MORTAL_STRIKE_FURY)) then
 			Debug("Mortal Strike");
 			CastSpellByName(ABILITY_MORTAL_STRIKE_FURY);
-			FuryLastSpellCast = GetTime();		
+			FuryLastSpellCast = GetTime();
 
+		-- Bloodthirst
 		elseif (Fury_Configuration[ABILITY_BLOODTHIRST_FURY]
 			and FuryBloodthirst
 			and not Fury_Configuration[MODE_HEADER_AOE]
@@ -780,14 +821,16 @@ function Fury()
 			CastSpellByName(ABILITY_BLOODTHIRST_FURY);
 			FuryLastSpellCast = GetTime();
 
+		-- Shield Slam
 		elseif (Fury_Configuration[ABILITY_SHIELD_SLAM_FURY]
 			and FuryShieldSlam
 			and UnitMana("player") >= 20
 			and SpellReady(ABILITY_SHIELD_SLAM_FURY)) then
-			Debug("SHield Slam");
+			Debug("Shield Slam");
 			CastSpellByName(ABILITY_SHIELD_SLAM_FURY);
 			FuryLastSpellCast = GetTime();
 		
+		-- Whirlwind
 		elseif ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] or Fury_Configuration[MODE_HEADER_AOE])
 			and CheckInteractDistance("target", 2)
 			and UnitMana("player") >= 25
@@ -797,7 +840,7 @@ function Fury()
 				Debug("Whirlwind");
 				if (FuryOldStance ~= 3) then
 					FuryDanceDone = true;
-				end				
+				end
 				CastSpellByName(ABILITY_WHIRLWIND_FURY);
 				WWEnemies.WWCount = 0;
 				FuryLastSpellCast = GetTime();
@@ -812,6 +855,8 @@ function Fury()
 					FuryLastStanceCast = GetTime();
 				end
 			end
+
+		-- Stance dance (part 2)
 		elseif (FuryDanceDone
 			and FuryOldStance
 			and FuryLastStanceCast + 1.5 <= GetTime()
@@ -830,14 +875,18 @@ function Fury()
 				FuryOldStance = nil;
 				FuryDanceDone = nil;
 			end
-	   elseif (FuryCombat
+
+		-- Juju Flurry
+		elseif (FuryCombat
 			and not HasBuff("player", "INV_Misc_MonsterScales_17")
 			and FuryAttack == true
 			and Fury_Configuration[ITEM_JUJU_FLURRY]
 			and ItemReady(ITEM_JUJU_FLURRY)) then
 			Debug(ITEM_JUJU_FLURRY);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_FLURRY);
-	   elseif (FuryCombat
+
+		-- Juju Chill
+		elseif (FuryCombat
 			and FuryAttack == true
 			and Fury_Configuration[ITEM_JUJU_CHILL]
 			and not HasBuff("player", "INV_Misc_MonsterScales_09")
@@ -845,14 +894,18 @@ function Fury()
 			and ItemReady(ITEM_JUJU_CHILL)) then
 			Debug(ITEM_JUJU_CHILL);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_CHILL);
-	   elseif (FuryCombat
+
+		-- Juju Ember
+		elseif (FuryCombat
 			and Fury_Configuration[ITEM_JUJU_EMBER]
 			and not HasBuff("player", "INV_Misc_MonsterScales_15")
 			and UseRes("fire")
 			and ItemReady(ITEM_JUJU_EMBER)) then
 			Debug(ITEM_JUJU_EMBER);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_EMBER);
-	   elseif (FuryCombat
+
+		-- Juju Might
+		elseif (FuryCombat
 			and FuryAttack == true
 			and Fury_Configuration[ITEM_JUJU_MIGHT]
 			and not HasBuff("player", "INV_Misc_MonsterScales_07")
@@ -860,7 +913,9 @@ function Fury()
 			and ItemReady(ITEM_JUJU_MIGHT)) then
 			Debug(ITEM_JUJU_MIGHT);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_MIGHT);
-	   elseif (FuryCombat
+
+		-- Juju Power
+		elseif (FuryCombat
 			and FuryAttack == true
 			and Fury_Configuration[ITEM_JUJU_POWER]
 			and not HasBuff("player", "INV_Misc_MonsterScales_11")
@@ -868,31 +923,39 @@ function Fury()
 			and ItemReady(ITEM_JUJU_POWER)) then
 			Debug(ITEM_JUJU_POWER);
 			UseContainerItemByNameOnPlayer(ITEM_JUJU_POWER);
-	   elseif (FuryCombat
+
+		-- Immolation potion
+		elseif (FuryCombat
 			and Fury_Configuration[ITEM_OIL_OF_IMMOLATION]
 			and not HasBuff("player", "Spell_Fire_Immolation")
 			and ItemReady(ITEM_OIL_OF_IMMOLATION)) then
 			Debug(ITEM_OIL_OF_IMMOLATION);
 			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION);
-	   elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
+
+		-- Death Wish
+		elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
 			and UnitMana("player") >= 10
 			and FuryAttack == true
 			and ActiveStance() ~= 2
 			and FuryCombat
 			and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
 			and SpellReady(ABILITY_DEATH_WISH_FURY)) then
-			   Debug("Death Wish");
-			   CastSpellByName(ABILITY_DEATH_WISH_FURY);
+				Debug("Death Wish");
+				CastSpellByName(ABILITY_DEATH_WISH_FURY);
+
+		-- Dump rage with Heroic Strike or Cleave
 		elseif ((Fury_Configuration[MODE_HEADER_AOE]
-				or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] and FuryMortalStrike
-				and not SpellReady(ABILITY_MORTAL_STRIKE_FURY))
-				or not Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] or not FuryMortalStrike)
-				and ((Fury_Configuration[ABILITY_BLOODTHIRST_FURY] and FuryBloodthirst
-				and not SpellReady(ABILITY_BLOODTHIRST_FURY))
-				or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY] or not FuryBloodthirst))
-				and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] and not SpellReady(ABILITY_WHIRLWIND_FURY))
-				or (not Fury_Configuration[ABILITY_WHIRLWIND_FURY] or not CheckInteractDistance("target", 2)))) then
+			or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] and FuryMortalStrike
+			and not SpellReady(ABILITY_MORTAL_STRIKE_FURY))
+			or not Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] or not FuryMortalStrike)
+			and ((Fury_Configuration[ABILITY_BLOODTHIRST_FURY] and FuryBloodthirst
+			and not SpellReady(ABILITY_BLOODTHIRST_FURY))
+			or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY] or not FuryBloodthirst))
+			and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY] and not SpellReady(ABILITY_WHIRLWIND_FURY))
+			or (not Fury_Configuration[ABILITY_WHIRLWIND_FURY] or not CheckInteractDistance("target", 2)))) then
+
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+			-- Hamstring
 			if (Fury_Configuration[ABILITY_HAMSTRING_FURY]
 				and FuryFlurry
 				and Weapon()
@@ -902,6 +965,8 @@ function Fury()
 				-- Try trigger Flurry with use of Hamstring to dump rage
 				Debug("Hamstring");
 				CastSpellByName(ABILITY_HAMSTRING_FURY);
+
+			-- Heroic Strike
 			elseif (Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 				and Weapon()
 				and not Fury_Configuration[MODE_HEADER_AOE]
@@ -912,7 +977,8 @@ function Fury()
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY);
 				--FuryLastSpellCast = GetTime();
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
-			
+
+			-- Cleave
 			elseif ((Fury_Configuration[ABILITY_CLEAVE_FURY] or Fury_Configuration[MODE_HEADER_AOE])
 				and Weapon()
 				and UnitMana("player") >= 20
@@ -922,12 +988,10 @@ function Fury()
 				CastSpellByName(ABILITY_CLEAVE_FURY);
 				--FuryLastSpellCast = GetTime();
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
-			
 			end
-
 		end
 	end
-end	
+end
 
 --------------------------------------------------
 --
@@ -940,15 +1004,18 @@ function Fury_SlashCommand(msg)
 	if (command) then
 		command = string.lower(command);
 	end
+	if (not (UnitClass("player") == CLASS_WARRIOR_FURY)) then
+		return
+	end
 	if (command == nil or command == "") then
 		Fury();
 	elseif (command == "aoe") then
 		if (Fury_Configuration[MODE_HEADER_AOE]) then
 			Fury_Configuration[MODE_HEADER_AOE] = false;
-			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_DISABLED .. ".") 
+			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_DISABLED .. ".")
 		else
 			Fury_Configuration[MODE_HEADER_AOE] = true;
-			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".") 
+			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif (command == "toggle") then
 		if (Fury_Configuration["Enabled"]) then
@@ -1061,7 +1128,7 @@ function Fury_SlashCommand(msg)
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_NOSTANCE .. SLASH_FURY_DISABLED .. ".")
 		end
 	elseif (command == "juju") then
-		if (options ==  "flurry") then
+		if (options ==	"flurry") then
 			if (Fury_Configuration[ITEM_JUJU_FLURRY]) then
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_FLURRY .. " disabled.")
 				Fury_Configuration[ITEM_JUJU_FLURRY] = false;
@@ -1076,7 +1143,7 @@ function Fury_SlashCommand(msg)
 			else
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_CHILL .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_CHILL] = true;
-			end		
+			end
 		elseif (options == "might") then
 			if (Fury_Configuration[ITEM_JUJU_MIGHT]) then
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_MIGHT .. " disabled.")
@@ -1092,7 +1159,7 @@ function Fury_SlashCommand(msg)
 			else
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_EMBER .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_EMBER] = true;
-			end		
+			end
 		elseif (options == "power") then
 			if (Fury_Configuration[ITEM_JUJU_POWER]) then
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_POWER .. " disabled.")
@@ -1100,7 +1167,7 @@ function Fury_SlashCommand(msg)
 			else
 				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_POWER .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_POWER] = true;
-			end		
+			end
 		else
 			Print(HELP_JUJU);
 		end
@@ -1229,15 +1296,19 @@ function Fury_OnLoad()
 end
 
 function Fury_OnEvent(event)
+
 	if (event == "VARIABLES_LOADED") then
 		--Check for settings
 		Fury_Configuration_Init()
+
 	elseif (event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_OVERPOWER1_FURY) or event == "CHAT_MSG_SPELL_SELF_DAMAGE" and string.find(arg1, CHAT_OVERPOWER2_FURY)) then
 		--Check to see if enemy dodges
 		FuryOverpower = GetTime();
+
 	elseif (event == "CHAT_MSG_SPELL_SELF_DAMAGE" and (string.find(arg1, CHAT_OVERPOWER3_FURY) or string.find(arg1, CHAT_OVERPOWER4_FURY) or string.find(arg1, CHAT_OVERPOWER5_FURY))) then
 		--Check to see if Overpower is used
 		FuryOverpower = nil;
+
 	elseif (event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" or event == "CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF" or event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF" or event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE") then
 		--Check to see if enemy casts spell
 		for mob, spell in string.gfind(arg1, CHAT_CAST_FURY) do
@@ -1246,15 +1317,18 @@ function Fury_OnEvent(event)
 			end
 			return;
 		end
+
 	elseif (event == "CHAT_MSG_SPELL_SELF_DAMAGE" and string.find(arg1, CHAT_INTERRUPT1_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT2_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT3_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT4_FURY) or event == "CHAT_MSG_COMBAT_SELF_MISSES" and string.find(arg1, CHAT_INTERRUPT5_FURY)) then
 		--Check to see if Pummel/Shield Bash is used
 		FurySpellInterrupt = nil;
+
 	elseif ((event == "CHAT_MSG_SPELL_SELF_DAMAGE" or event == "CHAT_MSG_COMBAT_SELF_MISSES") and string.find(arg1, CHAT_WHIRLWIND_FURY)) then
 		if (WWEnemies.WWCount == nil) then
 			WWEnemies.WWCount = 1;
 		else
 			WWEnemies.WWCount = WWEnemies.WWCount + 1
 		end
+
 	elseif ((event == "CHAT_MSG_SPELL_SELF_DAMAGE" or event == "CHAT_MSG_COMBAT_SELF_MISSES") and string.find(arg1, CHAT_CLEAVE_FURY)) then
 		if (WWEnemies.CleaveCount == nil) then
 			WWEnemies.CleaveCount = 1;
@@ -1262,6 +1336,7 @@ function Fury_OnEvent(event)
 		else
 			WWEnemies.CleaveCount = WWEnemies.CleaveCount + 1
 		end
+
 	elseif (event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE") then
 		--Check to see if getting affected by breakable effects
 		if (arg1 == CHAT_SAP_FURY or arg1 == CHAT_GOUGE_FURY or arg1 == CHAT_REPENTANCE_FURY or arg1 == CHAT_ROCKET_HELM_FURY) then
@@ -1269,6 +1344,7 @@ function Fury_OnEvent(event)
 		elseif (arg1 == CHAT_FEAR_FURY or arg1 == CHAT_INTIMIDATING_SHOUT_FURY or arg1 == CHAT_PSYCHIC_SCREAM_FURY or arg1 == CHAT_PANIC_FURY or arg1 == CHAT_BELLOWING_ROAR_FURY or arg1 == CHAT_ANCIENT_DESPAIR_FURY or arg1 == CHAT_TERRIFYING_SCREECH_FURY or arg1 == CHAT_HOWL_OF_TERROR_FURY) then
 			FuryFear = true;
 		end
+
 	elseif (event == "CHAT_MSG_SPELL_AURA_GONE_SELF") then
 		--Check to see if breakable effects fades
 		if (arg1 == CHAT_SAP2_FURY or arg1 == CHAT_GOUGE2_FURY or arg1 == CHAT_REPENTANCE2_FURY or arg1 == CHAT_ROCKET_HELM2_FURY) then
@@ -1286,6 +1362,7 @@ function Fury_OnEvent(event)
 		else
 			FuryMount = false;
 		end
+
 	elseif (event == "PLAYER_TARGET_CHANGED" or (event == "CHARACTER_POINTS_CHANGED" and arg1 == -1)) then
 		--Reset Overpower and interrupts, check to see if talents are being calculated
 		if (event == "PLAYER_TARGET_CHANGED") then
@@ -1305,7 +1382,7 @@ function Fury_OnEvent(event)
 			--Check for Improved Berserker Rage
 			local _, _, _, _, currRank = GetTalentInfo(2, 15);
 			if (currRank > 0) then
-				FuryBerserkerRage =  true;
+				FuryBerserkerRage = true;
 			else
 				FuryBerserkerRage = false;
 			end
@@ -1319,7 +1396,7 @@ function Fury_OnEvent(event)
 			--Check for Mortal Strike
 			local _, _, _, _, currRank = GetTalentInfo(1, 18);
 			if (currRank > 0) then
-				FuryMortalStrike =  true;
+				FuryMortalStrike = true;
 			else
 				FuryMortalStrike = false;
 			end
@@ -1339,7 +1416,8 @@ function Fury_OnEvent(event)
 			end
 			FuryTalents = true;
 		end
-	elseif (event == "PLAYER_REGEN_DISABLED") then
+
+		elseif (event == "PLAYER_REGEN_DISABLED") then
 		FuryCombat = true;
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		FuryCombat = nil;

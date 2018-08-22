@@ -8,7 +8,7 @@ BINDING_NAME_FURY			= "Attack";
 BINDING_NAME_FURY_AOE			= "Toggle AoE";
 BINDING_NAME_FURY_WW			= "Toggle Whirlwind";
 BINDING_NAME_FURY_THREAT		= "Toggle HS or Cleave";
-BINDING_NAME_FURY_DW                    = "Toggle Death Wish";
+BINDING_NAME_FURY_DW			= "Toggle Death Wish";
 BINDING_HEADER_FURY			= "Fury";
 
 CLASS_DRUID_FURY			= "Druid";
@@ -149,7 +149,7 @@ HELP_DANCE				= "/fury dance <number> - sets rage allowed to be wasted when swit
 HELP_DEBUG				= "/fury debug - writes commands in log";
 HELP_OOI				= "/fury ooi - toggle use of Oil of Immolation";
 HELP_TOGGLE				= "/fury toggle - toggle if addon is active";
-HELP_UNIT                               = "/fury unit - debug info";
+HELP_UNIT				= "/fury unit - debug info";
 HELP_WHERE				= "/fury where - debug info";
 HELP_JUJU				= "/fury juju <juju> - Supports flurry, power, might, chill and ember toggles use of the <juju> on cooldown";
 HELP_HELP				= "/fury help - outputs available commands";
