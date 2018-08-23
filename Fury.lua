@@ -602,6 +602,9 @@ function Fury()
 				end
 				CastSpellByName(ABILITY_PUMMEL_FURY);
 				FuryLastSpellCast = GetTime();
+				if UnitName("target") == "Kel'Thuzad" then
+					SendChatMessage("Kicked" ,"SAY" ,"common");
+				end
 			else
 				if (FuryLastStanceCast + 1.5 <= GetTime()) then
 					if (not FuryOldStance) then
@@ -623,12 +626,13 @@ function Fury()
 			and (ActiveStance() ~= 3 or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) and Fury_Configuration["PrimaryStance"] ~= 0))
 			and SpellReady(ABILITY_SHIELD_BASH_FURY)) then
 			if (ActiveStance() ~= 3) then
-				Debug("Pummel");
-				if (ActiveStance() == 3) then
-					FuryDanceDone = true;
-				end
+				Debug("Shield Bash (interrupt)");
+				FuryDanceDone = true;
 				CastSpellByName(ABILITY_SHIELD_BASH_FURY);
 				FuryLastSpellCast = GetTime();
+				if UnitName("target") == "Kel'Thuzad" then
+					SendChatMessage("Kicked" ,"SAY" ,"common");
+				end
 			else
 				if (FuryLastStanceCast + 1.5 <= GetTime()) then
 					if (not FuryOldStance) then
