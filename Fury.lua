@@ -300,11 +300,10 @@ res["holy"] = {
 	};
 
 function UseRes(type)
-	if UnitClassification() == "worldboss" then
-		for _, name in pairs(res[type]) do
-			if UnitName("target") == name then
-				return true;
-			end
+
+	for _, name in pairs(res[type]) do
+		if UnitName("target") == name then
+			return true;
 		end
 	end
 	return false;
@@ -363,6 +362,14 @@ function HasBuff(unit, texturename)
 	return nil;
 end
 
+local function HasBuffId(target, spellId)
+	for i=1,40 do
+		if select(11,UnitBuff(target,i)) == spellid then
+			return true
+		end
+	end
+	return nil
+end
 
 function UseContainerItemByNameOnPlayer(search)
 	for bag = 0,4 do
