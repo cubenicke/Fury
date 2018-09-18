@@ -1,4 +1,4 @@
-## Interface: 12000
+## Interface: 11200
 ## Title: Fury
 ## Notes: To make Warrior combat easier.
 ## Author: Bhaerau

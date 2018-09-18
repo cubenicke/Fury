@@ -118,7 +118,7 @@ function Fury_Configuration_Init()
 		Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;
 	end
 	if (Fury_Configuration[ABILITY_INTERCEPT_FURY] == nil) then
-		Fury_Configuration[ABILITY_INTERCEPT_FURY] = false;
+		Fury_Configuration[ABILITY_INTERCEPT_FURY] = true;
 	end
 	if (Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] == nil) then
 		Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] = true;
@@ -202,7 +202,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_EXECUTE_FURY] = true;
 	Fury_Configuration[ABILITY_HAMSTRING_FURY] = true;
 	Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;
-	Fury_Configuration[ABILITY_INTERCEPT_FURY] = false;
+	Fury_Configuration[ABILITY_INTERCEPT_FURY] = true;
 	Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] = true;
 	Fury_Configuration[ABILITY_OVERPOWER_FURY] = true;
 	Fury_Configuration[ABILITY_PUMMEL_FURY] = true;
@@ -1018,6 +1018,89 @@ function Fury()
 	end
 end
 
+local function doCharge()
+	if (FuryMount) then
+		Dismount();
+		FuryMount = nil;
+	elseif not FuryCombat then
+		if Fury_Configuration[ABILITY_CHARGE_FURY]
+		  and ActiveStance() == 1
+		  and SpellReady(ABILITY_CHARGE_FURY) then
+			Debug("Charge")
+			CastSpellByName(ABILITY_CHARGE_FURY);
+		elseif Fury_Configuration[ABILITY_CHARGE_FURY]
+		  and ActiveStance() ~= 1
+		  and SpellReady(ABILITY_CHARGE_FURY)
+		  and UnitMana("player") < tonumber(Fury_Configuration["StanceChangeRage"]) then
+			Debug("Arm Stance (Charge)");
+			if Fury_Configuration["PrimaryStance"] ~= 1
+			  and FuryOldStance == nil then
+				FuryOldStance = ActiveStance();
+				FuryLastStanceCast = GetTime();
+			end
+			CastShapeshiftForm(1);
+		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
+		  and ActiveStance() == 3
+		  and UnitMana("player") >= 10
+		  and SpellReady(ABILITY_INTERCEPT_FURY) then
+			Debug("Intercept")
+			CastSpellByName(ABILITY_INTERCEPT_FURY);
+		elseif Fury_Configuration[ABILITY_CHARGE_FURY] 
+		  and ActiveStance() ~= 1
+		  and SpellReady(ABILITY_CHARGE_FURY) then
+			Debug("Arm Stance (Charge)");
+			if Fury_Configuration["PrimaryStance"] ~= 1
+			  and FuryOldStance == nil then
+				FuryOldStance = ActiveStance();
+				FuryLastStanceCast = GetTime();
+			end
+			CastShapeshiftForm(1);
+		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
+		  and ActiveStance() == 3
+		  and UnitMana("player") < 10
+		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
+			Debug("Bloodrage")
+			CastSpellByName(ABILITY_BLOODRAGE_FURY);
+		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
+		  and ActiveStance() ~= 3
+		  and UnitMana("player") > 10
+		  and SpellReady(ABILITY_INTERCEPT_FURY) then
+			Debug("Berserker Stance (No combat charge)")
+			if Fury_Configuration["PrimaryStance"] ~= 3
+			  and FuryOldStance == nil then
+				FuryOldStance = ActiveStance();
+				FuryLastStanceCast = GetTime();
+			end
+			CastShapeshiftForm(3);
+		end
+	else
+		if Fury_Configuration[ABILITY_INTERCEPT_FURY]
+		  and ActiveStance() == 3
+		  and UnitMana("player") >= 10
+		  and SpellReady(ABILITY_INTERCEPT_FURY) then
+			Debug("Intercept")
+			CastSpellByName(ABILITY_INTERCEPT_FURY);
+		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
+		  and ActiveStance() == 3
+		  and UnitMana("player") < 10
+		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
+			Debug("Bloodrage")
+			CastSpellByName(ABILITY_BLOODRAGE_FURY);
+		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
+		  and ActiveStance() ~= 3
+		  and SpellReady(ABILITY_INTERCEPT_FURY) then
+			if (FuryLastStanceCast + 1.5 <= GetTime()) then
+				if (not FuryOldStance) then
+					FuryOldStance = ActiveStance();
+				end
+				Debug("Berserker Stance (Intercept)");
+				CastShapeshiftForm(3);
+				FuryLastStanceCast = GetTime();
+			end
+		end
+	end
+end
+
 --------------------------------------------------
 --
 -- Chat Handlers
@@ -1034,6 +1117,8 @@ function Fury_SlashCommand(msg)
 	end
 	if (command == nil or command == "") then
 		Fury();
+	elseif (command == "charge") then
+		doCharge()
 	elseif (command == "aoe") then
 		if (Fury_Configuration[MODE_HEADER_AOE]) then
 			Fury_Configuration[MODE_HEADER_AOE] = false;
@@ -1262,6 +1347,7 @@ function Fury_SlashCommand(msg)
 			 ["attackrage"] = HELP_ATTACKRAGE,
 			 ["berserk"] = HELP_BERSERK,
 			 ["bloodrage"] = HELP_BLOODRAGE,
+			 ["charge"] = HELP_CHARGE,
 			 ["dance"] = HELP_DANCE,
 			 ["debug"] = HELP_DEBUG,
 			 ["hamstring"] = HELP_HAMSTRING,

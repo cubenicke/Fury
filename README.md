@@ -59,6 +59,7 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/racial_orc_berserkerstrength.jpg) Blood Fury, racial_orc_berserkerstrength  
 ![](https://classicdb.ch/images/icons/small/ability_racial_bloodrage.jpg) Bloodrage, ability_racial_bloodrage  
 ![](https://classicdb.ch/images/icons/small/spell_nature_bloodlust.jpg) Bloodthirst, spell_nature_bloodlust  
+![](https://classicdb.ch/images/icons/small/ability_warrior_charge.jpg) Charge, Ability_Warrior_Charge  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_cleave.jpg) Cleave, Ability_Warrior_Cleave  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_disarm.jpg) Disarm, ability_warrior_disarm  
 ![](https://classicdb.ch/images/icons/small/spell_shadow_deathpact.jpg) Death Wish, Spell_Shadow_DeathPact  
@@ -66,6 +67,7 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/inv_sword_48.jpg) Execute, inv_sword_48  
 ![](https://classicdb.ch/images/icons/small/ability_shockwave.jpg) Hamstring, ability_shockwave  
 ![](https://classicdb.ch/images/icons/small/ability_rogue_ambush.jpg) Heroic Strike, Ability_Rogue_Ambush  
+![](https://classicdb.ch/images/icons/small/ability_rogue_sprint.jpg) Intercept, Ability_Warrior_Rogue_Sprint  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_savageblow.jpg) Mortal Strike, ability_warrior_savageblow  
 ![](https://classicdb.ch/images/icons/small/ability_meleedamage.jpg) Overpower, ability_meleedamage  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
@@ -84,6 +86,7 @@ Heroic Strike / Cleave
 ### operational Control
 ```
 /fury - uses Fury
+/fury charge - uses Intercept or Charge sequence
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
 /fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
