@@ -47,6 +47,7 @@ Juju Ember
 Juju Might  
 Juju Power  
 Oil of Immolation  
+Blood Fury (Orcs only)  
 Death Wish (on every cooldown)  
 Hamstring  
 Heroic Strike / Cleave  
@@ -54,7 +55,8 @@ Heroic Strike / Cleave
 ### Abilities
 **Name, Icon**  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_battleshout.jpg) Battle Shout, Ability_Warrior_BattleShout  
-![](https://classicdb.ch/images/icons/small/ability_rogue_ambush.jpg) Berserker Rage, spell_nature_ancestralguardian  
+![](https://classicdb.ch/images/icons/small/spell_nature_ancestralguardian.jpg) Berserker Rage, spell_nature_ancestralguardian  
+![](https://classicdb.ch/images/icons/small/racial_orc_berserkerstrength.jpg) Blood Fury, racial_orc_berserkerstrength  
 ![](https://classicdb.ch/images/icons/small/ability_racial_bloodrage.jpg) Bloodrage, ability_racial_bloodrage  
 ![](https://classicdb.ch/images/icons/small/spell_nature_bloodlust.jpg) Bloodthirst, spell_nature_bloodlust  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_cleave.jpg) Cleave, Ability_Warrior_Cleave  

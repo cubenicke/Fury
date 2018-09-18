@@ -28,7 +28,7 @@ function Fury_Configuration_Init()
 		Fury_Configuration["Debug"] = false; --Set to true to enable debugging feedback
 	end
 	if (Fury_Configuration["StanceChangeRage"] == nil) then
-		Fury_Configuration["StanceChangeRage"] = 10; --Set this to the amount of rage allowed to be wasted when switching stances
+		Fury_Configuration["StanceChangeRage"] = 25; --Set this to the amount of rage allowed to be wasted when switching stances
 	end
 	if (Fury_Configuration["MaximumRage"] == nil) then
 		Fury_Configuration["MaximumRage"] = 60; --Set this to the maximum amount of rage allowed when using abilities to increase rage
@@ -40,7 +40,7 @@ function Fury_Configuration_Init()
 		Fury_Configuration["DeathWishHealth"] = 60; --Set this to the minimum percent of health to have when using Death Wish
 	end
 	if (Fury_Configuration["NextAttackRage"] == nil) then
-		Fury_Configuration["NextAttackRage"] = 40; --Set this to the minimum rage to have to use next attack abilities (Cleave and Heroic Strike)
+		Fury_Configuration["NextAttackRage"] = 30; --Set this to the minimum rage to have to use next attack abilities (Cleave and Heroic Strike)
 	end
 	if (Fury_Configuration["BerserkHealth"] == nil) then
 		Fury_Configuration["BerserkHealth"] = 60; --Set this to the minimum percent of health to have when using Berserk
@@ -335,15 +335,19 @@ function SpellReady(spellname)
 			return true;
 		end
 	end
-	return nil;
+	return false;
 end
 
-function HasDebuff(unit, texturename)
+function HasDebuff(unit, texturename, amount)
 	local id = 1;
 	while (UnitDebuff(unit, id)) do
-		local debuffTexture = UnitDebuff(unit, id);
+		local debuffTexture,debuffAmount = UnitDebuff(unit, id);
 		if (string.find(debuffTexture, texturename)) then
-			return true;
+			if ((amount or 1) <= debuffAmount) then
+				return true;
+			else
+				return false;
+			end
 		end
 		id = id + 1;
 	end
@@ -943,6 +947,16 @@ function Fury()
 			Debug(ITEM_OIL_OF_IMMOLATION);
 			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION);
 
+		-- Blood Fury (Orc racial ability)
+		elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
+			and FuryAttack == true
+			and ActiveStance() ~= 2
+			and FuryCombat
+			and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
+			and SpellReady(ABILITY_BLOOD_FURY)) then
+				Debug("Blood Fury");
+				CastSpellByName(ABILITY_BLOOD_FURY);
+
 		-- Death Wish
 		elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
 			and UnitMana("player") >= 10
@@ -1122,13 +1136,13 @@ function Fury_SlashCommand(msg)
 		Fury_Configuration["BerserkHealth"] = options;
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_TROLL .. options .. ".")
 	elseif (command == "stance") then
-		if (options == ABILITY_BATTLE_STANCE_FURY) then
+		if (options == ABILITY_BATTLE_STANCE_FURY or options == "1") then
 			Fury_Configuration["PrimaryStance"] = 1;
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. ABILITY_BATTLE_STANCE_FURY .. ".")
-		elseif (options == ABILITY_DEFENSIVE_STANCE_FURY) then
+		elseif (options == ABILITY_DEFENSIVE_STANCE_FURY or options == "2") then
 			Fury_Configuration["PrimaryStance"] = 2;
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. ABILITY_DEFENSIVE_STANCE_FURY .. ".")
-		elseif (options == ABILITY_BERSERKER_STANCE_FURY) then
+		elseif (options == ABILITY_BERSERKER_STANCE_FURY or options == "3") then
 			Fury_Configuration["PrimaryStance"] = 3;
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. ABILITY_BERSERKER_STANCE_FURY .. ".")
 		elseif (options == "default") then
