@@ -12,7 +12,7 @@
 
 function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.15.8";
+	FURY_VERSION = "1.15.9";
 
 	if (not Fury_Configuration) then
 		Fury_Configuration = { };
@@ -335,7 +335,7 @@ function SpellReady(spellname)
 			return true;
 		end
 	end
-	return false;
+	return nil;
 end
 
 function HasDebuff(unit, texturename, amount)

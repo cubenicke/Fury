@@ -5,11 +5,17 @@ like Jujus.
 
 ## Usage
 
-In key bindings, bind these actions to some keys available to you mid fight (Same commands can also be created as macros - to create a button on action bar)  
+In key bindings, bind these actions to some keys available to you mid fight (Same commands can also be created as macros - to create a button on action bar). Easiest way to get going
+is to bind keys to Attack and Charge. Those two will work in most situations and just use charge to initiate fights (2-3 presses) then spam use Attack. When You want to have more control over
+the logic you can go into the other keybinds or even macros to finetune your playstyle and handle certain mechanics.   
+
+### KeyBinds
+
 Attack - One button Fury Warrior rotation. Spam it!  
+Charge - Will charge or intercept, sometimes builds rage and or switch stance to be able to charge/intercept.  
 Toggle HS or Cleave - Dump excessing rage with Heroic Strike or Cleave. Useful in threat situations and for a AoE with single mob prio.  
 Toggle WW - Stops using Whirlwind during normal rotation, toggle it in CC situations. or Kel'Thuzad to don't do damage on Mind Controlled people.   
-Toggle DW - Enable it a bit into fights when you want your first Death Wish to fire off.  
+Toggle DW - Enable it a bit into fights when you want your first Death Wish to fire off (Also controls Orc racial Blood Fury).  
 
 ### Usage as Macros
 Some commands exists as key bindings, but for most commands one has to write a macro to make them usable during combat.
