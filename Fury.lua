@@ -1018,8 +1018,15 @@ function Fury()
 	end
 end
 
+--------------------------------------------------
+--
+-- Variables
+--
+--------------------------------------------------
+
 local function doCharge()
 	if (FuryMount) then
+		-- Dismount as a first step
 		Dismount();
 		FuryMount = nil;
 	elseif not FuryCombat then
@@ -1065,15 +1072,18 @@ local function doCharge()
 		  and ActiveStance() ~= 3
 		  and UnitMana("player") > 10
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
-			Debug("Berserker Stance (No combat charge)")
-			if Fury_Configuration["PrimaryStance"] ~= 3
-			  and FuryOldStance == nil then
-				FuryOldStance = ActiveStance();
-				FuryLastStanceCast = GetTime();
+			if (FuryLastStanceCast + 1.5 <= GetTime()) then
+				Debug("Berserker Stance (No combat charge)")
+				if Fury_Configuration["PrimaryStance"] ~= 3
+				  and FuryOldStance == nil then
+					FuryOldStance = ActiveStance();
+					FuryLastStanceCast = GetTime();
+				end
+				CastShapeshiftForm(3);
 			end
-			CastShapeshiftForm(3);
 		end
 	else
+		-- In combat
 		if Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and ActiveStance() == 3
 		  and UnitMana("player") >= 10
@@ -1090,12 +1100,12 @@ local function doCharge()
 		  and ActiveStance() ~= 3
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
 			if (FuryLastStanceCast + 1.5 <= GetTime()) then
+				Debug("Berserker Stance (Intercept)");
 				if (not FuryOldStance) then
 					FuryOldStance = ActiveStance();
+					FuryLastStanceCast = GetTime();
 				end
-				Debug("Berserker Stance (Intercept)");
 				CastShapeshiftForm(3);
-				FuryLastStanceCast = GetTime();
 			end
 		end
 	end
