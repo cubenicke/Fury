@@ -1,6 +1,6 @@
 <Bindings>
 	<Binding name="FURY" header="FURY">
-   	 	Fury();
+		Fury();
 	</Binding>
 	<Binding name="FURY_AOE" header="FURY">
 		Fury_SlashCommand("aoe");

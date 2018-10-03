@@ -93,6 +93,9 @@ function Fury_Configuration_Init()
 	if (Fury_Configuration[ABILITY_BLOODRAGE_FURY] == nil) then
 		Fury_Configuration[ABILITY_BLOODRAGE_FURY] = true;
 	end
+	if (Fury_Configuration[ABILITY_BLOOD_FURY] == nil then
+		Fury_Configuration[ABILITY_BLOOD_FURY] = true;
+	end
 	if (Fury_Configuration[ABILITY_BLOODTHIRST_FURY] == nil) then
 		Fury_Configuration[ABILITY_BLOODTHIRST_FURY] = true;
 	end
@@ -193,6 +196,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration[RACIAL_BERSERKING_FURY] = true;
 	Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true;
 	Fury_Configuration[ABILITY_BLOODRAGE_FURY] = true;
+	Fury_Configuration[ABILITY_BLOOD_FURY] = true
 	Fury_Configuration[ABILITY_BLOODTHIRST_FURY] = true;
 	Fury_Configuration[ABILITY_CHARGE_FURY] = true;
 	Fury_Configuration[ABILITY_CLEAVE_FURY] = false;
@@ -208,6 +212,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_PUMMEL_FURY] = true;
 	Fury_Configuration[ABILITY_REND_FURY] = true;
 	Fury_Configuration[ABILITY_SHIELD_BASH_FURY] = true;
+
 	Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true;
 	Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true;
 	Fury_Configuration[ITEM_JUJU_FLURRY] = false;
@@ -948,7 +953,7 @@ function Fury()
 			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION);
 
 		-- Blood Fury (Orc racial ability)
-		elseif (Fury_Configuration[ABILITY_DEATH_WISH_FURY]
+		elseif (Fury_Configuration[ABILITY_BLOOD_FURY]
 			and FuryAttack == true
 			and ActiveStance() ~= 2
 			and FuryCombat
