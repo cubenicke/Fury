@@ -1025,11 +1025,7 @@ end
 
 --------------------------------------------------
 --
-<<<<<<< HEAD
--- Variables
-=======
 -- Handle charge command
->>>>>>> Changed charge logic
 --
 --------------------------------------------------
 
@@ -1417,6 +1413,8 @@ function Fury_OnLoad()
 	this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF");
 	this:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF");
 
+	this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES");
+
 	this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE");
 	this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF");
 
@@ -1424,6 +1422,8 @@ function Fury_OnLoad()
 
 	FuryLastSpellCast = GetTime();
 	FuryLastStanceCast = GetTime();
+	FuryRevengeTime = 0
+	FuryRevengeReadyUntil = 0
 	SlashCmdList["FURY"] = Fury_SlashCommand;
 	SLASH_FURY1 = "/fury";
 end
@@ -1485,6 +1485,16 @@ function Fury_OnEvent(event)
 		elseif (arg1 == CHAT_FEAR2_FURY or arg1 == CHAT_INTIMIDATING_SHOUT2_FURY or arg1 == CHAT_PSYCHIC_SCREAM2_FURY or arg1 == CHAT_PANIC2_FURY or arg1 == CHAT_BELLOWING_ROAR2_FURY or arg1 == CHAT_ANCIENT_DESPAIR2_FURY or arg1 == CHAT_TERRIFYING_SCREECH2_FURY or arg1 == CHAT_HOWL_OF_TERROR2_FURY) then
 			FuryFear = nil;
 		end
+
+	elseif (event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES") then
+		-- set up time for revenge
+		if string.find(arg1,"You block")
+		or string.find(arg1,"You parry")
+		or string.find(arg1,"You dodge") then
+			Debug("Revenge soon ready");
+			FuryRevengeReadyUntil = GetTime() + 4;
+		end
+
 	elseif (event == "CHAT_MSG_MONSTER_EMOTE") then
 		--Check to see if enemy flees
 		Fury_RunnerDetect(arg1, arg2);
