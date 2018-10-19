@@ -13,7 +13,7 @@
 
 function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.0"
+	FURY_VERSION = "1.16.1"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
@@ -90,7 +90,7 @@ function Fury_Configuration_Init()
 	if Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] == nil then
 		Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true -- Used to counter fears
 	end
-	if (Fury_Configuration[ABILITY_BLOOD_FURY] == nil then
+	if Fury_Configuration[ABILITY_BLOOD_FURY] == nil then
 		Fury_Configuration[ABILITY_BLOOD_FURY] = true
 	end
 	if Fury_Configuration[ABILITY_BLOODRAGE_FURY] == nil then
@@ -174,16 +174,9 @@ function Fury_Configuration_Init()
 	if Fury_Configuration[ITEM_OIL_OF_IMMOLATION] == nil then
 		Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false -- use on cooldown
 	end
-	if not WWEnemies then
-		WWEnemies = { Hist = {}, WWTime = 0, WWCount = nil, CleaveTime = 0, CleaveCount = nil}
-		for i = 0,5 do
-			WWEnemies.Hist[i] = 0
-		end
-	end
 end
 
 function Fury_Configuration_Default()
-<<<<<<< HEAD
 	Fury_Configuration["Enabled"] = true
 	Fury_Configuration["Debug"] = false
 	Fury_Configuration["StanceChangeRage"] = 10
@@ -224,49 +217,6 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ITEM_JUJU_CHILL] = true
 	Fury_Configuration[ITEM_JUJU_EMBER] = false
 	Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false
-=======
-	Fury_Configuration["Enabled"] = true;
-	Fury_Configuration["Debug"] = false;
-	Fury_Configuration["StanceChangeRage"] = 10;
-	Fury_Configuration["MaximumRage"] = 60;
-	Fury_Configuration["BloodrageHealth"] = 50;
-	Fury_Configuration["DeathwishHealth"] = 60;
-	Fury_Configuration["NextAttackRage"] = 40;
-	Fury_Configuration["BerserkHealth"] = 60;
-	Fury_Configuration["HamstringHealth"] = 40;
-	Fury_Configuration["AutoAttack"] = true;
-	Fury_Configuration["PrimaryStance"] = false;
-	Fury_Configuration[MODE_HEADER_AOE] = false;
-	Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY] = true;
-	Fury_Configuration[RACIAL_BERSERKING_FURY] = true;
-	Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true;
-	Fury_Configuration[ABILITY_BLOODRAGE_FURY] = true;
-	Fury_Configuration[ABILITY_BLOOD_FURY] = true
-	Fury_Configuration[ABILITY_BLOODTHIRST_FURY] = true;
-	Fury_Configuration[ABILITY_CHARGE_FURY] = true;
-	Fury_Configuration[ABILITY_CLEAVE_FURY] = false;
-	Fury_Configuration[ABILITY_DEATH_WISH_FURY] = true;
-	Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true;
-	Fury_Configuration[ABILITY_DISARM_FURY] = true;
-	Fury_Configuration[ABILITY_EXECUTE_FURY] = true;
-	Fury_Configuration[ABILITY_HAMSTRING_FURY] = true;
-	Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true;
-	Fury_Configuration[ABILITY_INTERCEPT_FURY] = true;
-	Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] = true;
-	Fury_Configuration[ABILITY_OVERPOWER_FURY] = true;
-	Fury_Configuration[ABILITY_PUMMEL_FURY] = true;
-	Fury_Configuration[ABILITY_REND_FURY] = true;
-	Fury_Configuration[ABILITY_SHIELD_BASH_FURY] = true;
-
-	Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true;
-	Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true;
-	Fury_Configuration[ITEM_JUJU_FLURRY] = false;
-	Fury_Configuration[ITEM_JUJU_MIGHT] = false;
-	Fury_Configuration[ITEM_JUJU_POWER] = false;
-	Fury_Configuration[ITEM_JUJU_CHILL] = true;
-	Fury_Configuration[ITEM_JUJU_EMBER] = false;
-	Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false;
->>>>>>> 35c39e0467039ece76aa5151cbfd18fa41423531
 end
 
 --------------------------------------------------
@@ -1079,8 +1029,7 @@ function Fury()
 			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION)
 
 		-- Blood Fury (Orc racial ability)
-<<<<<<< HEAD
-		elseif Fury_Configuration[ABILITY_DEATH_WISH_FURY]
+		elseif (Fury_Configuration[ABILITY_BLOOD_FURY]
 		  and FuryAttack == true
 		  and ActiveStance() ~= 2
 		  and FuryCombat
@@ -1088,16 +1037,6 @@ function Fury()
 		  and SpellReady(ABILITY_BLOOD_FURY) then
 			Debug("Blood Fury")
 			CastSpellByName(ABILITY_BLOOD_FURY)
-=======
-		elseif (Fury_Configuration[ABILITY_BLOOD_FURY]
-			and FuryAttack == true
-			and ActiveStance() ~= 2
-			and FuryCombat
-			and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
-			and SpellReady(ABILITY_BLOOD_FURY)) then
-				Debug("Blood Fury");
-				CastSpellByName(ABILITY_BLOOD_FURY);
->>>>>>> 35c39e0467039ece76aa5151cbfd18fa41423531
 
 		-- Death Wish
 		elseif Fury_Configuration[ABILITY_DEATH_WISH_FURY]
@@ -1178,8 +1117,8 @@ local function doCharge()
 	if FuryMount then
 		-- Dismount as a first step
 		Debug("Dismounting")
-		Dismount();
-		FuryMount = nil;
+		Dismount()
+		FuryMount = nil
 	elseif FuryCombat then
 		Debug("In combat")
 		if Fury_Configuration[ABILITY_INTERCEPT_FURY]
@@ -1546,31 +1485,24 @@ function Fury_OnLoad()
 	this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
 	this:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF")
 
-<<<<<<< HEAD
+	this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES")
+
 	this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE")
 	this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
-=======
-	this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES");
-
-	this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE");
-	this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF");
->>>>>>> 35c39e0467039ece76aa5151cbfd18fa41423531
 
 	this:RegisterEvent("PLAYER_AURAS_CHANGED")
 
-<<<<<<< HEAD
+	WWEnemies = { Hist = {}, WWTime = 0, WWCount = nil, CleaveTime = 0, CleaveCount = nil }
+	for i = 0,5 do
+		WWEnemies.Hist[i] = 0
+	end
+
 	FuryLastSpellCast = GetTime()
 	FuryLastStanceCast = GetTime()
-	SlashCmdList["FURY"] = Fury_SlashCommand
-	SLASH_FURY1 = "/fury"
-=======
-	FuryLastSpellCast = GetTime();
-	FuryLastStanceCast = GetTime();
 	FuryRevengeTime = 0
 	FuryRevengeReadyUntil = 0
-	SlashCmdList["FURY"] = Fury_SlashCommand;
-	SLASH_FURY1 = "/fury";
->>>>>>> 35c39e0467039ece76aa5151cbfd18fa41423531
+	SlashCmdList["FURY"] = Fury_SlashCommand
+	SLASH_FURY1 = "/fury"
 end
 
 function Fury_OnEvent(event)
@@ -1659,7 +1591,6 @@ function Fury_OnEvent(event)
 
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_SELF" then
 		--Check to see if breakable effects fades
-<<<<<<< HEAD
 		if arg1 == CHAT_SAP2_FURY
 		  or arg1 == CHAT_GOUGE2_FURY
 		  or arg1 == CHAT_REPENTANCE2_FURY
@@ -1686,24 +1617,6 @@ function Fury_OnEvent(event)
 		end
 
 	elseif event == "CHAT_MSG_MONSTER_EMOTE" then
-=======
-		if (arg1 == CHAT_SAP2_FURY or arg1 == CHAT_GOUGE2_FURY or arg1 == CHAT_REPENTANCE2_FURY or arg1 == CHAT_ROCKET_HELM2_FURY) then
-			FuryIncapacitate = nil;
-		elseif (arg1 == CHAT_FEAR2_FURY or arg1 == CHAT_INTIMIDATING_SHOUT2_FURY or arg1 == CHAT_PSYCHIC_SCREAM2_FURY or arg1 == CHAT_PANIC2_FURY or arg1 == CHAT_BELLOWING_ROAR2_FURY or arg1 == CHAT_ANCIENT_DESPAIR2_FURY or arg1 == CHAT_TERRIFYING_SCREECH2_FURY or arg1 == CHAT_HOWL_OF_TERROR2_FURY) then
-			FuryFear = nil;
-		end
-
-	elseif (event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES") then
-		-- set up time for revenge
-		if string.find(arg1,"You block")
-		or string.find(arg1,"You parry")
-		or string.find(arg1,"You dodge") then
-			Debug("Revenge soon ready");
-			FuryRevengeReadyUntil = GetTime() + 4;
-		end
-
-	elseif (event == "CHAT_MSG_MONSTER_EMOTE") then
->>>>>>> 35c39e0467039ece76aa5151cbfd18fa41423531
 		--Check to see if enemy flees
 		Fury_RunnerDetect(arg1, arg2)
 	elseif event == "PLAYER_AURAS_CHANGED" then
