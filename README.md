@@ -37,8 +37,8 @@ Berserker Rage (Feared only)
 Execute  
 Overpower  
 Pummel / Shield Bash  
-Hamstring
-Piercing Howl
+Hamstring  
+Piercing Howl  
 Rend (PvP only)  
 Berserker Rage (PvE only)  
 Bloodrage  
