@@ -1,20 +1,20 @@
 <Bindings>
 	<Binding name="FURY" header="FURY">
-   	 	Fury();
+		Fury()
 	</Binding>
 	<Binding name="FURY_AOE" header="FURY">
-		Fury_SlashCommand("aoe");
+		Fury_SlashCommand("aoe")
 	</Binding>
 	<Binding name="FURY_WW" header="FURY">
-		Fury_SlashCommand("ability Whirlwind");
+		Fury_SlashCommand("ability Whirlwind")
 	</Binding>
 	<Binding name="FURY_THREAT" header="FURY">
-		Fury_SlashCommand("threat");
+		Fury_SlashCommand("threat")
 	</Binding>
 	<Binding name="FURY_DW" header="FURY">
-		Fury_SlashCommand("ability Death Wish");
+		Fury_SlashCommand("ability Death Wish")
 	</Binding>
 	<Binding name="FURY_CHARGE" header="FURY">
-		Fury_SlashCommand("charge");
+		Fury_SlashCommand("charge")
 	</Binding>
 </Bindings>

@@ -37,7 +37,8 @@ Berserker Rage (Feared only)
 Execute  
 Overpower  
 Pummel / Shield Bash  
-Hamstring  
+Hamstring
+Piercing Howl
 Rend (PvP only)  
 Berserker Rage (PvE only)  
 Bloodrage  
@@ -76,6 +77,7 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/ability_rogue_sprint.jpg) Intercept, Ability_Warrior_Rogue_Sprint  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_savageblow.jpg) Mortal Strike, ability_warrior_savageblow  
 ![](https://classicdb.ch/images/icons/small/ability_meleedamage.jpg) Overpower, ability_meleedamage  
+![](https://classicdb.ch/images/icons/small/spell_shadow_deathscream.jpg) Piercing Howl, spell_shadow_deathscream  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
 ![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) Rend, ability_gouge  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash  
