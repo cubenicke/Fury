@@ -233,7 +233,7 @@ local function Print(msg)
 	if not DEFAULT_CHAT_FRAME then
 		return
 	end
-	DEFAULT_CHAT_FRAME:AddMessage(msg)
+	DEFAULT_CHAT_FRAME:AddMessage(BINDING_HEADER_FURY .. ": "..msg)
 end
 
 local function Debug(msg)
@@ -1287,26 +1287,26 @@ function Fury_SlashCommand(msg)
 	elseif command == "aoe" then
 		if Fury_Configuration[MODE_HEADER_AOE] then
 			Fury_Configuration[MODE_HEADER_AOE] = false
-			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_DISABLED .. ".")
+			Print(MODE_HEADER_AOE .. " " .. SLASH_FURY_DISABLED .. ".")
 		else
 			Fury_Configuration[MODE_HEADER_AOE] = true
-			Print(BINDING_HEADER_FURY .. ": " .. MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".")
+			Print(MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif command == "toggle" then
 		if Fury_Configuration["Enabled"] then
 			Fury_Configuration["Enabled"] = false
-			Print(BINDING_HEADER_FURY .. ": " .. BINDING_HEADER_FURY .. " " .. SLASH_FURY_DISABLED .. ".")
+			Print(BINDING_HEADER_FURY .. " " .. SLASH_FURY_DISABLED .. ".")
 		else
 			Fury_Configuration["Enabled"] = true
-			Print(BINDING_HEADER_FURY .. ": " .. BINDING_HEADER_FURY .. " " .. SLASH_FURY_ENABLED .. ".")
+			Print(BINDING_HEADER_FURY .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif command == "debug" then
 		if Fury_Configuration["Debug"] then
 			Fury_Configuration["Debug"] = false
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEBUG .. " " .. SLASH_FURY_DISABLED .. ".")
+			Print(SLASH_FURY_DEBUG .. " " .. SLASH_FURY_DISABLED .. ".")
 		else
 			Fury_Configuration["Debug"] = true
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEBUG .. " " .. SLASH_FURY_ENABLED .. ".")
+			Print(SLASH_FURY_DEBUG .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif command == "dance" then
 		if options ~= "" then
@@ -1316,15 +1316,17 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["StanceChangeRage"] = options
+		else
+			options = Fury_Configuration["StanceChangeRage"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DANCE .. options .. ".")
+		Print(SLASH_FURY_DANCE .. options .. ".")
 	elseif command == "attack" then
 		if Fury_Configuration["AutoAttack"] then
 			Fury_Configuration["AutoAttack"] = false
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_DISABLED .. ".")
+			Print(SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_DISABLED .. ".")
 		else
 			Fury_Configuration["AutoAttack"] = true
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_ENABLED .. ".")
+			Print(SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif command == "rage" then
 		if options ~= "" then
@@ -1334,8 +1336,10 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["MaximumRage"] = options
+		else
+			options = Fury_Configuration["MaximumRage"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_RAGE .. options .. ".")
+		Print(SLASH_FURY_RAGE .. options .. ".")
 
 	elseif command == "attackrage" then
 		if options ~= "" then
@@ -1345,8 +1349,10 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["NextAttackRage"] = options
+		else
+			options = Fury_Configuration["NextAttackRage"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_ATTACKRAGE .. options .. ".")
+		Print(SLASH_FURY_ATTACKRAGE .. options .. ".")
 
 	elseif command == "bloodrage" then
 		if options ~= "" then
@@ -1356,8 +1362,10 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["BloodrageHealth"] = options
+		else
+			options = Fury_Configuration["BloodrageHealth"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_BLOODRAGE .. options .. ".")
+		Print(SLASH_FURY_BLOODRAGE .. options .. ".")
 
 	elseif command == "demodiff" then
 		if options ~="" then 
@@ -1367,8 +1375,10 @@ function Fury_SlashCommand(msg)
 				options = 60
 			end
 			Fury_Configuration["DemoDiff"] = options
+		else
+			options = Fury_Configuration["DemoDiff"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEMODIFF .. options.. ".")
+		Print(SLASH_FURY_DEMODIFF .. options.. ".")
 
 	elseif command == "deathwish" then
 		if options ~= "" then
@@ -1378,8 +1388,10 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["DeathWishHealth"] = options
+		else
+			options = Fury_Configuration["DeathWishHealth"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEATHWISH .. options .. ".")
+		Print(SLASH_FURY_DEATHWISH .. options .. ".")
 
 	elseif command == "hamstring" then
 		if options ~= "" then
@@ -1389,19 +1401,21 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["HamstringHealth"] = options
+		else
+			options = Fury_Configuration["HamstringHealth"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_HAMSTRING .. options .. ".")
+		Print(SLASH_FURY_HAMSTRING .. options .. ".")
 
 	elseif command == "threat" then
 		--If HS then use cleave, if cleave then use HS
 		if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = false
 			Fury_Configuration[ABILITY_CLEAVE_FURY] = true
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_LOWTHREAT)
+			Print(SLASH_FURY_LOWTHREAT)
 		else
 			Fury_Configuration[ABILITY_CLEAVE_FURY] = false
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_HIGHTHREAT)
+			Print(SLASH_FURY_HIGHTHREAT)
 		end
 	elseif command == "berserk" then
 		if options ~= "" then
@@ -1411,68 +1425,70 @@ function Fury_SlashCommand(msg)
 				options = 100
 			end
 			Fury_Configuration["BerserkHealth"] = options
+		else
+			options = Fury_Configuration["BerserkHealth"]
 		end
-		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_TROLL .. options .. ".")
+		Print(SLASH_FURY_TROLL .. options .. ".")
 	elseif command == "stance" then
 		if options == ABILITY_BATTLE_STANCE_FURY
 		  or options == "1" then
 			Fury_Configuration["PrimaryStance"] = 1
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. ABILITY_BATTLE_STANCE_FURY .. ".")
+			Print(SLASH_FURY_STANCE .. ABILITY_BATTLE_STANCE_FURY .. ".")
 		elseif options == ABILITY_DEFENSIVE_STANCE_FURY
 		  or options == "2" then
 			Fury_Configuration["PrimaryStance"] = 2
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. ABILITY_DEFENSIVE_STANCE_FURY .. ".")
+			Print(SLASH_FURY_STANCE .. ABILITY_DEFENSIVE_STANCE_FURY .. ".")
 		elseif options == ABILITY_BERSERKER_STANCE_FURY
 		  or options == "3" then
 			Fury_Configuration["PrimaryStance"] = 3
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. ABILITY_BERSERKER_STANCE_FURY .. ".")
+			Print(SLASH_FURY_STANCE .. ABILITY_BERSERKER_STANCE_FURY .. ".")
 		elseif options == "default" then
 			Fury_Configuration["PrimaryStance"] = false
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_STANCE .. SLASH_FURY_DEFAULT .. ".")
+			Print(SLASH_FURY_STANCE .. SLASH_FURY_DEFAULT .. ".")
 		else
 			Fury_Configuration["PrimaryStance"] = 0
-			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_NOSTANCE .. SLASH_FURY_DISABLED .. ".")
+			Print(SLASH_FURY_NOSTANCE .. SLASH_FURY_DISABLED .. ".")
 		end
 
 	elseif command == "juju" then
 		if options == "flurry" then
 			if Fury_Configuration[ITEM_JUJU_FLURRY] then
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_FLURRY .. " disabled.")
+				Print(ITEM_JUJU_FLURRY .. " disabled.")
 				Fury_Configuration[ITEM_JUJU_FLURRY] = false
 			else
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_FLURRY .. " enabled.")
+				Print(ITEM_JUJU_FLURRY .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_FLURRY] = true
 			end
 		elseif options == "chill" then
 			if Fury_Configuration[ITEM_JUJU_CHILL] then
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_CHILL .. " disabled.")
+				Print(ITEM_JUJU_CHILL .. " disabled.")
 				Fury_Configuration[ITEM_JUJU_CHILL] = false
 			else
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_CHILL .. " enabled.")
+				Print(ITEM_JUJU_CHILL .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_CHILL] = true
 			end
 		elseif options == "might" then
 			if Fury_Configuration[ITEM_JUJU_MIGHT] then
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_MIGHT .. " disabled.")
+				Print(ITEM_JUJU_MIGHT .. " disabled.")
 				Fury_Configuration[ITEM_JUJU_MIGHT] = false
 			else
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_MIGHT .. " enabled.")
+				Print(ITEM_JUJU_MIGHT .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_MIGHT] = true
 			end
 		elseif options == "ember" then
 			if Fury_Configuration[ITEM_JUJU_EMBER] then
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_EMBER .. " disabled.")
+				Print(ITEM_JUJU_EMBER .. " disabled.")
 				Fury_Configuration[ITEM_JUJU_EMBER] = false
 			else
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_EMBER .. " enabled.")
+				Print(ITEM_JUJU_EMBER .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_EMBER] = true
 			end
 		elseif options == "power" then
 			if Fury_Configuration[ITEM_JUJU_POWER] then
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_POWER .. " disabled.")
+				Print(ITEM_JUJU_POWER .. " disabled.")
 				Fury_Configuration[ITEM_JUJU_POWER] = false
 			else
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_JUJU_POWER .. " enabled.")
+				Print(ITEM_JUJU_POWER .. " enabled.")
 				Fury_Configuration[ITEM_JUJU_POWER] = true
 			end
 		else
@@ -1480,10 +1496,10 @@ function Fury_SlashCommand(msg)
 		end
 	elseif command == "ooi" then
 			if Fury_Configuration[ITEM_OIL_OF_IMMOLATION] then
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_OIL_OF_IMMOLATION .. " disabled.")
+				Print(ITEM_OIL_OF_IMMOLATION .. " disabled.")
 				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = false
 			else
-				Print(BINDING_HEADER_FURY .. ": " .. ITEM_OIL_OF_IMMOLATION .. " enabled.")
+				Print(ITEM_OIL_OF_IMMOLATION .. " enabled.")
 				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = true
 			end
 	elseif command == "where" then
@@ -1512,27 +1528,27 @@ function Fury_SlashCommand(msg)
 		if options == ABILITY_HEROIC_STRIKE_FURY
 		  and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
-			Print(BINDING_HEADER_FURY .. ": " .. ABILITY_HEROIC_STRIKE_FURY .. " enabled.")
+			Print(ABILITY_HEROIC_STRIKE_FURY .. " enabled.")
 			if Fury_Configuration[ABILITY_CLEAVE_FURY] then
 				Fury_Configuration[ABILITY_CLEAVE_FURY] = false
-				Print(BINDING_HEADER_FURY .. ": " .. ABILITY_CLEAVE_FURY .. " disabled.")
+				Print(ABILITY_CLEAVE_FURY .. " disabled.")
 			end
 		elseif options == ABILITY_CLEAVE_FURY
 		  and not Fury_Configuration[ABILITY_CLEAVE_FURY] then
 			Fury_Configuration[ABILITY_CLEAVE_FURY] = true
-			Print(BINDING_HEADER_FURY .. ": " .. ABILITY_CLEAVE_FURY .. " enabled.")
+			Print(ABILITY_CLEAVE_FURY .. " enabled.")
 			if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
 				Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = false
-				Print(BINDING_HEADER_FURY .. ": " .. ABILITY_HEROIC_STRIKE_FURY .. " disabled.")
+				Print(ABILITY_HEROIC_STRIKE_FURY .. " disabled.")
 			end
 		elseif Fury_Configuration[options] then
 			Fury_Configuration[options] = false
-			Print(BINDING_HEADER_FURY .. ": " .. options .. " disabled.")
+			Print(options .. " disabled.")
 		elseif Fury_Configuration[options] == false then
 			Fury_Configuration[options] = true
-			Print(BINDING_HEADER_FURY .. ": " .. options .. " enabled.")
+			Print(options .. " enabled.")
 		else
-			Print(BINDING_HEADER_FURY .. ": " .. options .. " not found.")
+			Print(options .. " not found.")
 		end
 	elseif command == "version" then
 		Print("Version "..FURY_VERSION)
@@ -1743,6 +1759,7 @@ function Fury_OnEvent(event)
 	  or (event == "CHARACTER_POINTS_CHANGED" and arg1 == -1) then
 		--Reset Overpower and interrupts, check to see if talents are being calculated
 		if event == "PLAYER_TARGET_CHANGED" then
+			Fury_SetEnemies(1)
 			FuryOverpower = nil
 			FurySpellInterrupt = nil
 		end
@@ -1898,6 +1915,7 @@ function Fury_InitDistance()
 			end
 		end
 	end
+	-- Print if any distance check spell is missing
 	if not yard30 then
 		Print("Missing spell on action bar Shoot or Throw")
 	end

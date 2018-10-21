@@ -124,6 +124,7 @@ SLASH_FURY_ENABLED			= "enabled";
 SLASH_FURY_DISABLED			= "disabled";
 SLASH_FURY_DEFAULT			= "default";
 SLASH_FURY_DEBUG			= "Debug";
+SLASH_FURY_DEMODIFF			= "Max target difference in levels for using Demoralizing Shout is set to ";
 SLASH_FURY_AUTOATTACK		= "Autoattack";
 SLASH_FURY_ATTACKRAGE		= "Attackrage";
 SLASH_FURY_DANCE			= "Rage allowed to be wasted when switching stance set to ";
