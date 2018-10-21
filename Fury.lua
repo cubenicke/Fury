@@ -13,7 +13,7 @@
 
 function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.1"
+	FURY_VERSION = "1.16.2"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
@@ -54,6 +54,8 @@ function Fury_Configuration_Init()
 	end
 	if Fury_Configuration["PrimaryStance"] == nil then
 		Fury_Configuration["PrimaryStance"] = false --Set this to the stance to fall back to after performing an attack requiring another stance
+	if Fury_Configuration["DemoDiff"] == nil then
+		Fury_Configuration["DemoDiff"] = 7 -- When level difference is greater don't do Demoralizing Shout
 	end
 	if Fury_Configuration[MODE_HEADER_AOE] == nil then
 		Fury_Configuration[MODE_HEADER_AOE] = false -- Disable auto use of aoe (Disables OP, HS, BT, Exe, Enablse Cleave, Whirlwind)
@@ -186,6 +188,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration["NextAttackRage"] = 40
 	Fury_Configuration["BerserkHealth"] = 60
 	Fury_Configuration["HamstringHealth"] = 40
+	Fury_Configuration["DemoDiff"] = 7
 	Fury_Configuration["AutoAttack"] = true
 	Fury_Configuration["PrimaryStance"] = false
 	Fury_Configuration[MODE_HEADER_AOE] = false
@@ -205,6 +208,7 @@ function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
 	Fury_Configuration[ABILITY_INTERCEPT_FURY] = true
 	Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] = true
+	Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY] = true
 	Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
 	Fury_Configuration[ABILITY_PUMMEL_FURY] = true
 	Fury_Configuration[ABILITY_REND_FURY] = true
@@ -233,7 +237,7 @@ local function Print(msg)
 end
 
 local function Debug(msg)
-	if Fury_Configuration["Debug"] then
+	if Fury_Configuration and Fury_Configuration["Debug"] then
 		Print(msg)
 	end
 end
@@ -522,15 +526,23 @@ function ItemReady(item)
 end
 
 function addEnemyCount(Enemies)
-	for i=5,1,-1 do
-		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
-	end
-	WWEnemies.Hist[0] = Enemies
+	Fury_SetEnemies(Enemies)
 	Debug("Enemies "..Enemies)
 	if Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE] then
 		Print("Disabling AoE")
 		Fury_Configuration[MODE_HEADER_AOE] = false
 	end
+end
+
+function Fury_SetEnemies(count)
+	for i=5,1,-1 do
+		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
+	end
+	WWEnemies.Hist[0] = Enemies
+end
+
+function Fury_GetEnemies()
+	return WWEnemies.Hist[0] or 0;
 end
 
 function Fury()
@@ -556,10 +568,10 @@ function Fury()
 		end
 
 		-- Add number of enemies
-		if GetTime() - WWEnemies.CleaveTime > 1 and WWEnemies.CleaveCount ~= nil then
+		if WWEnemies.CleaveCount ~= nil and (GetTime() - WWEnemies.CleaveTime ) > 1 then
 			addEnemyCount(WWEnemies.CleaveCount)
 			WWEnemies.CleaveCount = nil
-		elseif GetTime() - WWEnemies.WWTime > 1 and WWEnemies.WWCount ~= nil then
+		elseif WWEnemies.WWCount ~= nil and (GetTime() - WWEnemies.WWTime) > 1 then
 			addEnemyCount(WWEnemies.WWCount)
 			WWEnemies.WWCount = nil
 		end
@@ -577,7 +589,6 @@ function Fury()
 		  and SpellReady(ABILITY_BERSERKER_RAGE_FURY) then
 			Debug("Berserker Rage")
 			CastSpellByName(ABILITY_BERSERKER_RAGE_FURY)
-			FuryLastSpellCast = GetTime()
 
 		-- Execute, this will stance dance in prot mode?
 		elseif Fury_Configuration[ABILITY_EXECUTE_FURY]
@@ -778,6 +789,15 @@ function Fury()
 				end
 			end
 
+		-- Sweeping Strikes
+		elseif Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY]
+		  and FurySweepingStrikes
+		  and Fury_GetEnemies() > 1
+		  and UnitMana("player") >= 30
+		  and SpellReady(ABILITY_SWEEPING_STRIKES_FURY) then
+			Debug("Sweeping Strikes")
+			CastSpellByName(ABILITY_SWEEPING_STRIKES_FURY)
+
 		-- Berserker rage
 		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
 		  and FuryBerserkerRage
@@ -794,7 +814,7 @@ function Fury()
 					FuryDanceDone = true
 				end
 				CastSpellByName(ABILITY_BERSERKER_RAGE_FURY)
-				FuryLastSpellCast = GetTime()
+
 			else
 				if FuryLastStanceCast + 1.5 <= GetTime() then
 					if not FuryOldStance then
@@ -826,8 +846,6 @@ function Fury()
 		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
 			Debug("Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
-			--FuryLastSpellCast = GetTime()
-			--No global cooldown, added anyway to ensure better flow
 
 		-- Battle Shout
 		elseif Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY]
@@ -886,6 +904,7 @@ function Fury()
 		  and not HasDebuff("target", "Ability_Druid_DemoralizingRoar")
 		  and UnitMana("player") >= 10
 		  and not UnitIsPlayer("target")
+		  and UnitLevel("Player") - UnitLevel("Target") < Fury_Configuration["DemoDiff"]
 		  and FuryAttack == true
 		  and SpellReady(ABILITY_DEMORALIZING_SHOUT_FURY) then
 			Debug("Demoralizing Shout")
@@ -925,7 +944,8 @@ function Fury()
 		-- Whirlwind
 		elseif (Fury_Configuration[ABILITY_WHIRLWIND_FURY]
 		  or Fury_Configuration[MODE_HEADER_AOE])
-		  and CheckInteractDistance("target", 2)
+		  and Fury_Distance() <= 8
+		  and Weapon()
 		  and UnitMana("player") >= 25
 		  and (ActiveStance() == 3
 		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
@@ -1029,7 +1049,7 @@ function Fury()
 			UseContainerItemByNameOnPlayer(ITEM_OIL_OF_IMMOLATION)
 
 		-- Blood Fury (Orc racial ability)
-		elseif (Fury_Configuration[ABILITY_BLOOD_FURY]
+		elseif Fury_Configuration[ABILITY_BLOOD_FURY]
 		  and FuryAttack == true
 		  and ActiveStance() ~= 2
 		  and FuryCombat
@@ -1063,8 +1083,7 @@ function Fury()
 		  or not FuryBloodthirst))
 		  and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY]
 		  and not SpellReady(ABILITY_WHIRLWIND_FURY))
-		  or (not Fury_Configuration[ABILITY_WHIRLWIND_FURY]
-		  or not CheckInteractDistance("target", 2))) then
+		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]) then
 
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
@@ -1113,53 +1132,103 @@ end
 --
 --------------------------------------------------
 
-local function doCharge()
-	if FuryMount then
+local function Fury_Charge()
+	local dist = Fury_Distance()
+	if not UnitExists("target") then
+		Debug("No target")
+		return
+	end
+	Debug("Distance: "..dist)
+	if FuryMount
+	  and dist <= 25 then
 		-- Dismount as a first step
 		Debug("Dismounting")
 		Dismount()
 		FuryMount = nil
-	elseif FuryCombat then
+	end
+	if FuryCombat then
 		Debug("In combat")
 		if Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and ActiveStance() == 3
+		  and dist <= 25
 		  and UnitMana("player") >= 10
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
 			Debug("Intercept")
-			CastSpellByName(ABILITY_INTERCEPT_FURY);
+			CastSpellByName(ABILITY_INTERCEPT_FURY)
+
 		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
 		  and ActiveStance() == 3
 		  and UnitMana("player") < 10
+		  and dist <= 25
+		  and SpellReady(ABILITY_INTERCEPT_FURY)
 		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
 			Debug("Bloodrage")
-			CastSpellByName(ABILITY_BLOODRAGE_FURY);
+			CastSpellByName(ABILITY_BLOODRAGE_FURY)
+
+		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
+		  and FuryBerserkerRage
+		  and ActiveStance() == 3
+		  and UnitMana("player") < 10
+		  and SpellReady(ABILITY_INTERCEPT_FURY)
+		  and SpellReady(ABILITY_BERSERKER_RAGE_FURY) then
+			Debug("Berserker Rage")
+			CastSpellByName(ABILITY_BERSERKER_RAGE_FURY)
+
 		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and ActiveStance() ~= 3
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
-			if (FuryLastStanceCast + 1.5 <= GetTime()) then
+			if FuryLastStanceCast + 1.5 <= GetTime() then
 				Debug("Berserker Stance (Intercept)");
-				if (not FuryOldStance) then
+				if FuryOldStance == nil then
 					FuryOldStance = ActiveStance();
 					FuryLastStanceCast = GetTime();
+
 				end
 				CastShapeshiftForm(3);
+
 			end
 		end
 	else
 		Debug("Out of combat")
 		if Fury_Configuration[ABILITY_CHARGE_FURY]
 		  and ActiveStance() == 1
+		  and dist <= 25
+		  and dist > 5
 		  and SpellReady(ABILITY_CHARGE_FURY) then
 			Debug("Charge")
 			CastSpellByName(ABILITY_CHARGE_FURY);
+			FuryLastSpellCast = GetTime()
+
 		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and ActiveStance() == 3
+		  and dist <= 25
+		  and dist > 5
 		  and UnitMana("player") >= 10
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
 			Debug("Intercept")
 			CastSpellByName(ABILITY_INTERCEPT_FURY);
+			FuryLastSpellCast = GetTime()
+
+		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
+		  and ActiveStance() ~= 3
+		  and not SpellReady(ABILITY_CHARGE_FURY)
+		  and SpellReady(ABILITY_INTERCEPT_FURY) then
+			Debug("Berserker Stance (Intercept)")
+			if (FuryLastStanceCast + 1.5 <= GetTime()) then
+				Debug("Berserker Stance (Intercept)");
+				if FuryOldStance == nil then
+					FuryOldStance = ActiveStance();
+					FuryLastStanceCast = GetTime();
+
+				end
+				CastShapeshiftForm(3);
+
+			end
+
 		elseif Fury_Configuration[ABILITY_CHARGE_FURY]
 		  and ActiveStance() ~= 1
+		  and dist <= 25
+		  and dist > 5
 		  and SpellReady(ABILITY_CHARGE_FURY)
 		  and UnitMana("player") < tonumber(Fury_Configuration["StanceChangeRage"]) then
 			Debug("Arm Stance (Charge)")
@@ -1167,14 +1236,31 @@ local function doCharge()
 			  and FuryOldStance == nil then
 				FuryOldStance = ActiveStance()
 				FuryLastStanceCast = GetTime()
+
 			end
 			CastShapeshiftForm(1)
-		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
+
+		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
+		  and FuryBerserkerRage
 		  and ActiveStance() == 3
-		  and UnitMana("player") >= 10
-		  and SpellReady(ABILITY_INTERCEPT_FURY) then
-			Debug("Intercept")
-			CastSpellByName(ABILITY_INTERCEPT_FURY)
+		  and SpellReady(ABILITY_INTERCEPT_FURY)
+		  and not SpellReady(ABILITY_CHARGE_FURY)
+		  and dist <= 25
+		  and UnitMana("player") < 10
+		  and SpellReady(ABILITY_BERSERKER_RAGE_FURY) then
+			Debug("Berserker Rage")
+			CastSpellByName(ABILITY_BERSERKER_RAGE_FURY)
+
+		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
+		  and ActiveStance() == 3
+		  and dist <= 25
+		  and SpellReady(ABILITY_INTERCEPT_FURY)
+		  and not SpellReady(ABILITY_CHARGE_FURY)
+		  and UnitMana("player") < 10
+		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
+			Debug("Bloodrage")
+			CastSpellByName(ABILITY_BLOODRAGE_FURY);
+
 		end
 	end
 end
@@ -1197,7 +1283,7 @@ function Fury_SlashCommand(msg)
 	  or command == "" then
 		Fury()
 	elseif command == "charge" then
-		doCharge()
+		Fury_Charge()
 	elseif command == "aoe" then
 		if Fury_Configuration[MODE_HEADER_AOE] then
 			Fury_Configuration[MODE_HEADER_AOE] = false
@@ -1223,13 +1309,14 @@ function Fury_SlashCommand(msg)
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEBUG .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif command == "dance" then
-		if options == ""
-		  or tonumber(options) < 0 then
-			options = 0
-		elseif tonumber(options) > 100 then
-			options = 100
+		if options ~= "" then
+			if tonumber(options) < 0 then
+				options = 0
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["StanceChangeRage"] = options
 		end
-		Fury_Configuration["StanceChangeRage"] = options
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DANCE .. options .. ".")
 	elseif command == "attack" then
 		if Fury_Configuration["AutoAttack"] then
@@ -1240,48 +1327,69 @@ function Fury_SlashCommand(msg)
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 	elseif command == "rage" then
-		if options == "" or tonumber(options) < 0 then
-			options = 0
-		elseif tonumber(options) > 100 then
-			options = 100
+		if options ~= "" then
+			if tonumber(options) < 0 then
+				options = 0
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["MaximumRage"] = options
 		end
-		Fury_Configuration["MaximumRage"] = options
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_RAGE .. options .. ".")
 
 	elseif command == "attackrage" then
-		if options == "" or tonumber(options) < 0 then
-			options = 0
-		elseif tonumber(options) > 100 then
-			options = 100
+		if options ~= "" then
+			if tonumber(options) < 0 then
+				options = 0
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["NextAttackRage"] = options
 		end
-		Fury_Configuration["NextAttackRage"] = options
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_ATTACKRAGE .. options .. ".")
 
 	elseif command == "bloodrage" then
-		if options == "" or tonumber(options) < 1 then
-			options = 1
-		elseif tonumber(options) > 100 then
-			options = 100
+		if options ~= "" then
+			if tonumber(options) < 1 then
+				options = 1
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["BloodrageHealth"] = options
 		end
-		Fury_Configuration["BloodrageHealth"] = options
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_BLOODRAGE .. options .. ".")
 
-	elseif command == "deathwish" then
-		if options == "" or tonumber(options) < 1 then
-			options = 1
-		elseif tonumber(options) > 100 then
-			options = 100
+	elseif command == "demodiff" then
+		if options ~="" then 
+			if tonumber(options) < -3 then
+				options = -3
+			elseif tonumber(options) > 60 then
+				options = 60
+			end
+			Fury_Configuration["DemoDiff"] = options
 		end
-		Fury_Configuration["DeathWishHealth"] = options
+		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEMODIFF .. options.. ".")
+
+	elseif command == "deathwish" then
+		if options ~= "" then
+			if tonumber(options) < 1 then
+				options = 1
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["DeathWishHealth"] = options
+		end
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_DEATHWISH .. options .. ".")
 
 	elseif command == "hamstring" then
-		if options == "" or tonumber(options) < 1 then
-			options = 1
-		elseif tonumber(options) > 100 then
-			options = 100
+		if options ~= "" then
+			if tonumber(options) < 1 then
+				options = 1
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["HamstringHealth"] = options
 		end
-		Fury_Configuration["HamstringHealth"] = options
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_HAMSTRING .. options .. ".")
 
 	elseif command == "threat" then
@@ -1296,12 +1404,14 @@ function Fury_SlashCommand(msg)
 			Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_HIGHTHREAT)
 		end
 	elseif command == "berserk" then
-		if options == "" or tonumber(options) < 1 then
-			options = 1
-		elseif tonumber(options) > 100 then
-			options = 100
+		if options ~= "" then
+			if tonumber(options) < 1 then
+				options = 1
+			elseif tonumber(options) > 100 then
+				options = 100
+			end
+			Fury_Configuration["BerserkHealth"] = options
 		end
-		Fury_Configuration["BerserkHealth"] = options
 		Print(BINDING_HEADER_FURY .. ": " .. SLASH_FURY_TROLL .. options .. ".")
 	elseif command == "stance" then
 		if options == ABILITY_BATTLE_STANCE_FURY
@@ -1440,6 +1550,7 @@ function Fury_SlashCommand(msg)
 			 ["charge"] = HELP_CHARGE,
 			 ["dance"] = HELP_DANCE,
 			 ["debug"] = HELP_DEBUG,
+			 ["demodiff"] = HELP_DEMODIFF,
 			 ["hamstring"] = HELP_HAMSTRING,
 			 ["juju"] = HELP_JUJU,
 			 ["help"] = HELP_HELP,
@@ -1496,7 +1607,7 @@ function Fury_OnLoad()
 	for i = 0,5 do
 		WWEnemies.Hist[i] = 0
 	end
-
+	
 	FuryLastSpellCast = GetTime()
 	FuryLastStanceCast = GetTime()
 	FuryRevengeTime = 0
@@ -1619,6 +1730,7 @@ function Fury_OnEvent(event)
 	elseif event == "CHAT_MSG_MONSTER_EMOTE" then
 		--Check to see if enemy flees
 		Fury_RunnerDetect(arg1, arg2)
+
 	elseif event == "PLAYER_AURAS_CHANGED" then
 		--Check to see if mounted
 		if UnitIsMounted("player") then
@@ -1635,25 +1747,46 @@ function Fury_OnEvent(event)
 			FurySpellInterrupt = nil
 		end
 		if not FuryTalents then
+			Debug("Scanning Talent Tree")
+			Fury_InitDistance()
 			--Calculate the cost of Heroic Strike based on talents
 			local _, _, _, _, currRank = GetTalentInfo(1, 1)
 			FuryHeroicStrikeCost = (15 - tonumber(currRank))
+			if FuryHeroicStrikeCost < 15 then
+				Debug("Heroic Cost")
+			end
 			--Calculate the cost of Execute based on talents
 			local _, _, _, _, currRank = GetTalentInfo(2, 10)
 			FuryExecuteCost = (15 - strsub(tonumber(currRank) * 2.5, 1, 2))
+			if FuryExecuteCost < 15 then
+				Debug("Execute Cost")
+			end
 			--Calculate the rage retainment of Tactical Mastery
 			local _, _, _, _, currRank = GetTalentInfo(1, 5)
 			FuryTacticalMastery = (tonumber(currRank) * 5)
+			if FuryTacticalMastery > 0 then
+				Debug("Tactical Mastery")
+			end
+			-- Check for Sweeping Strikes
+			local _, _, _, _, currRank = GetTalentInfo(1, 13)
+			if currRank > 0 then
+				Debug("Sweeping Strikes")
+				FurySweepingStrikes = true
+			else
+				FurySweepingStrikes = false
+			end
 			--Check for Improved Berserker Rage
 			local _, _, _, _, currRank = GetTalentInfo(2, 15)
 			if currRank > 0 then
+				Debug("Improved Berserker Rage")
 				FuryBerserkerRage = true
 			else
 				FuryBerserkerRage = false
 			end
 			--Check for Flurry
-			local _, _, _, _, currRank = GetTalentInfo(1, 16)
+			local _, _, _, _, currRank = GetTalentInfo(2, 16)
 			if currRank > 0 then
+				Debug("Flurry")
 				FuryFlurry = true
 			else
 				FuryFlurry = false
@@ -1661,6 +1794,7 @@ function Fury_OnEvent(event)
 			--Check for Piercing Howl
 			local _, _, _, _, currRank = GetTalentInfo(2, 6)
 			if currRank > 0 then
+				Debug("Piercing Howl")
 				FuryPiercingHowl = true
 			else
 				FuryPiercingHowl = false
@@ -1668,6 +1802,7 @@ function Fury_OnEvent(event)
 			--Check for Mortal Strike
 			local _, _, _, _, currRank = GetTalentInfo(1, 18)
 			if currRank > 0 then
+				Debug("Mortal Strike")
 				FuryMortalStrike = true
 			else
 				FuryMortalStrike = false
@@ -1675,6 +1810,7 @@ function Fury_OnEvent(event)
 			--Check for Bloodthirst
 			local _, _, _, _, currRank = GetTalentInfo(2, 17)
 			if currRank > 0 then
+				Debug("Bloodthirst")
 				FuryBloodthirst =  true
 			else
 				FuryBloodthirst = false
@@ -1682,6 +1818,7 @@ function Fury_OnEvent(event)
 			--Check for Shield Slam
 			local _, _, _, _, currRank = GetTalentInfo(3, 17)
 			if currRank > 0 then
+				Debug("Shield Slam")
 				FuryShieldSlam =  true
 			else
 				FuryShieldSlam = false
@@ -1706,181 +1843,87 @@ function Fury_OnEvent(event)
 	end
 end
 
-function Fury_CheckButtons()
-	if not Zorlen_Button_SweepingStrikes then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_SweepingStrikes) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_SweepingStrikes then
-				Print("You must put "..LOCALIZATION_ZORLEN_SweepingStrikes.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
+function Fury_InitDistance()
+	local found = 0
+	for i = 1, 120 do
+		t = GetActionTexture(i)
+		if t then
+			if not yard30 then
+				if string.find(t, "Ability_Marksmanship") -- Shoot
+				  or string.find(t, "Ability_Throw") then -- Throw
+					yard30 = i
+					Debug("30 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard25 then
+				if string.find(t, "Ability_Warrior_Charge") -- Charge
+				  or string.find(t, "Ability_Rogue_Sprint") then -- Intercept
+					yard25 = i
+					Debug("25 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard10 then
+				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
+					yard10 = i
+					Debug("10 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard08 then
+			end
+			if not yard05 then
+				if string.find(t, "Ability_Warrior_Sunder") -- Sunder Armor
+				  or string.find(t, "Ability_Warrior_DecisiveStrike") -- Slam
+				  or string.find(t, "Ability_Warrior_Disarm") -- Disarm
+				  or string.find(t, "INV_Gauntlets_04") -- Pummel
+				  or string.find(t, "Ability_MeleeDamage") -- Overpower
+				  or string.find(t, "Ability_Warrior_PunishingBlow") -- Mocking blow
+				  or string.find(t, "Ability_Warrior_Revenge") -- Revenge
+				  or string.find(t, "Ability_Gouge") -- Rend
+				  or string.find(t, "INV_Sword_48") -- Execute
+				  or string.find(t, "ability_warrior_savageblow") -- Mortal Strike
+				  or string.find(t, "Ability_Warrior_Cleave") -- Cleave
+				  or string.find(t, "INV_Shield_05") -- Shield Slam
+				  or string.find(t, "Spell_Nature_Bloodlust") then -- Bloodthirst
+					yard05 = i
+					Debug("5 yard: "..t)
+					found = found + 1
+				end
+			end
+			if found == 4 then
+				Debug("Found all "..i)
+				return
 			end
 		end
 	end
-	if not Zorlen_Button_Cleave then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Cleave) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Cleave then
-				Print("You must put "..LOCALIZATION_ZORLEN_Cleave.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if not yard30 then
+		Print("Missing spell on action bar Shoot or Throw")
 	end
-	if not Zorlen_Button_Whirlwind then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Whirldwind) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Whirlwind then
-				Print("You must put "..LOCALIZATION_ZORLEN_Whirlwind.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if not yard25 then
+		Print("Missing spell on action bar Intercept or Charge")
 	end
-	if not Zorlen_Button_ThunderClap then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_ThunderClap) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_ThunderClap then
-				Print("You must put "..LOCALIZATION_ZORLEN_ThunderClap.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if not yard10 then
+		Print("Missing spell on action bar Thunder Clap")
 	end
-	if not Zorlen_Button_Disarm then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Disarm) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Disarm then
-				Print("You must put "..LOCALIZATION_ZORLEN_Disarm.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if not yard05 then
+		Print("Missing spell on action bar (any close combat spell, like Pummel)")
 	end
-	if not Zorlen_Button_MortalStrike then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_MortalStrike) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_MortalStrike then
-				Print("You must put "..LOCALIZATION_ZORLEN_MortalStrike.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+end
+
+function Fury_Distance()
+	if yard05 and IsActionInRange(yard05) == 1 then
+		return 5
 	end
-	if not Zorlen_Button_Bloodthirst then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Bloodthirst) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Bloodthirst then
-				Print("You must put "..LOCALIZATION_ZORLEN_Bloodthirst.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if yard10 and IsActionInRange(yard10) == 1 then
+		return 10
 	end
-	if not Zorlen_Button_ShieldSlam then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_ShieldSlam) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_ShieldSlam then
-				Print("You must put "..LOCALIZATION_ZORLEN_ShieldSlam.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if yard25 and IsActionInRange(yard25) == 1 then
+		return 25
 	end
-	if not Zorlen_Button_Charge then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Charge) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Charge then
-				Print("You must put "..LOCALIZATION_ZORLEN_Charge.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
+	if yard30 and IsActionInRange(yard30) == 1 then
+		return 30
 	end
-	if not Zorlen_Button_Intercept then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Intercept) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Intercept then
-				Print("You must put "..LOCALIZATION_ZORLEN_Intercept.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_Overpower then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Overpower) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Overpower then
-				Print("You must put "..LOCALIZATION_ZORLEN_Overpower.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_Rend then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Rend) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Rend then
-				Print("You must put "..LOCALIZATION_ZORLEN_Rend.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_Hamstring then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Hamstring) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Hamstring then
-				Print("You must put "..LOCALIZATION_ZORLEN_Hamstring.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_Execute then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Execute) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Execute then
-				Print("You must put "..LOCALIZATION_ZORLEN_Execute.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_ShieldBash then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_ShieldBash) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_ShieldBash then
-				Print("You must put "..LOCALIZATION_ZORLEN_ShieldBash.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_Pummel then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Pummel) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Pummel then
-				Print("You must put "..LOCALIZATION_ZORLEN_Pummel.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_DemoralizingShout then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_DemoralizingShout) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_DemoralizingShout then
-				Print("You must put "..LOCALIZATION_ZORLEN_DemoralizingShout.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_BerserkerRage then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_BerserkerRage) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_BerserkerRage then
-				Print("You must put "..LOCALIZATION_ZORLEN_BerserkerRage.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_Bloodrage then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_Bloodrage) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_Bloodrage then
-				Print("You must put "..LOCALIZATION_ZORLEN_Bloodrage.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_DeathWish then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_DeathWish) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_DeathWish then
-				Print("You must put "..LOCALIZATION_ZORLEN_DeathWish.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_HeroicStrike then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_HeroicStrike) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_HeroicStrike then
-				Print("You must put "..LOCALIZATION_ZORLEN_HeroicStrike.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
-	if not Zorlen_Button_BattleShout then
-		if Zorlen_IsSpellKnown(LOCALIZATION_ZORLEN_BattleShout) then
-			Zorlen_RegisterButtons()
-			if not Zorlen_Button_BattleShout then
-				Print("You must put "..LOCALIZATION_ZORLEN_BattleShout.." on one of your action bars (even if it is hidden) for Warrior Button to work right!")
-			end
-		end
-	end
+	return 100
 end

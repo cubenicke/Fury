@@ -40,6 +40,7 @@ Pummel / Shield Bash
 Hamstring  
 Piercing Howl  
 Rend (PvP only)  
+Sweeping Strikes  
 Berserker Rage (PvE only)  
 Bloodrage  
 Berserking (Troll racial)  
@@ -54,7 +55,7 @@ Juju Ember
 Juju Might  
 Juju Power  
 Oil of Immolation  
-Blood Fury (Orcs only)  
+Blood Fury (Orc racial)  
 Death Wish (on every cooldown)  
 Hamstring  
 Heroic Strike / Cleave  
@@ -81,6 +82,7 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
 ![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) Rend, ability_gouge  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash  
+![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) Sweeping Strikes, ability_rogue_slicedice  
 ![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) Whirlwind, Ability_Whirlwind  
 
 ### Items

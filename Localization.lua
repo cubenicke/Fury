@@ -146,6 +146,7 @@ HELP_THREAT				= "/fury threat - enables Cleave or Heroic Strike based on curren
 HELP_HAMSTRING				= "/fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs";
 HELP_BLOODRAGE				= "/fury bloodrage <number> - sets minimum percent of health required when using Bloodrage";
 HELP_ATTACKRAGE				= "/fury attackrage <number> - sets minimum rage required when using Heroic Strike or Cleave";
+HELP_DEMODIFF				= "/fury demodiff <number> - sets maximum level differrence to use Demoralizing Shout";
 HELP_RAGE				= "/fury rage <number> - sets maximum rage allowed when using abilities to gain rage";
 HELP_ATTACK				= "/fury attack - toggles the use of autoattack. Experimental.";
 HELP_AOE				= "/fury aoe - disables bloodthirst/mortal strike and enables Cleave";
