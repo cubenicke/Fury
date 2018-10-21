@@ -1094,7 +1094,7 @@ function Fury()
 			  and UnitMana("player") >= HamstringCost()
 			  and SpellReady(ABILITY_HAMSTRING_FURY) then
 				-- Try trigger Flurry with use of Hamstring to dump rage
-				Debug("Hamstring")
+				Debug("Hamstring (Trigger flurry)")
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
 
 			-- Heroic Strike
