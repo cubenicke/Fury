@@ -113,7 +113,9 @@ Heroic Strike / Cleave
 /fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs
 /fury berserk <number> - sets minimum percent of health required when using Berserk
 /fury deathwish <number> - sets minimum percent of health required when using Death Wish
+/fury demodiff <number> - If Target is x levels below Demoralizing Shout is not used
 /fury stance <name> - sets stance to return to after switching stance. If default is selected it will return to your last used stance. If no stance is selected it will disable stance switching. Must use correct names with capitalization.
+/fury talents - Rescan range spells and talent tree (needed after action bar buttons have moved)
 ```
 ### Debugging
 ```
