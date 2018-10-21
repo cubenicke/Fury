@@ -1088,14 +1088,17 @@ function Fury()
 			--Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
 			if Fury_Configuration[ABILITY_HAMSTRING_FURY]
-			  and FuryFlurry
 			  and Weapon()
-			  and not HasBuff("player", "Ability_GhoulFrenzy")
 			  and UnitMana("player") >= HamstringCost()
+			  and ((FuryFlurry
+			  and not HasBuff("player", "Ability_GhoulFrenzy"))
+			  or FuryImpHamstring)
 			  and SpellReady(ABILITY_HAMSTRING_FURY) then
 				-- Try trigger Flurry with use of Hamstring to dump rage
-				Debug("Hamstring (Trigger flurry)")
+				-- or Try trigger stun with ImpHamstring
+				Debug("Hamstring (Trigger ...)")
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
+				FuryLastSpellCast = GetTime()
 
 			-- Heroic Strike
 			elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
@@ -1106,7 +1109,7 @@ function Fury()
 			  and SpellReady(ABILITY_HEROIC_STRIKE_FURY) then
 				Debug("Heroic Strike")
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
-				--FuryLastSpellCast = GetTime()
+				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
 			-- Cleave
@@ -1119,7 +1122,7 @@ function Fury()
 			  and SpellReady(ABILITY_CLEAVE_FURY) then
 				Debug("Cleave")
 				CastSpellByName(ABILITY_CLEAVE_FURY)
-				--FuryLastSpellCast = GetTime()
+				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
 			end
 		end
@@ -1284,6 +1287,10 @@ function Fury_SlashCommand(msg)
 		Fury()
 	elseif command == "charge" then
 		Fury_Charge()
+	elseif command == "talents" then
+		Print("Rescanning talent tree and actionbars")
+		Fury_InitDistance()
+		Fury_ScanTalents()
 	elseif command == "aoe" then
 		if Fury_Configuration[MODE_HEADER_AOE] then
 			Fury_Configuration[MODE_HEADER_AOE] = false
@@ -1573,6 +1580,7 @@ function Fury_SlashCommand(msg)
 			 ["ooi"] = HELP_OOI,
 			 ["rage"] = HELP_RAGE,
 			 ["stance"] = HELP_STANCE,
+			 ["talents"] = HELP_TALENTS,
 			 ["threat"] = HELP_THREAT,
 			 ["toggle"] = HELP_TOGGLE,
 			 ["unit"] = HELP_UNIT,
@@ -1630,6 +1638,93 @@ function Fury_OnLoad()
 	FuryRevengeReadyUntil = 0
 	SlashCmdList["FURY"] = Fury_SlashCommand
 	SLASH_FURY1 = "/fury"
+end
+
+function Fury_ScanTalents()
+	Debug("Scanning Talent Tree")
+	--Calculate the cost of Heroic Strike based on talents
+	local _, _, _, _, currRank = GetTalentInfo(1, 1)
+	FuryHeroicStrikeCost = (15 - tonumber(currRank))
+	if FuryHeroicStrikeCost < 15 then
+		Debug("Heroic Cost")
+	end
+	--Calculate the rage retainment of Tactical Mastery
+	local _, _, _, _, currRank = GetTalentInfo(1, 5)
+	FuryTacticalMastery = (tonumber(currRank) * 5)
+	if FuryTacticalMastery > 0 then
+		Debug("Tactical Mastery")
+	end
+	-- Check for Sweeping Strikes
+	local _, _, _, _, currRank = GetTalentInfo(1, 13)
+	if currRank > 0 then
+		Debug("Sweeping Strikes")
+		FurySweepingStrikes = true
+	else
+		FurySweepingStrikes = false
+	end
+	-- Check for Improved Hamstring
+	local _, _, _, _, currRank = GetTalentInfo(1, 17)
+	if currRank > 0 then
+		Debug("Improved Hamstring")
+		FuryImpHamstring = true
+	else
+		FuryImpHamstring = false
+	end
+	--Check for Mortal Strike
+	local _, _, _, _, currRank = GetTalentInfo(1, 18)
+	if currRank > 0 then
+		Debug("Mortal Strike")
+		FuryMortalStrike = true
+	else
+		FuryMortalStrike = false
+	end	--Check for Piercing Howl
+	local _, _, _, _, currRank = GetTalentInfo(2, 6)
+	if currRank > 0 then
+		Debug("Piercing Howl")
+		FuryPiercingHowl = true
+	else
+		FuryPiercingHowl = false
+	end
+	--Calculate the cost of Execute based on talents
+	local _, _, _, _, currRank = GetTalentInfo(2, 10)
+	FuryExecuteCost = (15 - strsub(tonumber(currRank) * 2.5, 1, 2))
+	if FuryExecuteCost < 15 then
+		Debug("Execute Cost")
+	end
+	-- Check for Improved Berserker Rage
+	local _, _, _, _, currRank = GetTalentInfo(2, 15)
+	if currRank > 0 then
+		Debug("Improved Berserker Rage")
+		FuryBerserkerRage = true
+	else
+		FuryBerserkerRage = false
+	end
+	--Check for Flurry
+	local _, _, _, _, currRank = GetTalentInfo(2, 16)
+	if currRank > 0 then
+		Debug("Flurry")
+		FuryFlurry = true
+	else
+		FuryFlurry = false
+	end
+
+	--Check for Bloodthirst
+	local _, _, _, _, currRank = GetTalentInfo(2, 17)
+	if currRank > 0 then
+		Debug("Bloodthirst")
+		FuryBloodthirst =  true
+	else
+		FuryBloodthirst = false
+	end
+	--Check for Shield Slam
+	local _, _, _, _, currRank = GetTalentInfo(3, 17)
+	if currRank > 0 then
+		Debug("Shield Slam")
+		FuryShieldSlam =  true
+	else
+		FuryShieldSlam = false
+	end
+	FuryTalents = true
 end
 
 function Fury_OnEvent(event)
@@ -1764,83 +1859,8 @@ function Fury_OnEvent(event)
 			FurySpellInterrupt = nil
 		end
 		if not FuryTalents then
-			Debug("Scanning Talent Tree")
 			Fury_InitDistance()
-			--Calculate the cost of Heroic Strike based on talents
-			local _, _, _, _, currRank = GetTalentInfo(1, 1)
-			FuryHeroicStrikeCost = (15 - tonumber(currRank))
-			if FuryHeroicStrikeCost < 15 then
-				Debug("Heroic Cost")
-			end
-			--Calculate the cost of Execute based on talents
-			local _, _, _, _, currRank = GetTalentInfo(2, 10)
-			FuryExecuteCost = (15 - strsub(tonumber(currRank) * 2.5, 1, 2))
-			if FuryExecuteCost < 15 then
-				Debug("Execute Cost")
-			end
-			--Calculate the rage retainment of Tactical Mastery
-			local _, _, _, _, currRank = GetTalentInfo(1, 5)
-			FuryTacticalMastery = (tonumber(currRank) * 5)
-			if FuryTacticalMastery > 0 then
-				Debug("Tactical Mastery")
-			end
-			-- Check for Sweeping Strikes
-			local _, _, _, _, currRank = GetTalentInfo(1, 13)
-			if currRank > 0 then
-				Debug("Sweeping Strikes")
-				FurySweepingStrikes = true
-			else
-				FurySweepingStrikes = false
-			end
-			--Check for Improved Berserker Rage
-			local _, _, _, _, currRank = GetTalentInfo(2, 15)
-			if currRank > 0 then
-				Debug("Improved Berserker Rage")
-				FuryBerserkerRage = true
-			else
-				FuryBerserkerRage = false
-			end
-			--Check for Flurry
-			local _, _, _, _, currRank = GetTalentInfo(2, 16)
-			if currRank > 0 then
-				Debug("Flurry")
-				FuryFlurry = true
-			else
-				FuryFlurry = false
-			end
-			--Check for Piercing Howl
-			local _, _, _, _, currRank = GetTalentInfo(2, 6)
-			if currRank > 0 then
-				Debug("Piercing Howl")
-				FuryPiercingHowl = true
-			else
-				FuryPiercingHowl = false
-			end
-			--Check for Mortal Strike
-			local _, _, _, _, currRank = GetTalentInfo(1, 18)
-			if currRank > 0 then
-				Debug("Mortal Strike")
-				FuryMortalStrike = true
-			else
-				FuryMortalStrike = false
-			end
-			--Check for Bloodthirst
-			local _, _, _, _, currRank = GetTalentInfo(2, 17)
-			if currRank > 0 then
-				Debug("Bloodthirst")
-				FuryBloodthirst =  true
-			else
-				FuryBloodthirst = false
-			end
-			--Check for Shield Slam
-			local _, _, _, _, currRank = GetTalentInfo(3, 17)
-			if currRank > 0 then
-				Debug("Shield Slam")
-				FuryShieldSlam =  true
-			else
-				FuryShieldSlam = false
-			end
-			FuryTalents = true
+			Fury_ScanTalents()
 		end
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
@@ -1862,6 +1882,10 @@ end
 
 function Fury_InitDistance()
 	local found = 0
+	yard30 = nil
+	yard25 = nil
+	yard08 = nil
+	yard05 = nil
 	for i = 1, 120 do
 		t = GetActionTexture(i)
 		if t then
@@ -1910,7 +1934,7 @@ function Fury_InitDistance()
 				end
 			end
 			if found == 4 then
-				Debug("Found all "..i)
+				Debug("Found all distance check spells ("..i..")")
 				return
 			end
 		end
