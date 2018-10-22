@@ -54,6 +54,10 @@ function Fury_Configuration_Init()
 	end
 	if Fury_Configuration["PrimaryStance"] == nil then
 		Fury_Configuration["PrimaryStance"] = false --Set this to the stance to fall back to after performing an attack requiring another stance
+	end
+	if Fury_Configuration["DemoDiff"] == nil then
+		Fury_Configuration["DemoDiff"] = 7 -- When level difference is greater don't do Demoralizing Shout
+	end
 	if Fury_Configuration["DemoDiff"] == nil then
 		Fury_Configuration["DemoDiff"] = 7 -- When level difference is greater don't do Demoralizing Shout
 	end
@@ -545,6 +549,12 @@ function Fury_GetEnemies()
 	return WWEnemies.Hist[0] or 0;
 end
 
+--------------------------------------------------
+
+-- Fury - Handles the combat sequence
+
+--------------------------------------------------
+
 function Fury()
 	if Fury_Configuration["Enabled"]
 	  and not UnitIsCivilian("target")
@@ -937,9 +947,9 @@ function Fury()
 		  and FuryShieldSlam
 		  and UnitMana("player") >= 20
 		  and SpellReady(ABILITY_SHIELD_SLAM_FURY) then
-		  Debug("Shield Slam")
-		  CastSpellByName(ABILITY_SHIELD_SLAM_FURY)
-		  FuryLastSpellCast = GetTime()
+			Debug("Shield Slam")
+			CastSpellByName(ABILITY_SHIELD_SLAM_FURY)
+			FuryLastSpellCast = GetTime()
 
 		-- Whirlwind
 		elseif (Fury_Configuration[ABILITY_WHIRLWIND_FURY]
@@ -1509,6 +1519,12 @@ function Fury_SlashCommand(msg)
 				Print(ITEM_OIL_OF_IMMOLATION .. " enabled.")
 				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = true
 			end
+	elseif command == "distance" then
+		if UnitCanAttack("player", "target") then
+			Print("Distance "..Fury_Distance().." yards")
+		else
+			Print("You need to have an attackable target")
+		end
 	elseif command == "where" then
 		Print("GetMinimapZoneText "..(GetMinimapZoneText() or ""))
 		Print("GetRealZoneText "..(GetRealZoneText() or ""))
@@ -1560,37 +1576,43 @@ function Fury_SlashCommand(msg)
 	elseif command == "version" then
 		Print("Version "..FURY_VERSION)
 	elseif command == "help" then
+		local helps = {
+		 ["ability"] = HELP_ABILITY,
+		 ["aoe"] = HELP_AOE,
+		 ["attack"] = HELP_ATTACK,
+		 ["attackrage"] = HELP_ATTACKRAGE,
+		 ["berserk"] = HELP_BERSERK,
+		 ["bloodrage"] = HELP_BLOODRAGE,
+		 ["charge"] = HELP_CHARGE,
+		 ["dance"] = HELP_DANCE,
+		 ["debug"] = HELP_DEBUG,
+		 ["demodiff"] = HELP_DEMODIFF,
+		 ["distance"] = HELP_DISTANCE,
+		 ["hamstring"] = HELP_HAMSTRING,
+		 ["help"] = HELP_HELP,
+		 ["juju"] = HELP_JUJU,
+		 ["ooi"] = HELP_OOI,
+		 ["rage"] = HELP_RAGE,
+		 ["stance"] = HELP_STANCE,
+		 ["talents"] = HELP_TALENTS,
+		 ["threat"] = HELP_THREAT,
+		 ["toggle"] = HELP_TOGGLE,
+		 ["unit"] = HELP_UNIT,
+		 ["where"] = HELP_WHERE
+		}
 		if options == nil or options == "" then
-			Print(SLASH_FURY_HELP)
-		else
-			local helps = {
-			 ["ability"] = HELP_ABILITY,
-			 ["aoe"] = HELP_AOE,
-			 ["attack"] = HELP_ATTACK,
-			 ["attackrage"] = HELP_ATTACKRAGE,
-			 ["berserk"] = HELP_BERSERK,
-			 ["bloodrage"] = HELP_BLOODRAGE,
-			 ["charge"] = HELP_CHARGE,
-			 ["dance"] = HELP_DANCE,
-			 ["debug"] = HELP_DEBUG,
-			 ["demodiff"] = HELP_DEMODIFF,
-			 ["hamstring"] = HELP_HAMSTRING,
-			 ["juju"] = HELP_JUJU,
-			 ["help"] = HELP_HELP,
-			 ["ooi"] = HELP_OOI,
-			 ["rage"] = HELP_RAGE,
-			 ["stance"] = HELP_STANCE,
-			 ["talents"] = HELP_TALENTS,
-			 ["threat"] = HELP_THREAT,
-			 ["toggle"] = HELP_TOGGLE,
-			 ["unit"] = HELP_UNIT,
-			 ["where"] = HELP_WHERE
-			}
-			if helps[options] ~= nil then
-				Print(helps[options])
-			else
-				Print(HELP_UNKNOWN)
+			local cmds = ""
+			for k,_ in pairs(helps) do
+				if cmds ~= "" then
+					cmds = cmds..", "
+				end
+				cmds = cmds..k
 			end
+			Print(SLASH_FURY_HELP ..cmds)
+		elseif helps[options] ~= nil then
+			Print(helps[options])
+		else
+			Print(HELP_UNKNOWN)
 		end
 	else
 		Print(SLASH_FURY_HELP)
@@ -1880,10 +1902,17 @@ function Fury_OnEvent(event)
 	end
 end
 
+--------------------------------------------------
+--
+-- Distance handling
+--
+--------------------------------------------------
+
 function Fury_InitDistance()
 	local found = 0
 	yard30 = nil
 	yard25 = nil
+	yard10 = nil
 	yard08 = nil
 	yard05 = nil
 	for i = 1, 120 do
@@ -1913,6 +1942,9 @@ function Fury_InitDistance()
 				end
 			end
 			if not yard08 then
+				--TODO
+				yard08 = i
+				found = found + 1
 			end
 			if not yard05 then
 				if string.find(t, "Ability_Warrior_Sunder") -- Sunder Armor
@@ -1933,7 +1965,7 @@ function Fury_InitDistance()
 					found = found + 1
 				end
 			end
-			if found == 4 then
+			if found == 5 then
 				Debug("Found all distance check spells ("..i..")")
 				return
 			end
@@ -1949,23 +1981,29 @@ function Fury_InitDistance()
 	if not yard10 then
 		Print("Missing spell on action bar Thunder Clap")
 	end
+	if not yard08 then
+		Print("Missing spell on action bar 8 yards")
+	end
 	if not yard05 then
 		Print("Missing spell on action bar (any close combat spell, like Pummel)")
 	end
 end
 
 function Fury_Distance()
+	if not UnitCanAttack("player", "target") then
+		return 0, false
+	end
 	if yard05 and IsActionInRange(yard05) == 1 then
-		return 5
+		return 5, true
 	end
 	if yard10 and IsActionInRange(yard10) == 1 then
-		return 10
+		return 10, true
 	end
 	if yard25 and IsActionInRange(yard25) == 1 then
-		return 25
+		return 25, true
 	end
 	if yard30 and IsActionInRange(yard30) == 1 then
-		return 30
+		return 30, true
 	end
-	return 100
+	return 100, true
 end
