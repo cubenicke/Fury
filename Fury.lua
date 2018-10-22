@@ -761,6 +761,7 @@ function Fury()
 		  and (UnitIsPlayer("target")
 		  or (Fury_Runners[UnitName("target")]
 		  and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
+		  and Fury_Distance() <= 25
 		  and FuryAttack == true
 		  and not SnareDebuff()
 		  and UnitMana("player") >= 10
@@ -954,7 +955,7 @@ function Fury()
 		-- Whirlwind
 		elseif (Fury_Configuration[ABILITY_WHIRLWIND_FURY]
 		  or Fury_Configuration[MODE_HEADER_AOE])
-		  and Fury_Distance() <= 8
+		  and Fury_Distance() <= 10
 		  and Weapon()
 		  and UnitMana("player") >= 25
 		  and (ActiveStance() == 3
@@ -1206,7 +1207,7 @@ local function Fury_Charge()
 		if Fury_Configuration[ABILITY_CHARGE_FURY]
 		  and ActiveStance() == 1
 		  and dist <= 25
-		  and dist > 5
+		  and dist > 7
 		  and SpellReady(ABILITY_CHARGE_FURY) then
 			Debug("Charge")
 			CastSpellByName(ABILITY_CHARGE_FURY);
@@ -1215,7 +1216,7 @@ local function Fury_Charge()
 		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and ActiveStance() == 3
 		  and dist <= 25
-		  and dist > 5
+		  and dist > 7
 		  and UnitMana("player") >= 10
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
 			Debug("Intercept")
@@ -1241,7 +1242,7 @@ local function Fury_Charge()
 		elseif Fury_Configuration[ABILITY_CHARGE_FURY]
 		  and ActiveStance() ~= 1
 		  and dist <= 25
-		  and dist > 5
+		  and dist > 7
 		  and SpellReady(ABILITY_CHARGE_FURY)
 		  and UnitMana("player") < tonumber(Fury_Configuration["StanceChangeRage"]) then
 			Debug("Arm Stance (Charge)")
@@ -1934,17 +1935,20 @@ function Fury_InitDistance()
 					found = found + 1
 				end
 			end
+			if not yard08 then
+				if string.find(t, "Ability_Marksmanship") -- Shoot
+				  or string.find(t, "Ability_Throw") then -- Throw
+					yard08 = i
+					Debug("08 yard: "..t)
+					found = found + 1
+				end
+			end
 			if not yard10 then
 				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
 					yard10 = i
 					Debug("10 yard: "..t)
 					found = found + 1
 				end
-			end
-			if not yard08 then
-				--TODO
-				yard08 = i
-				found = found + 1
 			end
 			if not yard05 then
 				if string.find(t, "Ability_Warrior_Sunder") -- Sunder Armor
@@ -1972,7 +1976,7 @@ function Fury_InitDistance()
 		end
 	end
 	-- Print if any distance check spell is missing
-	if not yard30 then
+	if not yard30 or not yard08 then
 		Print("Missing spell on action bar Shoot or Throw")
 	end
 	if not yard25 then
@@ -1981,9 +1985,6 @@ function Fury_InitDistance()
 	if not yard10 then
 		Print("Missing spell on action bar Thunder Clap")
 	end
-	if not yard08 then
-		Print("Missing spell on action bar 8 yards")
-	end
 	if not yard05 then
 		Print("Missing spell on action bar (any close combat spell, like Pummel)")
 	end
@@ -1991,19 +1992,22 @@ end
 
 function Fury_Distance()
 	if not UnitCanAttack("player", "target") then
-		return 0, false
+		return 0 -- invalid target
 	end
 	if yard05 and IsActionInRange(yard05) == 1 then
-		return 5, true
+		return 5 -- 0 - 5
 	end
 	if yard10 and IsActionInRange(yard10) == 1 then
-		return 10, true
+		if yard08 and IsActionInRange(yard08) == 0 then
+			return 7 -- 6 - 7
+		end
+		return 10 -- 8 - 10
 	end
 	if yard25 and IsActionInRange(yard25) == 1 then
-		return 25, true
+		return 25 -- 11 - 25
 	end
 	if yard30 and IsActionInRange(yard30) == 1 then
-		return 30, true
+		return 30 -- 26 - 30
 	end
-	return 100, true
+	return 100 -- 31 - <na>
 end
