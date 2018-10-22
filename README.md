@@ -122,6 +122,7 @@ Heroic Strike / Cleave
 /fury help [command] - prints help text
 /fury attack - toggles the use of autoattack. Experimental.
 /fury debug - toggles debug mode
+/fury distance - show distance to target  
 /fury unit [player|target] - shows buffs and debuffs for player or target
 /fury where - info about whereabouts
 ```
