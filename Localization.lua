@@ -160,5 +160,6 @@ HELP_TOGGLE				= "/fury toggle - toggle if addon is active";
 HELP_UNIT				= "/fury unit - debug info";
 HELP_WHERE				= "/fury where - debug info";
 HELP_JUJU				= "/fury juju <juju> - Supports flurry, power, might, chill and ember toggles use of the <juju> on cooldown";
+HELP_SHOOT				= "/fury shoot - Fires equipped ranged weapon";
 HELP_HELP				= "/fury help - outputs available commands";
 HELP_UNKNOWN				= "Unknown command /fury help - for list of commands";

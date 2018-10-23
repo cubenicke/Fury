@@ -13,7 +13,7 @@
 
 function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.2"
+	FURY_VERSION = "1.16.3"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
@@ -421,8 +421,9 @@ end
 
 function Shield()
 	--Detect if a shield is present
-	if GetInventoryItemLink("player", 17) then
-		local _, _, itemCode = strfind(GetInventoryItemLink("player", 17), "(%d+):")
+	local item = GetInventoryItemLink("player", 17)
+	if item then
+		local _, _, itemCode = strfind(item, "(%d+):")
 		local _, _, _, _, _, itemType = GetItemInfo(itemCode)
 		if itemType == ITEM_SHIELDS_FURY and not GetInventoryItemBroken("player", 17) then
 			return true
@@ -431,11 +432,37 @@ function Shield()
 	return nil
 end
 
+function IsTrinketEquipped(name)
+	for slot = 13, 14 do
+		local item = GetInventoryItemLink("player", slot)
+		if item then
+			local _, _, itemCode = strfind(item, "(%d+):")
+			local itemName = GetItemInfo(itemCode)
+			if itemName == name and GetInventoryItemCooldown("player", slot) == 0 then 
+				return slot
+			end
+		end
+	end
+	return nil
+end
+
+function Ranged()
+	--Detect if a ranged weapon is equipped and return type
+	local item = GetInventoryItemLink("player", 18) 
+	if item then
+		local _, _, itemCode = strfind(item, "(%d+):")
+		local _, _, _, _, _, itemType = GetItemInfo(itemCode)
+		return itemType
+	end
+	return nil
+end
+
 function HamstringCost()
 	--Calculate the cost of Hamstring based on gear
 	local i = 0
-	if GetInventoryItemLink("player", 10) then
-		local _, _, itemCode = strfind(GetInventoryItemLink("player", 10), "(%d+):")
+	local item = GetInventoryItemLink("player", 10)
+	if item then
+		local _, _, itemCode = strfind(item, "(%d+):")
 		local itemName = GetItemInfo(itemCode)
 		if itemName == ITEM_GAUNTLETS1_FURY or itemName == ITEM_GAUNTLETS2_FURY or itemName == ITEM_GAUNTLETS3_FURY or itemName == ITEM_GAUNTLETS4_FURY then
 			i = 3
@@ -475,16 +502,25 @@ function AntiStealthDebuff()
 	return nil
 end
 
-function SnareDebuff()
+function RootDebuff()
+	-- Detect root buffs
+	if HasDebuff("player", "Spell_Frost_FrostNova")
+	  or HasDebuff("player", "spell_Nature_StrangleVines") then
+		return true
+	end
+	return nil
+end
+
+function SnareDebuff(unit)
 	--Detect snaring debuffs
 	--Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock
-	if HasDebuff("target", "Ability_ShockWave")
-	  or HasDebuff("target", "Ability_Rogue_Trip")
-	  or HasDebuff("target", "Spell_Shadow_GrimWard")
-	  or HasDebuff("target", "Ability_PoisonSting")
-	  or HasDebuff("target", "Spell_Frost_FrostBolt02")
-	  or HasDebuff("target", "Spell_Frost_Glacier")
-	  or HasDebuff("target", "Spell_Frost_FrostShock") then
+	if HasDebuff(unit, "Ability_ShockWave")
+	  or HasDebuff(unit, "Ability_Rogue_Trip")
+	  or HasDebuff(unit, "Spell_Shadow_GrimWard")
+	  or HasDebuff(unit, "Ability_PoisonSting")
+	  or HasDebuff(unit, "Spell_Frost_FrostBolt02")
+	  or HasDebuff(unit, "Spell_Frost_Glacier")
+	  or HasDebuff(unit, "Spell_Frost_FrostShock") then
 		return true
 	end
 	return nil
@@ -529,6 +565,19 @@ function ItemReady(item)
 	return false
 end
 
+function EquippedAndReady(slot, name)
+	local item = GetInventoryItemLink("player", slot)
+	if item then
+		local _, _, itemCode = strfind(item, "(%d+):")
+		local itemName = GetItemInfo(itemCode)
+		if itemName == name
+		  and GetInventoryItemCooldown("player", slot) == 0 then 
+			return true
+		end
+	end
+	return nil
+end
+
 function addEnemyCount(Enemies)
 	Fury_SetEnemies(Enemies)
 	Debug("Enemies "..Enemies)
@@ -549,6 +598,27 @@ function Fury_GetEnemies()
 	return WWEnemies.Hist[0] or 0;
 end
 
+function Fury_Shoot()
+	local ranged_type = Ranged()
+	local spell
+	if ranged_type == "Bows" then
+		spell = "Shoot Bow" 
+	elseif ranged_type == "Crossbows" then
+		spell = "Shoot Crossbow"
+	elseif ranged_type == "Guns" then
+		spell = "Shoot Gun"
+	elseif ranged_type == "Thrown" then
+		spell = "Throw"
+	else
+		return false
+	end
+	if SpellReady(spell) then
+		Debug(spell)
+		CastSpellByName(spell)
+		FuryLastSpellCast = GetTime()
+	end
+	return true
+end
 --------------------------------------------------
 
 -- Fury - Handles the combat sequence
@@ -730,15 +800,16 @@ function Fury()
 		  or (Fury_Runners[UnitName("target")]
 		  and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
 		  and Weapon()
-		  and not SnareDebuff()
+		  and not SnareDebuff("target")
 		  and FuryAttack == true
+		  and Fury_Distance() == 5
 		  and UnitMana("player") >= HamstringCost()
 		  and (ActiveStance() ~= 2
 		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0))
 		  and SpellReady(ABILITY_HAMSTRING_FURY) then
 			if ActiveStance() ~= 2 then
-				Debug("Hamstring (Runner)")
+				Debug("Hamstring")
 				if FuryOldStance == 2 then
 					FuryDanceDone = true
 				end
@@ -761,9 +832,9 @@ function Fury()
 		  and (UnitIsPlayer("target")
 		  or (Fury_Runners[UnitName("target")]
 		  and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
-		  and Fury_Distance() <= 25
+		  and Fury_Distance() <= 10
 		  and FuryAttack == true
-		  and not SnareDebuff()
+		  and not SnareDebuff("target")
 		  and UnitMana("player") >= 10
 		  and SpellReady(ABILITY_PIERCING_HOWL_FURY) then
 				Debug("Piercing Howl")
@@ -796,6 +867,28 @@ function Fury()
 					end
 					Debug("Battle Stance (Rend)")
 					CastShapeshiftForm(1)
+					FuryLastStanceCast = GetTime()
+				end
+			end
+			
+		-- Rooted
+		elseif RootDebuff()
+		  and Fury_Distance() > 8 then
+			if ActiveStance() == 2 then
+				FuryDanceDone = true
+				local slot = IsTrinketEquipped("Linken's Boomerang")
+				if slot ~= nil then
+					Debug("Use Linken's Boomerang")
+					UseInventoryItem(slot)
+				else
+					Debug("Shoot")
+					Fury_Shoot()
+				end
+			else
+				if FuryLastStanceCast + 1.5 <= GetTime() then
+					FuryOldStance = 2
+					Debug("Defensive Stance (Rooted)")
+					CastShapeshiftForm(2)
 					FuryLastStanceCast = GetTime()
 				end
 			end
@@ -1199,6 +1292,7 @@ local function Fury_Charge()
 
 				end
 				CastShapeshiftForm(3);
+				FuryLastStanceCast = GetTime()
 
 			end
 		end
@@ -1236,6 +1330,7 @@ local function Fury_Charge()
 
 				end
 				CastShapeshiftForm(3);
+				FuryLastStanceCast = GetTime()
 
 			end
 
@@ -1253,6 +1348,7 @@ local function Fury_Charge()
 
 			end
 			CastShapeshiftForm(1)
+			FuryLastStanceCast = GetTime()
 
 		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
 		  and FuryBerserkerRage
@@ -1435,6 +1531,10 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
 			Print(SLASH_FURY_HIGHTHREAT)
 		end
+
+	elseif command == "shoot" then
+		Fury_Shoot()
+
 	elseif command == "berserk" then
 		if options ~= "" then
 			if tonumber(options) < 1 then
@@ -1594,6 +1694,7 @@ function Fury_SlashCommand(msg)
 		 ["juju"] = HELP_JUJU,
 		 ["ooi"] = HELP_OOI,
 		 ["rage"] = HELP_RAGE,
+		 ["shoot"] = HELP_SHOOT,
 		 ["stance"] = HELP_STANCE,
 		 ["talents"] = HELP_TALENTS,
 		 ["threat"] = HELP_THREAT,
@@ -1885,7 +1986,8 @@ function Fury_OnEvent(event)
 			FuryOverpower = nil
 			FurySpellInterrupt = nil
 		end
-		if not FuryTalents then
+		if not FuryTalents
+		  and UnitClass("player") == CLASS_WARRIOR_FURY then
 			Fury_InitDistance()
 			Fury_ScanTalents()
 		end
