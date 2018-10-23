@@ -1780,8 +1780,8 @@ function Fury_OnEvent(event)
 			  and UnitCanAttack("player", "target")
 			  and mob ~= spell then
 				FurySpellInterrupt = GetTime()
+				return
 			end
-			return
 		end
 
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE"
@@ -1812,8 +1812,10 @@ function Fury_OnEvent(event)
 		if WWEnemies.CleaveCount == nil then
 			WWEnemies.CleaveCount = 1
 			WWEnemies.CleaveTime = GetTime()
+
 		else
 			WWEnemies.CleaveCount = WWEnemies.CleaveCount + 1
+
 		end
 
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE" then
@@ -1823,6 +1825,7 @@ function Fury_OnEvent(event)
 		  or arg1 == CHAT_REPENTANCE_FURY
 		  or arg1 == CHAT_ROCKET_HELM_FURY then
 			FuryIncapacitate = true
+
 		elseif arg1 == CHAT_FEAR_FURY
 		  or arg1 == CHAT_INTIMIDATING_SHOUT_FURY
 		  or arg1 == CHAT_PSYCHIC_SCREAM_FURY
@@ -1841,6 +1844,7 @@ function Fury_OnEvent(event)
 		  or arg1 == CHAT_REPENTANCE2_FURY
 		  or arg1 == CHAT_ROCKET_HELM2_FURY then
 			FuryIncapacitate = nil
+
 		elseif arg1 == CHAT_FEAR2_FURY
 		  or arg1 == CHAT_INTIMIDATING_SHOUT2_FURY
 		  or arg1 == CHAT_PSYCHIC_SCREAM2_FURY
@@ -1935,18 +1939,18 @@ function Fury_InitDistance()
 					found = found + 1
 				end
 			end
+			if not yard10 then
+				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
+					yard10 = i
+					Debug("10 yard: "..t)
+					found = found + 1
+				end
+			end
 			if not yard08 then
 				if string.find(t, "Ability_Marksmanship") -- Shoot
 				  or string.find(t, "Ability_Throw") then -- Throw
 					yard08 = i
 					Debug("08 yard: "..t)
-					found = found + 1
-				end
-			end
-			if not yard10 then
-				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
-					yard10 = i
-					Debug("10 yard: "..t)
 					found = found + 1
 				end
 			end
