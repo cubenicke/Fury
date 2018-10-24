@@ -409,8 +409,9 @@ end
 
 function Weapon()
 	--Detect if a suitable weapon (not a skinning knife/mining pick and not broken) is present
-	if GetInventoryItemLink("player", 16) then
-		local _, _, itemCode = strfind(GetInventoryItemLink("player", 16), "(%d+):")
+	local item = GetInventoryItemLink("player", 16)
+	if item then
+		local _, _, itemCode = strfind(item, "(%d+):")
 		local itemName, itemLink, _, _, itemType = GetItemInfo(itemCode)
 		if itemLink ~= "item:7005:0:0:0" and itemLink ~= "item:2901:0:0:0" and not GetInventoryItemBroken("player", 16) then
 			return true
@@ -502,8 +503,8 @@ function AntiStealthDebuff()
 	return nil
 end
 
-function RootDebuff()
-	-- Detect root buffs
+function ImmobilizingDebuff()
+	-- Detect immobilizing buffs
 	if HasDebuff("player", "Spell_Frost_FrostNova")
 	  or HasDebuff("player", "spell_Nature_StrangleVines") then
 		return true
@@ -553,7 +554,6 @@ function ItemExists(itemName)
 	return false
 end
 
-
 function ItemReady(item)
 	if ItemExists(item) == false then
 		return false
@@ -573,6 +573,19 @@ function EquippedAndReady(slot, name)
 		if itemName == name
 		  and GetInventoryItemCooldown("player", slot) == 0 then
 			return true
+		end
+	end
+	return nil
+end
+
+function CheckCooldown(slot)
+	local cd = GetInventoryItemCooldown("player", slot)
+	if  cd > 0 then
+		local item = GetInventoryItemLink("player", slot)
+		if item then
+			local _, _, itemCode = strfind(item, "(%d+):")
+			local itemName = GetItemInfo(itemCode)
+			return itemName
 		end
 	end
 	return nil
@@ -619,6 +632,7 @@ function Fury_Shoot()
 	end
 	return true
 end
+
 --------------------------------------------------
 
 -- Fury - Handles the combat sequence
@@ -872,8 +886,8 @@ function Fury()
 			end
 
 		-- Rooted
-		elseif RootDebuff()
-		  and Fury_Distance() > 8 then
+		elseif ImmobilizingDebuff()
+		  and Fury_Distance() >= 8 then
 			if ActiveStance() == 2 then
 				FuryDanceDone = true
 				local slot = IsTrinketEquipped("Linken's Boomerang")
@@ -881,7 +895,6 @@ function Fury()
 					Debug("Use Linken's Boomerang")
 					UseInventoryItem(slot)
 				else
-					Debug("Shoot")
 					Fury_Shoot()
 				end
 			else
@@ -1999,6 +2012,12 @@ function Fury_OnEvent(event)
 		FuryCombat = nil
 		FuryDanceDone = nil
 		FuryOldStance = nil
+		for slot = 1, 18 do
+			local name = CheckCooldown(slot)
+			if name then
+				Print(name.." is on CD, replace?")
+			end
+		end
 
 	elseif event == "PLAYER_ENTER_COMBAT" then
 		FuryAttack = true
