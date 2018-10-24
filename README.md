@@ -40,6 +40,7 @@ Pummel / Shield Bash
 Hamstring  
 Piercing Howl  
 Rend (PvP only)  
+Sweeping Strikes  
 Berserker Rage (PvE only)  
 Bloodrage  
 Berserking (Troll racial)  
@@ -54,7 +55,7 @@ Juju Ember
 Juju Might  
 Juju Power  
 Oil of Immolation  
-Blood Fury (Orcs only)  
+Blood Fury (Orc racial)  
 Death Wish (on every cooldown)  
 Hamstring  
 Heroic Strike / Cleave  
@@ -81,6 +82,9 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
 ![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) Rend, ability_gouge  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash  
+![](https://classicdb.ch/images/icons/small/ability_marksmanship.jpg) Shoot Bow,Crossbow,Gun, ability_marksmanship  
+![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) Sweeping Strikes, ability_rogue_slicedice  
+![](https://classicdb.ch/images/icons/small/ability_throw.jpg) Throw, ability_throw  
 ![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) Whirlwind, Ability_Whirlwind  
 
 ### Items
@@ -95,6 +99,7 @@ Heroic Strike / Cleave
 ```
 /fury - uses Fury
 /fury charge - uses Intercept or Charge sequence
+/fury shoot - fires ranged weapon
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
 /fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
@@ -111,13 +116,16 @@ Heroic Strike / Cleave
 /fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs
 /fury berserk <number> - sets minimum percent of health required when using Berserk
 /fury deathwish <number> - sets minimum percent of health required when using Death Wish
+/fury demodiff <number> - If Target is x levels below Demoralizing Shout is not used
 /fury stance <name> - sets stance to return to after switching stance. If default is selected it will return to your last used stance. If no stance is selected it will disable stance switching. Must use correct names with capitalization.
+/fury talents - Rescan range spells and talent tree (needed after action bar buttons have moved)
 ```
 ### Debugging
 ```
 /fury help [command] - prints help text
 /fury attack - toggles the use of autoattack. Experimental.
 /fury debug - toggles debug mode
+/fury distance - show distance to target  
 /fury unit [player|target] - shows buffs and debuffs for player or target
 /fury where - info about whereabouts
 ```
