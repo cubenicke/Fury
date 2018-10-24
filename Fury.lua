@@ -438,7 +438,7 @@ function IsTrinketEquipped(name)
 		if item then
 			local _, _, itemCode = strfind(item, "(%d+):")
 			local itemName = GetItemInfo(itemCode)
-			if itemName == name and GetInventoryItemCooldown("player", slot) == 0 then 
+			if itemName == name and GetInventoryItemCooldown("player", slot) == 0 then
 				return slot
 			end
 		end
@@ -448,7 +448,7 @@ end
 
 function Ranged()
 	--Detect if a ranged weapon is equipped and return type
-	local item = GetInventoryItemLink("player", 18) 
+	local item = GetInventoryItemLink("player", 18)
 	if item then
 		local _, _, itemCode = strfind(item, "(%d+):")
 		local _, _, _, _, _, itemType = GetItemInfo(itemCode)
@@ -571,7 +571,7 @@ function EquippedAndReady(slot, name)
 		local _, _, itemCode = strfind(item, "(%d+):")
 		local itemName = GetItemInfo(itemCode)
 		if itemName == name
-		  and GetInventoryItemCooldown("player", slot) == 0 then 
+		  and GetInventoryItemCooldown("player", slot) == 0 then
 			return true
 		end
 	end
@@ -602,7 +602,7 @@ function Fury_Shoot()
 	local ranged_type = Ranged()
 	local spell
 	if ranged_type == "Bows" then
-		spell = "Shoot Bow" 
+		spell = "Shoot Bow"
 	elseif ranged_type == "Crossbows" then
 		spell = "Shoot Crossbow"
 	elseif ranged_type == "Guns" then
@@ -870,7 +870,7 @@ function Fury()
 					FuryLastStanceCast = GetTime()
 				end
 			end
-			
+
 		-- Rooted
 		elseif RootDebuff()
 		  and Fury_Distance() > 8 then

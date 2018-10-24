@@ -81,8 +81,10 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/spell_shadow_deathscream.jpg) Piercing Howl, spell_shadow_deathscream  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
 ![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) Rend, ability_gouge  
-![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash  
-![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) Sweeping Strikes, ability_rogue_slicedice  
+![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash 
+![](https://classicdb.ch/images/icons/small/ability_marksmanship.jpg) Shoot Bow,Crossbow,Gun, ability_marksmanship 
+![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) Sweeping Strikes, ability_rogue_slicedice
+![](https://classicdb.ch/images/icons/small/ability_throw.jpg) Throw, ability_throw   
 ![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) Whirlwind, Ability_Whirlwind  
 
 ### Items
@@ -97,6 +99,7 @@ Heroic Strike / Cleave
 ```
 /fury - uses Fury
 /fury charge - uses Intercept or Charge sequence
+/fury shoot - fires ranged weapon
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
 /fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
