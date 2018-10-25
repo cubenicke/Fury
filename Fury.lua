@@ -579,8 +579,9 @@ function EquippedAndReady(slot, name)
 end
 
 function CheckCooldown(slot)
-	local cd = GetInventoryItemCooldown("player", slot)
-	if  cd > 0 then
+	local start, duration = GetInventoryItemCooldown("player", slot)
+	if duration > 30 then
+		-- Alllow duration for 30 seconds since it's when you equip the item
 		local item = GetInventoryItemLink("player", slot)
 		if item then
 			local _, _, itemCode = strfind(item, "(%d+):")
@@ -1407,19 +1408,24 @@ function Fury_SlashCommand(msg)
 	local _, _, command, options = string.find(msg, "([%w%p]+)%s*(.*)$")
 	if command then
 		command = string.lower(command)
+
 	end
 	if not (UnitClass("player") == CLASS_WARRIOR_FURY) then
 		return
+
 	end
 	if command == nil
 	  or command == "" then
 		Fury()
+
 	elseif command == "charge" then
 		Fury_Charge()
+
 	elseif command == "talents" then
 		Print("Rescanning talent tree and actionbars")
 		Fury_InitDistance()
 		Fury_ScanTalents()
+
 	elseif command == "aoe" then
 		if Fury_Configuration[MODE_HEADER_AOE] then
 			Fury_Configuration[MODE_HEADER_AOE] = false
@@ -1428,6 +1434,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration[MODE_HEADER_AOE] = true
 			Print(MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
+
 	elseif command == "toggle" then
 		if Fury_Configuration["Enabled"] then
 			Fury_Configuration["Enabled"] = false
@@ -1436,6 +1443,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["Enabled"] = true
 			Print(BINDING_HEADER_FURY .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
+
 	elseif command == "debug" then
 		if Fury_Configuration["Debug"] then
 			Fury_Configuration["Debug"] = false
@@ -1444,6 +1452,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["Debug"] = true
 			Print(SLASH_FURY_DEBUG .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
+
 	elseif command == "dance" then
 		if options ~= "" then
 			if tonumber(options) < 0 then
@@ -1456,6 +1465,7 @@ function Fury_SlashCommand(msg)
 			options = Fury_Configuration["StanceChangeRage"]
 		end
 		Print(SLASH_FURY_DANCE .. options .. ".")
+
 	elseif command == "attack" then
 		if Fury_Configuration["AutoAttack"] then
 			Fury_Configuration["AutoAttack"] = false
@@ -1464,6 +1474,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["AutoAttack"] = true
 			Print(SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
+
 	elseif command == "rage" then
 		if options ~= "" then
 			if tonumber(options) < 0 then
@@ -1569,6 +1580,7 @@ function Fury_SlashCommand(msg)
 			options = Fury_Configuration["BerserkHealth"]
 		end
 		Print(SLASH_FURY_TROLL .. options .. ".")
+
 	elseif command == "stance" then
 		if options == ABILITY_BATTLE_STANCE_FURY
 		  or options == "1" then
@@ -1634,6 +1646,7 @@ function Fury_SlashCommand(msg)
 		else
 			Print(HELP_JUJU)
 		end
+
 	elseif command == "ooi" then
 			if Fury_Configuration[ITEM_OIL_OF_IMMOLATION] then
 				Print(ITEM_OIL_OF_IMMOLATION .. " disabled.")
@@ -1642,18 +1655,21 @@ function Fury_SlashCommand(msg)
 				Print(ITEM_OIL_OF_IMMOLATION .. " enabled.")
 				Fury_Configuration[ITEM_OIL_OF_IMMOLATION] = true
 			end
+
 	elseif command == "distance" then
 		if UnitCanAttack("player", "target") then
 			Print("Distance "..Fury_Distance().." yards")
 		else
 			Print("You need to have an attackable target")
 		end
+
 	elseif command == "where" then
 		Print("GetMinimapZoneText "..(GetMinimapZoneText() or ""))
 		Print("GetRealZoneText "..(GetRealZoneText() or ""))
 		Print("GetSubZoneText "..(GetSubZoneText() or ""))
 		Print("GetZonePVPInfo "..(GetZonePVPInfo() or ""))
 		Print("GetZoneText "..(GetZoneText() or ""))
+
 	elseif command == "unit" then
 		if options ~= nil
 		  and options ~= "" then
@@ -1670,6 +1686,7 @@ function Fury_SlashCommand(msg)
 			Print("Type: "..(UnitCreatureType(target) or ""))
 		end
 		PrintEffects(target)
+
 	elseif command == "ability" then
 		if options == ABILITY_HEROIC_STRIKE_FURY
 		  and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
@@ -1696,33 +1713,35 @@ function Fury_SlashCommand(msg)
 		else
 			Print(options .. " not found.")
 		end
+
 	elseif command == "version" then
 		Print("Version "..FURY_VERSION)
+
 	elseif command == "help" then
 		local helps = {
-		 ["ability"] = HELP_ABILITY,
-		 ["aoe"] = HELP_AOE,
-		 ["attack"] = HELP_ATTACK,
-		 ["attackrage"] = HELP_ATTACKRAGE,
-		 ["berserk"] = HELP_BERSERK,
-		 ["bloodrage"] = HELP_BLOODRAGE,
-		 ["charge"] = HELP_CHARGE,
-		 ["dance"] = HELP_DANCE,
-		 ["debug"] = HELP_DEBUG,
-		 ["demodiff"] = HELP_DEMODIFF,
-		 ["distance"] = HELP_DISTANCE,
-		 ["hamstring"] = HELP_HAMSTRING,
-		 ["help"] = HELP_HELP,
-		 ["juju"] = HELP_JUJU,
-		 ["ooi"] = HELP_OOI,
-		 ["rage"] = HELP_RAGE,
-		 ["shoot"] = HELP_SHOOT,
-		 ["stance"] = HELP_STANCE,
-		 ["talents"] = HELP_TALENTS,
-		 ["threat"] = HELP_THREAT,
-		 ["toggle"] = HELP_TOGGLE,
-		 ["unit"] = HELP_UNIT,
-		 ["where"] = HELP_WHERE
+		  ["ability"] = HELP_ABILITY,
+		  ["aoe"] = HELP_AOE,
+		  ["attack"] = HELP_ATTACK,
+		  ["attackrage"] = HELP_ATTACKRAGE,
+		  ["berserk"] = HELP_BERSERK,
+		  ["bloodrage"] = HELP_BLOODRAGE,
+		  ["charge"] = HELP_CHARGE,
+		  ["dance"] = HELP_DANCE,
+		  ["debug"] = HELP_DEBUG,
+		  ["demodiff"] = HELP_DEMODIFF,
+		  ["distance"] = HELP_DISTANCE,
+		  ["hamstring"] = HELP_HAMSTRING,
+		  ["help"] = HELP_HELP,
+		  ["juju"] = HELP_JUJU,
+		  ["ooi"] = HELP_OOI,
+		  ["rage"] = HELP_RAGE,
+		  ["shoot"] = HELP_SHOOT,
+		  ["stance"] = HELP_STANCE,
+		  ["talents"] = HELP_TALENTS,
+		  ["threat"] = HELP_THREAT,
+		  ["toggle"] = HELP_TOGGLE,
+		  ["unit"] = HELP_UNIT,
+		  ["where"] = HELP_WHERE
 		}
 		if options == nil or options == "" then
 			local cmds = ""
@@ -1733,14 +1752,20 @@ function Fury_SlashCommand(msg)
 				cmds = cmds..k
 			end
 			Print(SLASH_FURY_HELP ..cmds)
+
 		elseif helps[options] ~= nil then
 			Print(helps[options])
+
 		else
 			Print(HELP_UNKNOWN)
+
 		end
+
 	else
 		Print(SLASH_FURY_HELP)
+
 	end
+
 end
 
 --------------------------------------------------
