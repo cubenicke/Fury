@@ -1,6 +1,6 @@
 --[[
 	Fury - English Localization
-
+	Extended by: Cubenicke
 	By: Bhaerau
 ]]--
 
@@ -22,6 +22,8 @@ CLASS_SHAMAN_FURY			= "Shaman";
 CLASS_WARLOCK_FURY			= "Warlock";
 CLASS_WARRIOR_FURY			= "Warrior";
 
+RACE_ORC				= "Orc";
+
 ABILITY_BATTLE_SHOUT_FURY		= "Battle Shout";
 ABILITY_BATTLE_STANCE_FURY		= "Battle Stance";
 ABILITY_BERSERKER_RAGE_FURY		= "Berserker Rage";
@@ -32,7 +34,7 @@ ABILITY_BLOODTHIRST_FURY		= "Bloodthirst";
 ABILITY_CHARGE_FURY			= "Charge";
 ABILITY_CLEAVE_FURY			= "Cleave";
 --ABILITY_CONCUSSION_BLOW_FURY		= "Concussion Blow";
-ABILITY_DEATH_WISH_FURY		= "Death Wish";
+ABILITY_DEATH_WISH_FURY			= "Death Wish";
 ABILITY_BLOOD_FURY			= "Blood Fury";
 ABILITY_DEFENSIVE_STANCE_FURY		= "Defensive Stance";
 ABILITY_DEMORALIZING_SHOUT_FURY		= "Demoralizing Shout";
@@ -51,16 +53,20 @@ ABILITY_PUMMEL_FURY			= "Pummel";
 --ABILITY_RECKLESSNESS_FURY		= "Recklessness";
 ABILITY_REND_FURY			= "Rend";
 --ABILITY_RETALIATION_FURY		= "Retaliation";
---ABILITY_REVENGE_FURY			= "Revenge";
+ABILITY_REVENGE_FURY			= "Revenge";
 ABILITY_SHIELD_BASH_FURY		= "Shield Bash";
---ABILITY_SHIELD_BLOCK_FURY		= "Shield Block";
+ABILITY_SHIELD_BLOCK_FURY		= "Shield Block";
 ABILITY_SHIELD_SLAM_FURY		= "Shield Slam";
 --ABILITY_SHIELD_WALL_FURY		= "Shield Wall";
 --ABILITY_SLAM_FURY			= "Slam";
+ABILITY_SHOOT_BOW_FURY			= "Shoot Bow";
+ABILITY_SHOOT_CROSSBOW_FURY		= "Shoot Crossbow";
+ABILITY_SHOOT_GUN_FURY			= "Shoot Gun";
 --ABILITY_SUNDER_ARMOR_FURY		= "Sunder Armor";
 ABILITY_SWEEPING_STRIKES_FURY		= "Sweeping Strikes";
 --ABILITY_TAUNT_FURY			= "Taunt";
 ABILITY_THUNDER_CLAP_FURY		= "Thunder Clap";
+ABILITY_THROW_FURY			= "Throw";
 ABILITY_WHIRLWIND_FURY			= "Whirlwind";
 
 RACIAL_BERSERKING_FURY			= "Berserking";
@@ -79,6 +85,10 @@ CHAT_INTERRUPT4_FURY			= "Your Pummel missed (.+).";
 CHAT_INTERRUPT5_FURY			= "Your Shield Bash missed (.+).";
 CHAT_WHIRLWIND_FURY			= "Your Whirlwind (.+).";
 CHAT_CLEAVE_FURY			= "Your Cleave (.+).";
+
+CHAT_DODGE_FURY				= "You dodge";
+CHAT_PARRY_FURY				= "You parry";
+CHAT_BLOCK_FURY				= "You block";
 
 CHAT_FEAR_FURY				= "You are afflicted by Fear.";
 CHAT_INTIMIDATING_SHOUT_FURY		= "You are afflicted by Intimidating Shout.";
@@ -105,28 +115,71 @@ CHAT_SAP2_FURY				= "Sap fades from you.";
 CHAT_GOUGE2_FURY			= "Gouge fades from you.";
 CHAT_REPENTANCE2_FURY			= "Repentance fades from you.";
 CHAT_ROCKET_HELM2_FURY			= "Reckless Charge fades from you.";
+CHAT_IS_ON_CD_FURY			= "is on CD, replace?";
+CHAT_MISSING_SPELL_SHOOT_THROW_FURY	= "Missing spell on action bar Shoot or Throw";
+CHAT_MISSING_SPELL_INTERCEPT_CHARGE_FURY	= "Missing spell on action bar Intercept or Charge";
+CHAT_MISSING_SPELL_THUNDERCLAP_FURY	= "Missing spell on action bar Thunder Clap";
+CHAT_MISSING_SPELL_PUMMEL_FURY	= "Missing spell on action bar (any close combat spell, like Pummel)";
+CHAT_DISABLING_AOE_FURY			= "Disabling AoE";
+CHAT_BUFFS_FURY				= "Buffs:";
+CHAT_DEBUFFS_FURY			= "Debuffs:";
+CHAT_KICKED_FURY			= "Kicked";
+CHAT_TALENTS_RESCAN_FURY		= "Rescanning talent tree and actionbars";
 
 ITEM_GAUNTLETS1_FURY			= "Knight-Lieutenant's Plate Gauntlets";
 ITEM_GAUNTLETS2_FURY			= "Marshal's Plate Gauntlets";
 ITEM_GAUNTLETS3_FURY			= "Blood Guard's Plate Gloves";
 ITEM_GAUNTLETS4_FURY			= "General's Plate Gauntlets";
-ITEM_SHIELDS_FURY			= "Shields";
+ITEM_TRINKET_INSIGNIA_OF_THE_ALLIANCE_FURY = "Insignia of the Alliance";
+ITEM_TRINKET_INSIGNIA_OF_THE_HORDE_FURY	= "Insignia of the Horde"
+ITEM_TRINKET_LINKENS_BOOMERANG_FURY	= "Linken's Boomerang";
+ITEM_BELT_SPIDER_BELT_FURY		= "Spider Belt";
+ITEM_BOOTS_ORNATE_MITHRIL_BOOTS_FURY	= "Ornate Mithril Boots";
 
-ITEM_JUJU_FLURRY			= "Juju Flurry";
-ITEM_JUJU_POWER				= "Juju Power";
-ITEM_JUJU_MIGHT				= "Juju Might";
-ITEM_JUJU_EMBER				= "Juju Ember";
-ITEM_JUJU_CHILL				= "Juju Chill";
-ITEM_OIL_OF_IMMOLATION			= "Oil of Immolation";
+ITEM_TYPE_SHIELDS_FURY			= "Shields";
+ITEM_TYPE_BOWS_FURY			= "Bows";
+ITEM_TYPE_CROSSBOWS_FURY		= "Crossbows";
+ITEM_TYPE_GUNS_FURY			= "Guns";
+ITEM_TYPE_THROWN_FURY			= "Thrown";
+
+ITEM_CONS_JUJU_FLURRY			= "Juju Flurry";
+ITEM_CONS_JUJU_POWER			= "Juju Power";
+ITEM_CONS_JUJU_MIGHT			= "Juju Might";
+ITEM_CONS_JUJU_EMBER			= "Juju Ember";
+ITEM_CONS_JUJU_CHILL			= "Juju Chill";
+ITEM_CONS_OIL_OF_IMMOLATION		= "Oil of Immolation";
+
+BOSS_NAX_GOTHIK_THE_HARVESTER_FURY	= "Gothik the Harvester";
+BOSS_NAX_GRAND_WIDOW_FAERLINA_FURY	= "Grand Widow Faerlina";
+BOSS_NAX_HEIGAN_THE_UNCLEAN_FURY	= "Heigan the Unclean";
+BOSS_NAX_KEL_THUZAD_FURY		= "Kel'Thuzad";
+BOSS_NAX_LADY_BLAUMEUX_FURY		= "Lady Blaumeux";
+BOSS_NAX_LOATHEB_FURY			= "Loatheb";
+BOSS_NAX_SAPPHIRON_FURY			= "Sapphiron";
+BOSS_NAX_SIR_ZELIEK_FURY		= "Sir Zeliek";
+BOSS_NAX_THANE_KORTH_AZZ_FURY		= "Thane Korth'azz";
+BOSS_AQ40_EMPEROR_VEK_LOR_FURY		= "Emperor Vek'lor";
+BOSS_AQ40_PRINCE_HUHURAN_FURY		= "Princess Huhuran";
+BOSS_AQ40_THE_PROPHET_SKERAM_FURY	= "The Prophet Skeram";
+BOSS_MC_MAGMADAR_FURY			= "Magmadar";
+BOXX_MC_RAGNAROS_FURY			= "Ragnaros";
+BOSS_MC_SHAZZRATH_FURY			= "Shazzrath";
+BOSS_ONYXIA_FURY			= "Onyxia";
+BOSS_STRAT_BARON_RIVENDERE_FURY		= "Baron Rivendare";
 
 MODE_HEADER_AOE				= "AoE";
 SLASH_FURY_ENABLED			= "enabled";
 SLASH_FURY_DISABLED			= "disabled";
 SLASH_FURY_DEFAULT			= "default";
 SLASH_FURY_DEBUG			= "Debug";
+SLASH_FURY_DISTANCE			= "Distance";
+SLASH_FURY_YARDS			= "yards";
+SLASH_FURY_NO_ATTACKABLE_TARGET		= "You need to have an attackable target";
+SLASH_FURY_NOT_FOUND			= "not found";
 SLASH_FURY_DEMODIFF			= "Max target difference in levels for using Demoralizing Shout is set to ";
-SLASH_FURY_AUTOATTACK		= "Autoattack";
-SLASH_FURY_ATTACKRAGE		= "Attackrage";
+SLASH_FURY_AUTOATTACK			= "Autoattack";
+SLASH_FURY_ATTACKRAGE			= "Attackrage";
+SLASH_FURY_VERSION			= "Version";
 SLASH_FURY_DANCE			= "Rage allowed to be wasted when switching stance set to ";
 SLASH_FURY_RAGE				= "Maximum rage allowed when using abilities to gain rage set to ";
 SLASH_FURY_RAGE				= "Minimum rage required when using Heroic Strike or Cleave set to ";
