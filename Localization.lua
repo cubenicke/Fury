@@ -133,6 +133,7 @@ ITEM_GAUNTLETS4_FURY			= "General's Plate Gauntlets";
 ITEM_TRINKET_INSIGNIA_OF_THE_ALLIANCE_FURY = "Insignia of the Alliance";
 ITEM_TRINKET_INSIGNIA_OF_THE_HORDE_FURY	= "Insignia of the Horde"
 ITEM_TRINKET_LINKENS_BOOMERANG_FURY	= "Linken's Boomerang";
+ITEM_TRINKET_TIDAL_CHARM		= "Tidal Charm";
 ITEM_BELT_SPIDER_BELT_FURY		= "Spider Belt";
 ITEM_BOOTS_ORNATE_MITHRIL_BOOTS_FURY	= "Ornate Mithril Boots";
 
