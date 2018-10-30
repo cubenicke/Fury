@@ -11,7 +11,7 @@
 --
 --------------------------------------------------
 
-function Fury_Configuration_Init()
+local function Fury_Configuration_Init()
 
 	FURY_VERSION = "1.16.3"
 
@@ -246,7 +246,7 @@ local function Debug(msg)
 	end
 end
 
-function PrintEffects(target)
+local function PrintEffects(target)
 	local id = 1
 	if UnitBuff(target, id) then
 		Print(SLASH_BUFFS_FURY)
@@ -298,7 +298,7 @@ local res = {
 	}
 }
 
-function UseRes(type)
+local function UseRes(type)
 	for _, name in pairs(res[type]) do
 		if UnitName("target") == name then
 			return true
@@ -307,10 +307,117 @@ function UseRes(type)
 	return false
 end
 
-
+--------------------------------------------------
+--
+-- Distance handling
+--
 --------------------------------------------------
 
-function SpellId(spellname)
+local function Fury_InitDistance()
+	local found = 0
+	yard30 = nil
+	yard25 = nil
+	yard10 = nil
+	yard08 = nil
+	yard05 = nil
+	for i = 1, 120 do
+		t = GetActionTexture(i)
+		if t then
+			if not yard30 then
+				if string.find(t, "Ability_Marksmanship") -- Shoot
+				  or string.find(t, "Ability_Throw") then -- Throw
+					yard30 = i
+					Debug("30 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard25 then
+				if string.find(t, "Ability_Warrior_Charge") -- Charge
+				  or string.find(t, "Ability_Rogue_Sprint") then -- Intercept
+					yard25 = i
+					Debug("25 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard10 then
+				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
+					yard10 = i
+					Debug("10 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard08 then
+				if string.find(t, "Ability_Marksmanship") -- Shoot
+				  or string.find(t, "Ability_Throw") then -- Throw
+					yard08 = i
+					Debug("08 yard: "..t)
+					found = found + 1
+				end
+			end
+			if not yard05 then
+				if string.find(t, "Ability_Warrior_Sunder") -- Sunder Armor
+				  or string.find(t, "Ability_Warrior_DecisiveStrike") -- Slam
+				  or string.find(t, "Ability_Warrior_Disarm") -- Disarm
+				  or string.find(t, "INV_Gauntlets_04") -- Pummel
+				  or string.find(t, "Ability_MeleeDamage") -- Overpower
+				  or string.find(t, "Ability_Warrior_PunishingBlow") -- Mocking blow
+				  or string.find(t, "Ability_Warrior_Revenge") -- Revenge
+				  or string.find(t, "Ability_Gouge") -- Rend
+				  or string.find(t, "INV_Sword_48") -- Execute
+				  or string.find(t, "ability_warrior_savageblow") -- Mortal Strike
+				  or string.find(t, "Ability_Warrior_Cleave") -- Cleave
+				  or string.find(t, "INV_Shield_05") -- Shield Slam
+				  or string.find(t, "Spell_Nature_Bloodlust") then -- Bloodthirst
+					yard05 = i
+					Debug("5 yard: "..t)
+					found = found + 1
+				end
+			end
+			if found == 5 then
+				Debug("Found all distance check spells ("..i..")")
+				return
+			end
+		end
+	end
+	-- Print if any distance check spell is missing
+	if not yard30 or not yard08 then
+		Print(CHAT_MISSING_SPELL_SHOOT_THROW_FURY)
+	end
+	if not yard25 then
+		Print(CHAT_MISSING_SPELL_INTERCEPT_CHARGE_FURY)
+	end
+	if not yard10 then
+		Print(CHAT_MISSING_SPELL_THUNDERCLAP_FURY)
+	end
+	if not yard05 then
+		Print(CHAT_MISSING_SPELL_PUMMEL_FURY)
+	end
+end
+
+local function Fury_Distance()
+	if not UnitCanAttack("player", "target") then
+		return 0 -- invalid target
+	end
+	if yard05 and IsActionInRange(yard05) == 1 then
+		return 5 -- 0 - 5
+	end
+	if yard10 and IsActionInRange(yard10) == 1 then
+		if yard08 and IsActionInRange(yard08) == 0 then
+			return 7 -- 6 - 7
+		end
+		return 10 -- 8 - 10
+	end
+	if yard25 and IsActionInRange(yard25) == 1 then
+		return 25 -- 11 - 25
+	end
+	if yard30 and IsActionInRange(yard30) == 1 then
+		return 30 -- 26 - 30
+	end
+	return 100 -- 31 - <na>
+end
+--------------------------------------------------
+
+local function SpellId(spellname)
 	local id = 1
 	for i = 1, GetNumSpellTabs() do
 		local _, _, _, numSpells = GetSpellTabInfo(i)
@@ -325,18 +432,20 @@ function SpellId(spellname)
 	return nil
 end
 
-function SpellReady(spellname)
+local function SpellReady(spellname)
 	local id = SpellId(spellname)
 	if id then
 		local start, duration = GetSpellCooldown(id, 0)
 		if start == 0 and duration == 0 and FuryLastSpellCast + 1 <= GetTime() then
 			return true
 		end
+		return false
 	end
+	Debug("SR: "..spellname.." unknown")
 	return false
 end
 
-function HasDebuff(unit, texturename, amount)
+local function HasDebuff(unit, texturename, amount)
 	local id = 1
 	while UnitDebuff(unit, id) do
 		local debuffTexture,debuffAmount = UnitDebuff(unit, id)
@@ -352,7 +461,7 @@ function HasDebuff(unit, texturename, amount)
 	return nil
 end
 
-function HasBuff(unit, texturename)
+local function HasBuff(unit, texturename)
 	local id = 1
 	while UnitBuff(unit, id) do
 		local buffTexture = UnitBuff(unit, id)
@@ -373,7 +482,7 @@ local function HasBuffId(target, spellId)
 	return nil
 end
 
-function UseContainerItemByNameOnPlayer(search)
+local function UseContainerItemByNameOnPlayer(search)
 	for bag = 0,4 do
 		for slot = 1,GetContainerNumSlots(bag) do
 			local item = GetContainerItemLink(bag,slot)
@@ -388,7 +497,7 @@ function UseContainerItemByNameOnPlayer(search)
 end
 --------------------------------------------------
 
-function ActiveStance()
+local function ActiveStance()
 	--Detect the active stance
 	for i = 1, 3 do
 		local _, _, active = GetShapeshiftFormInfo(i)
@@ -399,7 +508,7 @@ function ActiveStance()
 	return nil
 end
 
-function Weapon()
+local function Weapon()
 	--Detect if a suitable weapon (not a skinning knife/mining pick and not broken) is present
 	local item = GetInventoryItemLink("player", 16)
 	if item then
@@ -412,7 +521,7 @@ function Weapon()
 	return nil
 end
 
-function Shield()
+local function Shield()
 	--Detect if a shield is present
 	local item = GetInventoryItemLink("player", 17)
 	if item then
@@ -425,7 +534,7 @@ function Shield()
 	return nil
 end
 
-function IsTrinketEquipped(name)
+local function IsTrinketEquipped(name)
 	for slot = 13, 14 do
 		local item = GetInventoryItemLink("player", slot)
 		if item then
@@ -439,7 +548,7 @@ function IsTrinketEquipped(name)
 	return nil
 end
 
-function Ranged()
+local function Ranged()
 	--Detect if a ranged weapon is equipped and return type
 	local item = GetInventoryItemLink("player", 18)
 	if item then
@@ -450,7 +559,7 @@ function Ranged()
 	return nil
 end
 
-function HamstringCost()
+local function HamstringCost()
 	--Calculate the cost of Hamstring based on gear
 	local i = 0
 	local item = GetInventoryItemLink("player", 10)
@@ -464,7 +573,7 @@ function HamstringCost()
 	return 10 - i
 end
 
-function AntiStealthDebuff()
+local function AntiStealthDebuff()
 	--Detect anti-stealth debuffs
 	--Rend, Deep Wounds, Serpent Sting, Immolate, Curse of Agony , Garrote, Rupture, Deadly Poison, Fireball, Ignite, Pyroblast, Corruption, Siphon Life, Faerie Fire, Moonfire, Rake, Rip, Pounce, Insect Swarm, Holy Fire, Wyvern Sting, Devouring Plague
 	if HasDebuff("target", "Ability_Gouge")
@@ -495,7 +604,7 @@ function AntiStealthDebuff()
 	return nil
 end
 
-function ImmobilizingDebuff()
+local function ImmobilizingDebuff()
 	-- Detect immobilizing buffs
 	if HasDebuff("player", "Spell_Frost_FrostNova")
 	  or HasDebuff("player", "spell_Nature_StrangleVines") then
@@ -504,7 +613,7 @@ function ImmobilizingDebuff()
 	return nil
 end
 
-function SnareDebuff(unit)
+local function SnareDebuff(unit)
 	--Detect snaring debuffs
 	--Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock
 	if HasDebuff(unit, "Ability_ShockWave")
@@ -519,14 +628,14 @@ function SnareDebuff(unit)
 	return nil
 end
 
-function Fury_RunnerDetect(arg1, arg2)
+local function Fury_RunnerDetect(arg1, arg2)
 	--Thanks to HateMe
 	if arg1 == CHAT_RUNNER_FURY then
 		Fury_Runners[arg2] = true
 	end
 end
 
-function ItemExists(itemName)
+local function ItemExists(itemName)
 	for bag = 4, 0, -1 do
 		for slot = 1, GetContainerNumSlots(bag) do
 			local _, itemCount = GetContainerItemInfo(bag, slot)
@@ -546,7 +655,7 @@ function ItemExists(itemName)
 	return false
 end
 
-function ItemReady(item)
+local function ItemReady(item)
 	if ItemExists(item) == false then
 		return false
 	end
@@ -557,7 +666,7 @@ function ItemReady(item)
 	return false
 end
 
-function EquippedAndReady(slot, name)
+local function EquippedAndReady(slot, name)
 	local item = GetInventoryItemLink("player", slot)
 	if item then
 		local _, _, itemCode = strfind(item, "(%d+):")
@@ -570,7 +679,7 @@ function EquippedAndReady(slot, name)
 	return nil
 end
 
-function CheckCooldown(slot)
+local function CheckCooldown(slot)
 	local start, duration = GetInventoryItemCooldown("player", slot)
 	if duration > 30 then
 		-- Alllow duration for 30 seconds since it's when you equip the item
@@ -584,7 +693,14 @@ function CheckCooldown(slot)
 	return nil
 end
 
-function addEnemyCount(Enemies)
+local function Fury_SetEnemies(count)
+	for i=5,1,-1 do
+		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
+	end
+	WWEnemies.Hist[0] = Enemies
+end
+
+local function addEnemyCount(Enemies)
 	Fury_SetEnemies(Enemies)
 	Debug("Enemies "..Enemies)
 	if Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE] then
@@ -593,18 +709,11 @@ function addEnemyCount(Enemies)
 	end
 end
 
-function Fury_SetEnemies(count)
-	for i=5,1,-1 do
-		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
-	end
-	WWEnemies.Hist[0] = Enemies
-end
-
-function Fury_GetEnemies()
+local function Fury_GetEnemies()
 	return WWEnemies.Hist[0] or 0;
 end
 
-function Fury_Shoot()
+local function Fury_Shoot()
 	local ranged_type = Ranged()
 	local spell
 	if ranged_type == ITEM_TYPE_BOWS_FURY then
@@ -671,7 +780,8 @@ function Fury()
 
 		-- Use Berserker rage to interrupt fears and ....
 		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
-		  and (FuryIncapacitate or FuryFear)
+		  and (FuryIncapacitate
+		  or FuryFear)
 		  and ActiveStance() == 3
 		  and SpellReady(ABILITY_BERSERKER_RAGE_FURY) then
 			Debug("Berserker Rage")
@@ -1863,7 +1973,7 @@ function Fury_OnLoad()
 	SLASH_FURY1 = "/fury"
 end
 
-function Fury_ScanTalents()
+local function Fury_ScanTalents()
 	Debug("Scanning Talent Tree")
 	--Calculate the cost of Heroic Strike based on talents
 	local _, _, _, _, currRank = GetTalentInfo(1, 1)
@@ -2144,111 +2254,3 @@ function Fury_OnEvent(event)
 	end
 end
 
---------------------------------------------------
---
--- Distance handling
---
---------------------------------------------------
-
-function Fury_InitDistance()
-	local found = 0
-	yard30 = nil
-	yard25 = nil
-	yard10 = nil
-	yard08 = nil
-	yard05 = nil
-	for i = 1, 120 do
-		t = GetActionTexture(i)
-		if t then
-			if not yard30 then
-				if string.find(t, "Ability_Marksmanship") -- Shoot
-				  or string.find(t, "Ability_Throw") then -- Throw
-					yard30 = i
-					Debug("30 yard: "..t)
-					found = found + 1
-				end
-			end
-			if not yard25 then
-				if string.find(t, "Ability_Warrior_Charge") -- Charge
-				  or string.find(t, "Ability_Rogue_Sprint") then -- Intercept
-					yard25 = i
-					Debug("25 yard: "..t)
-					found = found + 1
-				end
-			end
-			if not yard10 then
-				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
-					yard10 = i
-					Debug("10 yard: "..t)
-					found = found + 1
-				end
-			end
-			if not yard08 then
-				if string.find(t, "Ability_Marksmanship") -- Shoot
-				  or string.find(t, "Ability_Throw") then -- Throw
-					yard08 = i
-					Debug("08 yard: "..t)
-					found = found + 1
-				end
-			end
-			if not yard05 then
-				if string.find(t, "Ability_Warrior_Sunder") -- Sunder Armor
-				  or string.find(t, "Ability_Warrior_DecisiveStrike") -- Slam
-				  or string.find(t, "Ability_Warrior_Disarm") -- Disarm
-				  or string.find(t, "INV_Gauntlets_04") -- Pummel
-				  or string.find(t, "Ability_MeleeDamage") -- Overpower
-				  or string.find(t, "Ability_Warrior_PunishingBlow") -- Mocking blow
-				  or string.find(t, "Ability_Warrior_Revenge") -- Revenge
-				  or string.find(t, "Ability_Gouge") -- Rend
-				  or string.find(t, "INV_Sword_48") -- Execute
-				  or string.find(t, "ability_warrior_savageblow") -- Mortal Strike
-				  or string.find(t, "Ability_Warrior_Cleave") -- Cleave
-				  or string.find(t, "INV_Shield_05") -- Shield Slam
-				  or string.find(t, "Spell_Nature_Bloodlust") then -- Bloodthirst
-					yard05 = i
-					Debug("5 yard: "..t)
-					found = found + 1
-				end
-			end
-			if found == 5 then
-				Debug("Found all distance check spells ("..i..")")
-				return
-			end
-		end
-	end
-	-- Print if any distance check spell is missing
-	if not yard30 or not yard08 then
-		Print(SLASH_MISSING_SPELL_SHOOT_THROW_FURY)
-	end
-	if not yard25 then
-		Print(SLASH_MISSING_SPELL_INTERCEPT_CHARGE_FURY)
-	end
-	if not yard10 then
-		Print(SLASH_MISSING_SPELL_THUNDERCLAP_FURY)
-	end
-	if not yard05 then
-		Print(SLASH_MISSING_SPELL_PUMMEL_FURY)
-	end
-end
-
-function Fury_Distance()
-	if not UnitCanAttack("player", "target") then
-		return 0 -- invalid target
-	end
-	if yard05 and IsActionInRange(yard05) == 1 then
-		return 5 -- 0 - 5
-	end
-	if yard10 and IsActionInRange(yard10) == 1 then
-		if yard08 and IsActionInRange(yard08) == 0 then
-			return 7 -- 6 - 7
-		end
-		return 10 -- 8 - 10
-	end
-	if yard25 and IsActionInRange(yard25) == 1 then
-		return 25 -- 11 - 25
-	end
-	if yard30 and IsActionInRange(yard30) == 1 then
-		return 30 -- 26 - 30
-	end
-	return 100 -- 31 - <na>
-end
