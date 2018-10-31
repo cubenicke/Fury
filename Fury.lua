@@ -708,13 +708,6 @@ local function addEnemyCount(Enemies)
 	end
 end
 
-local function Fury_SetEnemies(count)
-	for i=5,1,-1 do
-		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
-	end
-	WWEnemies.Hist[0] = Enemies
-end
-
 local function Fury_GetEnemies()
 	return WWEnemies.Hist[0] or 0;
 end
