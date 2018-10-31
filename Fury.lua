@@ -267,9 +267,8 @@ end
 
 local res = {
 	["fire"] = {
-		--Naxxramas
-		BOSS_NAXXRAMAS_GRAND_WIDOW_FAERLINA_FURY,
-		BOSS_NAXXRAMAS_THANE_KORTH_AZZ_FURY,
+		BOSS_NAX_GRAND_WIDOW_FAERLINA_FURY,
+		BOSS_NAX_THANE_KORTH_AZZ_FURY,
 		BOXX_MC_RAGNAROS_FURY,
 		BOSS_ONYXIA_FURY
 	},
@@ -709,6 +708,13 @@ local function addEnemyCount(Enemies)
 	end
 end
 
+local function Fury_SetEnemies(count)
+	for i=5,1,-1 do
+		WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
+	end
+	WWEnemies.Hist[0] = Enemies
+end
+
 local function Fury_GetEnemies()
 	return WWEnemies.Hist[0] or 0;
 end
@@ -1001,7 +1007,7 @@ function Fury()
 					FuryLastStanceCast = GetTime()
 				end
 			end
-			
+
 		-- 17, slow target
 		elseif Fury_Configuration[ABILITY_PIERCING_HOWL_FURY]
 		  and FuryPiercingHowl
@@ -1128,7 +1134,7 @@ function Fury()
 		  and SpellReady(ABILITY_SWEEPING_STRIKES_FURY) then
 			Debug("Sweeping Strikes")
 			CastSpellByName(ABILITY_SWEEPING_STRIKES_FURY)
-			
+
 		-- 23, Bloodthirst
 		elseif FuryBloodthirst
 		  and Fury_Configuration[ABILITY_BLOODTHIRST_FURY]
@@ -1149,7 +1155,7 @@ function Fury()
 			Debug("Mortal Strike")
 			CastSpellByName(ABILITY_MORTAL_STRIKE_FURY)
 			FuryLastSpellCast = GetTime()
-			
+
 		-- 25, Whirlwind
 		elseif (Fury_Configuration[ABILITY_WHIRLWIND_FURY]
 		  or Fury_Configuration[MODE_HEADER_AOE])
@@ -1412,6 +1418,7 @@ local function Fury_Charge()
 	if not UnitExists("target") and not FuryCombat then
 		if ActiveStance() ~= Fury_Configuration["PrimaryStance"] then
 			CastShapeshiftForm(Fury_Configuration["PrimaryStance"])
+			FuryLastStanceCast = GetTime()
 		end
 		Debug("No target")
 		return
@@ -2256,4 +2263,3 @@ function Fury_OnEvent(event)
 
 	end
 end
-

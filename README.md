@@ -82,7 +82,9 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
 ![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) Rend, ability_gouge  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash  
+![](https://classicdb.ch/images/icons/small/inv_shield_05.jpg) Shield Slam, inv_shield_05  
 ![](https://classicdb.ch/images/icons/small/ability_marksmanship.jpg) Shoot Bow,Crossbow,Gun, ability_marksmanship  
+![](https://classicdb.ch/images/icons/small/ability_warrior_sunder.jpg) Sunder Armor, ability_warrior_sunder  
 ![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) Sweeping Strikes, ability_rogue_slicedice  
 ![](https://classicdb.ch/images/icons/small/ability_throw.jpg) Throw, ability_throw  
 ![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) Whirlwind, Ability_Whirlwind  
