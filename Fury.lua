@@ -1710,7 +1710,7 @@ function Fury_SlashCommand(msg)
 		Fury_Charge()
 
 	elseif command == "talents" then
-		Print(SLASH_TALENTS_RESCAN_FURY)
+		Print(CHAT_TALENTS_RESCAN_FURY)
 		Fury_InitDistance()
 		Fury_ScanTalents()
 
