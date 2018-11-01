@@ -1563,6 +1563,129 @@ local function Fury_Charge()
 	end
 end
 
+local function Fury_ScanTalents()
+	Debug("Scanning Talent Tree")
+	--Calculate the cost of Heroic Strike based on talents
+	local _, _, _, _, currRank = GetTalentInfo(1, 1)
+	FuryHeroicStrikeCost = (15 - tonumber(currRank))
+	if FuryHeroicStrikeCost < 15 then
+		Debug("Heroic Cost")
+	end
+	--Calculate the rage retainment of Tactical Mastery
+	local _, _, _, _, currRank = GetTalentInfo(1, 5)
+	FuryTacticalMastery = (tonumber(currRank) * 5)
+	if FuryTacticalMastery > 0 then
+		Debug("Tactical Mastery")
+	end
+	-- Check for Sweeping Strikes
+	local _, _, _, _, currRank = GetTalentInfo(1, 13)
+	if currRank > 0 then
+		Debug("Sweeping Strikes")
+		FurySweepingStrikes = true
+	else
+		FurySweepingStrikes = false
+	end
+	-- Check for Mace Specializaton
+	local _, _, _, _, currRank = GetTalentInfo(1, 14)
+	if currRank > 0 then
+		Debug("Mace Specializaton")
+		FuryMaceSpec = true
+	else
+		FuryMaceSpec = false
+	end
+	-- Check for Sword Specializaton
+	local _, _, _, _, currRank = GetTalentInfo(1, 15)
+	if currRank > 0 then
+		Debug("Sword Specializaton")
+		FurySwordSpec = true
+	else
+		FurySwordSpec = false
+	end
+	-- Check for Improved Hamstring
+	local _, _, _, _, currRank = GetTalentInfo(1, 17)
+	if currRank > 0 then
+		Debug("Improved Hamstring")
+		FuryImpHamstring = true
+	else
+		FuryImpHamstring = false
+	end
+	--Check for Mortal Strike
+	local _, _, _, _, currRank = GetTalentInfo(1, 18)
+	if currRank > 0 then
+		Debug("Mortal Strike")
+		FuryMortalStrike = true
+	else
+		FuryMortalStrike = false
+	end	--Check for Piercing Howl
+	local _, _, _, _, currRank = GetTalentInfo(2, 6)
+	if currRank > 0 then
+		Debug("Piercing Howl")
+		FuryPiercingHowl = true
+	else
+		FuryPiercingHowl = false
+	end
+	--Calculate the cost of Execute based on talents
+	local _, _, _, _, currRank = GetTalentInfo(2, 10)
+	FuryExecuteCost = (15 - strsub(tonumber(currRank) * 2.5, 1, 2))
+	if FuryExecuteCost < 15 then
+		Debug("Execute Cost")
+	end
+	--Check for Death Wish
+	local _, _, _, _, currRank = GetTalentInfo(2, 15)
+	if currRank > 0 then
+		Debug("Death Wish")
+		FuryDeathWish = true
+	else
+		FuryDeathWish = false
+	end
+	-- Check for Improved Berserker Rage
+	local _, _, _, _, currRank = GetTalentInfo(2, 15)
+	if currRank > 0 then
+		Debug("Improved Berserker Rage")
+		FuryBerserkerRage = true
+	else
+		FuryBerserkerRage = false
+	end
+	--Check for Flurry
+	local _, _, _, _, currRank = GetTalentInfo(2, 16)
+	if currRank > 0 then
+		Debug("Flurry")
+		FuryFlurry = true
+	else
+		FuryFlurry = false
+	end
+
+	--Check for Bloodthirst
+	local _, _, _, _, currRank = GetTalentInfo(2, 17)
+	if currRank > 0 then
+		Debug("Bloodthirst")
+		FuryBloodthirst =  true
+	else
+		FuryBloodthirst = false
+	end
+	--Check for Shield Slam
+	local _, _, _, _, currRank = GetTalentInfo(3, 17)
+	if currRank > 0 then
+		Debug("Shield Slam")
+		FuryShieldSlam =  true
+	else
+		FuryShieldSlam = false
+	end
+	if UnitRace("player") == RACE_ORC then
+		Debug("Blood Fury")
+		FuryRacialBloodFury = true
+	else
+		FuryRacialBloodFury = false
+	end
+	if UnitRace("player") == RACE_TROLL then
+		Debug("Berserking")
+		FuryRacialBerserking = true
+	else
+		FuryRacialBerserking = false
+	end
+	FuryTalents = true
+end
+
 --------------------------------------------------
 --
 -- Chat Handlers
@@ -1974,123 +2097,6 @@ function Fury_OnLoad()
 	FuryRevengeReadyUntil = 0
 	SlashCmdList["FURY"] = Fury_SlashCommand
 	SLASH_FURY1 = "/fury"
-end
-
-local function Fury_ScanTalents()
-	Debug("Scanning Talent Tree")
-	--Calculate the cost of Heroic Strike based on talents
-	local _, _, _, _, currRank = GetTalentInfo(1, 1)
-	FuryHeroicStrikeCost = (15 - tonumber(currRank))
-	if FuryHeroicStrikeCost < 15 then
-		Debug("Heroic Cost")
-	end
-	--Calculate the rage retainment of Tactical Mastery
-	local _, _, _, _, currRank = GetTalentInfo(1, 5)
-	FuryTacticalMastery = (tonumber(currRank) * 5)
-	if FuryTacticalMastery > 0 then
-		Debug("Tactical Mastery")
-	end
-	-- Check for Sweeping Strikes
-	local _, _, _, _, currRank = GetTalentInfo(1, 13)
-	if currRank > 0 then
-		Debug("Sweeping Strikes")
-		FurySweepingStrikes = true
-	else
-		FurySweepingStrikes = false
-	end
-	-- Check for Mace Specializaton
-	local _, _, _, _, currRank = GetTalentInfo(1, 14)
-	if currRank > 0 then
-		Debug("Mace Specializaton")
-		FuryMaceSpec = true
-	else
-		FuryMaceSpec = false
-	end
-	-- Check for Sword Specializaton
-	local _, _, _, _, currRank = GetTalentInfo(1, 15)
-	if currRank > 0 then
-		Debug("Sword Specializaton")
-		FurySwordSpec = true
-	else
-		FurySwordSpec = false
-	end
-	-- Check for Improved Hamstring
-	local _, _, _, _, currRank = GetTalentInfo(1, 17)
-	if currRank > 0 then
-		Debug("Improved Hamstring")
-		FuryImpHamstring = true
-	else
-		FuryImpHamstring = false
-	end
-	--Check for Mortal Strike
-	local _, _, _, _, currRank = GetTalentInfo(1, 18)
-	if currRank > 0 then
-		Debug("Mortal Strike")
-		FuryMortalStrike = true
-	else
-		FuryMortalStrike = false
-	end	--Check for Piercing Howl
-	local _, _, _, _, currRank = GetTalentInfo(2, 6)
-	if currRank > 0 then
-		Debug("Piercing Howl")
-		FuryPiercingHowl = true
-	else
-		FuryPiercingHowl = false
-	end
-	--Calculate the cost of Execute based on talents
-	local _, _, _, _, currRank = GetTalentInfo(2, 10)
-	FuryExecuteCost = (15 - strsub(tonumber(currRank) * 2.5, 1, 2))
-	if FuryExecuteCost < 15 then
-		Debug("Execute Cost")
-	end
-	--Check for Death Wish
-	local _, _, _, _, currRank = GetTalentInfo(2, 15)
-	if currRank > 0 then
-		Debug("Death Wish")
-		FuryDeathWish = true
-	else
-		FuryDeathWish = false
-	end
-	-- Check for Improved Berserker Rage
-	local _, _, _, _, currRank = GetTalentInfo(2, 15)
-	if currRank > 0 then
-		Debug("Improved Berserker Rage")
-		FuryBerserkerRage = true
-	else
-		FuryBerserkerRage = false
-	end
-	--Check for Flurry
-	local _, _, _, _, currRank = GetTalentInfo(2, 16)
-	if currRank > 0 then
-		Debug("Flurry")
-		FuryFlurry = true
-	else
-		FuryFlurry = false
-	end
-
-	--Check for Bloodthirst
-	local _, _, _, _, currRank = GetTalentInfo(2, 17)
-	if currRank > 0 then
-		Debug("Bloodthirst")
-		FuryBloodthirst =  true
-	else
-		FuryBloodthirst = false
-	end
-	--Check for Shield Slam
-	local _, _, _, _, currRank = GetTalentInfo(3, 17)
-	if currRank > 0 then
-		Debug("Shield Slam")
-		FuryShieldSlam =  true
-	else
-		FuryShieldSlam = false
-	end
-	if UnitRace("player") == RACE_ORC then
-		Debug("Blood Fury")
-		FuryRacialBloodFury = true
-	else
-		FuryRacialBloodFury = false
-	end
-	FuryTalents = true
 end
 
 function Fury_OnEvent(event)
