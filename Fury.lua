@@ -21,6 +21,9 @@ local function Fury_Configuration_Init()
 	if not Fury_Runners then
 		Fury_Runners = { }
 	end
+	if not Fury_ImmuneDisarm then
+		Fury_ImmuneDisarm = { }
+	end
 
 	if Fury_Configuration["Enabled"] == nil then
 		Fury_Configuration["Enabled"] = true --Set to false to disable the addon
@@ -1097,6 +1100,7 @@ function Fury()
 		  or UnitClass("target") == CLASS_SHAMAN_FURY
 		  or UnitClass("target") == CLASS_WARRIOR_FURY)
 		  and UnitMana("player") >= 20
+		  and Fury_ImmuneDisarm[UnitName("target")] == nil
 		  and (ActiveStance() == 2
 		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0))
@@ -1298,7 +1302,8 @@ function Fury()
 			UseContainerItemByNameOnPlayer(ITEM_CONS_OIL_OF_IMMOLATION)
 
 		-- 37, Racial berserking
-		elseif Fury_Configuration[RACIAL_BERSERKING_FURY]
+		elseif FuryRacialBerserking
+		  and Fury_Configuration[RACIAL_BERSERKING_FURY]
 		  and UnitMana("player") >= 5
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) <= tonumber(Fury_Configuration["BerserkHealth"])
 		  and not HasBuff("player", "Racial_Berserk")
@@ -1522,22 +1527,6 @@ local function Fury_Charge()
 
 			end
 
-		elseif Fury_Configuration[ABILITY_CHARGE_FURY]
-		  and ActiveStance() ~= 1
-		  and dist <= 25
-		  and dist > 7
-		  and SpellReady(ABILITY_CHARGE_FURY)
-		  and not SpellReady(ABILITY_INTERCEPT_FURY) then
-			Debug("Arm Stance (Charge)")
-			if Fury_Configuration["PrimaryStance"] ~= 1
-			  and FuryOldStance == nil then
-				FuryOldStance = ActiveStance()
-				FuryLastStanceCast = GetTime()
-
-			end
-			CastShapeshiftForm(1)
-			FuryLastStanceCast = GetTime()
-
 		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
 		  and FuryBerserkerRage
 		  and ActiveStance() == 3
@@ -1559,6 +1548,20 @@ local function Fury_Charge()
 			Debug("Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY);
 
+		elseif Fury_Configuration[ABILITY_CHARGE_FURY]
+		  and ActiveStance() ~= 1
+		  and dist <= 25
+		  and dist > 7
+		  and SpellReady(ABILITY_CHARGE_FURY) then
+			Debug("Arm Stance (Charge)")
+			if Fury_Configuration["PrimaryStance"] ~= 1
+			  and FuryOldStance == nil then
+				FuryOldStance = ActiveStance()
+				FuryLastStanceCast = GetTime()
+
+			end
+			CastShapeshiftForm(1)
+			FuryLastStanceCast = GetTime()
 		end
 	end
 end
@@ -2063,34 +2066,35 @@ end
 --------------------------------------------------
 
 function Fury_OnLoad()
-	this:RegisterEvent("PLAYER_REGEN_ENABLED")
-	this:RegisterEvent("PLAYER_REGEN_DISABLED")
-	this:RegisterEvent("PLAYER_ENTER_COMBAT")
-	this:RegisterEvent("PLAYER_LEAVE_COMBAT")
-	this:RegisterEvent("CHAT_MSG_COMBAT_SELF_MISSES")
-	this:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
-	this:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
-	this:RegisterEvent("VARIABLES_LOADED")
-	this:RegisterEvent("CHARACTER_POINTS_CHANGED")
-	this:RegisterEvent("PLAYER_TARGET_CHANGED")
-
-	this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
-	this:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE")
-	this:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
-	this:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF")
-
-	this:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES")
-
-	this:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE")
-	this:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
-
-	this:RegisterEvent("PLAYER_AURAS_CHANGED")
+	local evs = {
+		"PLAYER_REGEN_ENABLED",
+		"PLAYER_REGEN_DISABLED",
+		"PLAYER_ENTER_COMBAT",
+		"PLAYER_LEAVE_COMBAT",
+		"CHAT_MSG_COMBAT_SELF_MISSES",
+		"CHAT_MSG_SPELL_SELF_DAMAGE",
+		"CHAT_MSG_MONSTER_EMOTE",
+		"VARIABLES_LOADED",
+		"CHARACTER_POINTS_CHANGED",
+		"PLAYER_TARGET_CHANGED",
+		"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
+		"CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE",
+		"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF",
+		"CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF",
+		"CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES",
+		"CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE",
+		"CHAT_MSG_SPELL_AURA_GONE_SELF",
+		"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF",
+	}
+	for k, ev in pairs(evs) do 
+		this:RegisterEvent(ev);
+	end
 
 	WWEnemies = { Hist = {}, WWTime = 0, WWCount = nil, CleaveTime = 0, CleaveCount = nil }
 	for i = 0,5 do
 		WWEnemies.Hist[i] = 0
 	end
-	
+
 	FuryLastSpellCast = GetTime()
 	FuryLastStanceCast = GetTime()
 	FuryRevengeTime = 0
@@ -2260,5 +2264,10 @@ function Fury_OnEvent(event)
 	elseif event == "PLAYER_LEAVE_COMBAT" then
 		FuryAttack = nil
 
+	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
+		local _,_,name = string.find(arg1, CHAT_DISARM_IMMUNE_FURY)
+		if name ~= nil then
+			Fury_ImmuneDisarm[name] = true
+		end
 	end
 end

@@ -23,6 +23,7 @@ CLASS_WARLOCK_FURY			= "Warlock";
 CLASS_WARRIOR_FURY			= "Warrior";
 
 RACE_ORC				= "Orc";
+RACE_TROLL				= "Troll";
 
 ABILITY_BATTLE_SHOUT_FURY		= "Battle Shout";
 ABILITY_BATTLE_STANCE_FURY		= "Battle Stance";
@@ -119,7 +120,9 @@ CHAT_IS_ON_CD_FURY			= "is on CD, replace?";
 CHAT_MISSING_SPELL_SHOOT_THROW_FURY	= "Missing spell on action bar Shoot or Throw";
 CHAT_MISSING_SPELL_INTERCEPT_CHARGE_FURY	= "Missing spell on action bar Intercept or Charge";
 CHAT_MISSING_SPELL_THUNDERCLAP_FURY	= "Missing spell on action bar Thunder Clap";
-CHAT_MISSING_SPELL_PUMMEL_FURY	= "Missing spell on action bar (any close combat spell, like Pummel)";
+CHAT_MISSING_SPELL_PUMMEL_FURY		= "Missing spell on action bar (any close combat spell, like Pummel)";
+CHAT_DISARM_IMMUNE_FURY			= "Your Disarm failed. (.+) is immune." 
+
 CHAT_DISABLING_AOE_FURY			= "Disabling AoE";
 CHAT_BUFFS_FURY				= "Buffs:";
 CHAT_DEBUFFS_FURY			= "Debuffs:";
