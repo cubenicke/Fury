@@ -2085,6 +2085,7 @@ function Fury_OnLoad()
 		"CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE",
 		"CHAT_MSG_SPELL_AURA_GONE_SELF",
 		"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF",
+		"PLAYER_AURAS_CHANGED",
 	}
 	for k, ev in pairs(evs) do 
 		this:RegisterEvent(ev);
