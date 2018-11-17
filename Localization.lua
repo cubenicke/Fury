@@ -211,6 +211,7 @@ HELP_ATTACK				= "/fury attack - toggles the use of autoattack. Experimental.";
 HELP_AOE				= "/fury aoe - disables bloodthirst/mortal strike and enables Cleave";
 HELP_DANCE				= "/fury dance <number> - sets rage allowed to be wasted when switching stance (dancing)";
 HELP_DEBUG				= "/fury debug - writes commands in log";
+HELP_LOG				= "/fury log [on|off] - Create a channel and log to <wow>\\Logs\\WowChatLog.txt";
 HELP_OOI				= "/fury ooi - toggle use of Oil of Immolation";
 HELP_TALENTS				= "/fury talents - Rescan spells and talents (needed after movement in action bar)";
 HELP_TOGGLE				= "/fury toggle - toggle if addon is active";

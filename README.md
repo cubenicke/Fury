@@ -32,6 +32,7 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 ## Reference
 
 ### Logic
+
 Dismount (Mounted only)  
 Berserker Rage (Feared only)  
 Execute  
@@ -62,40 +63,59 @@ Heroic Strike / Cleave
 
 ### Abilities
 **Name, Icon**  
-![](https://classicdb.ch/images/icons/small/ability_warrior_battleshout.jpg) Battle Shout, Ability_Warrior_BattleShout  
-![](https://classicdb.ch/images/icons/small/spell_nature_ancestralguardian.jpg) Berserker Rage, spell_nature_ancestralguardian  
-![](https://classicdb.ch/images/icons/small/racial_orc_berserkerstrength.jpg) Blood Fury, racial_orc_berserkerstrength  
-![](https://classicdb.ch/images/icons/small/ability_racial_bloodrage.jpg) Bloodrage, ability_racial_bloodrage  
-![](https://classicdb.ch/images/icons/small/spell_nature_bloodlust.jpg) Bloodthirst, spell_nature_bloodlust  
-![](https://classicdb.ch/images/icons/small/ability_warrior_charge.jpg) Charge, Ability_Warrior_Charge  
-![](https://classicdb.ch/images/icons/small/ability_warrior_cleave.jpg) Cleave, Ability_Warrior_Cleave  
-![](https://classicdb.ch/images/icons/small/ability_warrior_disarm.jpg) Disarm, ability_warrior_disarm  
-![](https://classicdb.ch/images/icons/small/spell_shadow_deathpact.jpg) Death Wish, Spell_Shadow_DeathPact  
-![](https://classicdb.ch/images/icons/small/ability_warrior_warcry.jpg) Demoralizing Shout, Ability_Warrior_Warcry  
-![](https://classicdb.ch/images/icons/small/inv_sword_48.jpg) Execute, inv_sword_48  
-![](https://classicdb.ch/images/icons/small/ability_shockwave.jpg) Hamstring, ability_shockwave  
-![](https://classicdb.ch/images/icons/small/ability_rogue_ambush.jpg) Heroic Strike, Ability_Rogue_Ambush  
-![](https://classicdb.ch/images/icons/small/ability_rogue_sprint.jpg) Intercept, Ability_Warrior_Rogue_Sprint  
-![](https://classicdb.ch/images/icons/small/ability_warrior_savageblow.jpg) Mortal Strike, ability_warrior_savageblow  
-![](https://classicdb.ch/images/icons/small/ability_meleedamage.jpg) Overpower, ability_meleedamage  
-![](https://classicdb.ch/images/icons/small/spell_shadow_deathscream.jpg) Piercing Howl, spell_shadow_deathscream  
-![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) Pummel, inv_gauntlets_04  
-![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) Rend, ability_gouge  
-![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) Shield Bash, ability_warrior_shieldbash  
-![](https://classicdb.ch/images/icons/small/inv_shield_05.jpg) Shield Slam, inv_shield_05  
-![](https://classicdb.ch/images/icons/small/ability_marksmanship.jpg) Shoot Bow,Crossbow,Gun, ability_marksmanship  
-![](https://classicdb.ch/images/icons/small/ability_warrior_sunder.jpg) Sunder Armor, ability_warrior_sunder  
-![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) Sweeping Strikes, ability_rogue_slicedice  
-![](https://classicdb.ch/images/icons/small/ability_throw.jpg) Throw, ability_throw  
-![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) Whirlwind, Ability_Whirlwind  
+![](https://classicdb.ch/images/icons/small/ability_warrior_battleshout.jpg) [Battle Shout](https://classicdb.ch/?spell=25959)  
+![](https://classicdb.ch/images/icons/small/spell_nature_ancestralguardian.jpg) [Berserker Rage](https://classicdb.ch/?spell=18449)  
+![](https://classicdb.ch/images/icons/small/racial_orc_berserkerstrength.jpg) [Blood Fury](https://classicdb.ch/?spell=20572)  
+![](https://classicdb.ch/images/icons/small/ability_racial_bloodrage.jpg) [Bloodrage](https://classicdb.ch/?spell=2687)  
+![](https://classicdb.ch/images/icons/small/spell_nature_bloodlust.jpg) [Bloodthirst](https://classicdb.ch/?spell=23900)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_charge.jpg) [Charge](https://classicdb.ch/?spell=11578)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_cleave.jpg) [Cleave](https://classicdb.ch/?spell=20569)  
+![](https://classicdb.ch/images/icons/small/spell_shadow_deathpact.jpg) [Death Wish](https://classicdb.ch/?spell=12328)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_warcry.jpg) [Demoralizing Shout](https://classicdb.ch/?spell=11556)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_disarm.jpg) [Disarm](https://classicdb.ch/?spell=676)  
+![](https://classicdb.ch/images/icons/small/inv_sword_48.jpg) [Execute](https://classicdb.ch/?spell=20662)  
+![](https://classicdb.ch/images/icons/small/ability_shockwave.jpg) [Hamstring](https://classicdb.ch/?spell=7373)  
+![](https://classicdb.ch/images/icons/small/ability_rogue_ambush.jpg) [Heroic Strike](https://classicdb.ch/?spell=25286)  
+![](https://classicdb.ch/images/icons/small/ability_rogue_sprint.jpg) [Intercept](https://classicdb.ch/?spell=20252)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_savageblow.jpg) [Mortal Strike](https://classicdb.ch/?spell=21553)  
+![](https://classicdb.ch/images/icons/small/ability_meleedamage.jpg) [Overpower](https://classicdb.ch/?spell=11585)  
+![](https://classicdb.ch/images/icons/small/inv_gauntlets_04.jpg) [Pummel](https://classicdb.ch/?spell=6552)  
+![](https://classicdb.ch/images/icons/small/spell_shadow_deathscream.jpg) [Piercing Howl](https://classicdb.ch/?spell=12323)  
+![](https://classicdb.ch/images/icons/small/ability_gouge.jpg) [Rend](https://classicdb.ch/?spell=11574)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_revenge.jpg) [Revenge](https://classicdb.ch/?spell=25288)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) [Shield Bash](https://classicdb.ch/?spell=72)  
+![](https://classicdb.ch/images/icons/small/inv_shield_05.jpg) [Shield Slam](https://classicdb.ch/?spell=23925)  
+![](https://classicdb.ch/images/icons/small/ability_marksmanship.jpg) [Shoot Bow,Crossbow,Gun](https://classicdb.ch/?spell=3018)  
+![](https://classicdb.ch/images/icons/small/ability_warrior_sunder.jpg) [Sunder Armor](https://classicdb.ch/?spell=11597)  
+![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) [Sweeping Strikes](https://classicdb.ch/?spell=26654)  
+![](https://classicdb.ch/images/icons/small/spell_nature_thunderclap.jpg) [Thunder Clap](https://classicdb.ch/?spell=11581)  
+![](https://classicdb.ch/images/icons/small/ability_throw.jpg) [Throw](https://classicdb.ch/?spell=2764)  
+![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) [Whirlwind](https://classicdb.ch/?spell=1680)  
 
-### Items
-  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_09.jpg) [Juju Chill](https://classicdb.ch/?item=12457),INV_Misc_MonsterScales_09 (Only on Kel'Thuzad and Sapphiron)
-  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_15.jpg) [Juju Ember](https://classicdb.ch/?item=12455),INV_Misc_MonsterScales_15
-  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_17.jpg) [Juju Flurry](https://classicdb.ch/?item=12450),INV_Misc_MonsterScales_17
-  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_07.jpg) [Juju Might](https://classicdb.ch/?item=12460),INV_Misc_MonsterScales_07 Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_92.jpg) [Winterfall Firewater](https://classicdb.ch/?item=12820)
-  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_11.jpg) [Juju Power](https://classicdb.ch/?item=12451),INV_Misc_MonsterScales_11 Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_61.jpg) [Elixir of Giants](https://classicdb.ch/?item=9206)
-  * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956), inv_potion_11
+### Items in rotation
+
+####For rage calculations
+![](https://classicdb.ch/images/icons/small/inv_gauntlets_23.jpg) [Knight-Lieutenant's Plate Gauntlets](https://classicdb.ch/?item=16406)  
+![](https://classicdb.ch/images/icons/small/inv_gauntlets_29.jpg) [Marshal's Plate Gauntlets](https://classicdb.ch/?item=16484)  
+![](https://classicdb.ch/images/icons/small/inv_gauntlets_26.jpg) [Blood Guard's Plate Gloves](https://classicdb.ch/?item=16510)  
+![](https://classicdb.ch/images/icons/small/inv_gauntlets_10.jpg) [General's Plate Gauntlets](https://classicdb.ch/?item=16548)  
+
+####Situational
+![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_01.jpg) [Insignia of the Alliance](https://classicdb.ch/?item=18854)  
+![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_02.jpg) [Insignia of the Horde](https://classicdb.ch/?item=18834)  
+![](https://classicdb.ch/images/icons/small/inv_belt_25.jpg) [Spider Belt](https://classicdb.ch/?item=3863)  
+![](https://classicdb.ch/images/icons/small/inv_boots_01.jpg) [Ornate Mithril Boots](https://classicdb.ch/?item=7936)  
+![](https://classicdb.ch/images/icons/small/inv_misc_rune_01.jpg) [Tidal Charm](https://classicdb.ch/?item=1404)  
+![](https://classicdb.ch/images/icons/small/inv_weapon_shortblade_10.jpg) [Linken's Boomerang](https://classicdb.ch/?item=11905)  
+
+### Consumables
+  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_09.jpg) [Juju Chill](https://classicdb.ch/?item=12457) (Only on Kel'Thuzad and Sapphiron)
+  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_15.jpg) [Juju Ember](https://classicdb.ch/?item=12455)
+  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_17.jpg) [Juju Flurry](https://classicdb.ch/?item=12450)
+  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_07.jpg) [Juju Might](https://classicdb.ch/?item=12460) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_92.jpg) [Winterfall Firewater](https://classicdb.ch/?item=12820))
+  * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_11.jpg) [Juju Power](https://classicdb.ch/?item=12451) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_61.jpg) [Elixir of Giants](https://classicdb.ch/?item=9206))
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956)
+
 
 ### operational Control
 ```
@@ -128,6 +148,7 @@ Heroic Strike / Cleave
 /fury attack - toggles the use of autoattack. Experimental.
 /fury debug - toggles debug mode
 /fury distance - show distance to target  
+/fury log [on|off] - Start a new channel for logging commands will be saved to Logs folder
 /fury unit [player|target] - shows buffs and debuffs for player or target
 /fury where - info about whereabouts
 ```
