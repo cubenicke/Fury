@@ -4,13 +4,11 @@ Fury makes one button for the warrior rotation, but still makes it possible to a
 like Jujus.
 
 ## Usage
-
 In key bindings, bind these actions to some keys available to you mid fight (Same commands can also be created as macros - to create a button on action bar). Easiest way to get going
 is to bind keys to Attack and Charge. Those two will work in most situations and just use charge to initiate fights (2-3 presses) then spam use Attack. When You want to have more control over
 the logic you can go into the other keybinds or even macros to finetune your playstyle and handle certain mechanics.   
 
 ### KeyBinds
-
 Attack - One button Fury Warrior rotation. Spam it!  
 Charge - Will charge or intercept, sometimes builds rage and or switch stance to be able to charge/intercept.  
 Toggle HS or Cleave - Dump excessing rage with Heroic Strike or Cleave. Useful in threat situations and for a AoE with single mob prio.  
@@ -30,9 +28,7 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
     END
 
 ## Reference
-
 ### Logic
-
 Dismount (Mounted only)  
 Berserker Rage (Feared only)  
 Execute  
@@ -93,14 +89,13 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) [Whirlwind](https://classicdb.ch/?spell=1680)  
 
 ### Items in rotation
-
-####For rage calculations
+#### For rage calculations
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_23.jpg) [Knight-Lieutenant's Plate Gauntlets](https://classicdb.ch/?item=16406)  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_29.jpg) [Marshal's Plate Gauntlets](https://classicdb.ch/?item=16484)  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_26.jpg) [Blood Guard's Plate Gloves](https://classicdb.ch/?item=16510)  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_10.jpg) [General's Plate Gauntlets](https://classicdb.ch/?item=16548)  
 
-####Situational
+#### Situational
 ![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_01.jpg) [Insignia of the Alliance](https://classicdb.ch/?item=18854)  
 ![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_02.jpg) [Insignia of the Horde](https://classicdb.ch/?item=18834)  
 ![](https://classicdb.ch/images/icons/small/inv_belt_25.jpg) [Spider Belt](https://classicdb.ch/?item=3863)  
