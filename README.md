@@ -98,7 +98,7 @@ Heroic Strike / Cleave
 #### Situational
 ![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_01.jpg) [Insignia of the Alliance](https://classicdb.ch/?item=18854)  
 ![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_02.jpg) [Insignia of the Horde](https://classicdb.ch/?item=18834)  
-![](https://classicdb.ch/images/icons/small/inv_belt_25.jpg) [Spider Belt](https://classicdb.ch/?item=3863)  
+![](https://classicdb.ch/images/icons/small/inv_belt_25.jpg) [Spider Belt](https://classicdb.ch/?item=4328)  
 ![](https://classicdb.ch/images/icons/small/inv_boots_01.jpg) [Ornate Mithril Boots](https://classicdb.ch/?item=7936)  
 ![](https://classicdb.ch/images/icons/small/inv_misc_rune_01.jpg) [Tidal Charm](https://classicdb.ch/?item=1404)  
 ![](https://classicdb.ch/images/icons/small/inv_weapon_shortblade_10.jpg) [Linken's Boomerang](https://classicdb.ch/?item=11905)  
