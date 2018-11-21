@@ -92,7 +92,7 @@ Heroic Strike / Cleave
 ### Items in rotation
 
 #### On cooldown
-![]https://classicdb.ch/images/icons/small/spell_nature_abolishmagic.jpg) [Earthstrike](https://classicdb.ch/?item=21180)  
+![](https://classicdb.ch/images/icons/small/spell_nature_abolishmagic.jpg) [Earthstrike](https://classicdb.ch/?item=21180)  
 
 #### For rage calculations
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_23.jpg) [Knight-Lieutenant's Plate Gauntlets](https://classicdb.ch/?item=16406)  
