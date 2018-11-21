@@ -186,6 +186,9 @@ local function Fury_Configuration_Init()
 	if Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] == nil then
 		Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] = true -- use on cooldown
 	end
+	if Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] == nil then
+		Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] = true -- use on cooldown
+	end
 end
 
 local function Fury_Configuration_Default()
@@ -1379,15 +1382,23 @@ function Fury()
 			Debug("40. Earthstrike")
 			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_EARTHSTRIKE))
 
-		-- 41, Bloodrage
+		-- 41 Slayer's Crest
+		elseif Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST]
+		  and FuryCombat 
+		  and FuryAttack == true
+		  and IsTrinketEquipped(ITEM_TRINKET_SLAYERS_CREST) then
+			Debug("41. Slayer's Crest")
+			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_SLAYERS_CREST))
+
+		-- 42, Bloodrage
 		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
 		  and UnitMana("player") <= tonumber(Fury_Configuration["MaximumRage"])
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["BloodrageHealth"])
 		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
-			Debug("41. Bloodrage")
+			Debug("42. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 42, Dump rage with Heroic Strike or Cleave
+		-- 43, Dump rage with Heroic Strike or Cleave
 		elseif (Fury_Configuration[MODE_HEADER_AOE]
 		  or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 		  and FuryMortalStrike
@@ -1403,7 +1414,7 @@ function Fury()
 		  and not SpellReady(ABILITY_WHIRLWIND_FURY))
 		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]) then
 
-			-- 43, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+			-- 44, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
 			if Fury_Configuration[ABILITY_HAMSTRING_FURY]
 			  and Weapon()
@@ -1416,23 +1427,23 @@ function Fury()
 			  and SpellReady(ABILITY_HAMSTRING_FURY) then
 				-- Try trigger...
 				-- stun,imp attack speed, extra swing
-				Debug("42. Hamstring (Trigger ...)")
+				Debug("44. Hamstring (Trigger ...)")
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
 				FuryLastSpellCast = GetTime()
 
-			-- 44, Heroic Strike
+			-- 45, Heroic Strike
 			elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 			  and Weapon()
 			  and not Fury_Configuration[MODE_HEADER_AOE]
 			  and UnitMana("player") >= FuryHeroicStrikeCost
 			  and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
 			  and SpellReady(ABILITY_HEROIC_STRIKE_FURY) then
-				Debug("44. Heroic Strike")
+				Debug("45. Heroic Strike")
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
-			-- 45, Cleave
+			-- 46, Cleave
 			elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
 			  or Fury_Configuration[MODE_HEADER_AOE])
 			  and Weapon()
@@ -1440,12 +1451,12 @@ function Fury()
 			  and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
 			  or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
 			  and SpellReady(ABILITY_CLEAVE_FURY) then
-				Debug("45. Cleave")
+				Debug("46. Cleave")
 				CastSpellByName(ABILITY_CLEAVE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
 			elseif not FuryRageDumped then
-				Debug("45. Rage: "..tostring(UnitMana("player")))
+				Debug("47. Rage: "..tostring(UnitMana("player")))
 				FuryRageDumped = true
 			end
 		end
@@ -1791,7 +1802,6 @@ function Fury_SlashCommand(msg)
 	local _, _, command, options = string.find(msg, "([%w%p]+)%s*(.*)$")
 	if command then
 		command = string.lower(command)
-
 	end
 	if not (UnitClass("player") == CLASS_WARRIOR_FURY) then
 		return
@@ -1980,7 +1990,10 @@ function Fury_SlashCommand(msg)
 		toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
 
 	elseif command == "earthstrike" then
-		toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+		toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
+
+	elseif command == "slayer's" and options == "Crest" then
+		toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
 
 	elseif command == "distance" then
 		if UnitCanAttack("player", "target") then
@@ -2071,6 +2084,7 @@ function Fury_SlashCommand(msg)
 		  ["ooi"] = HELP_OOI,
 		  ["rage"] = HELP_RAGE,
 		  ["shoot"] = HELP_SHOOT,
+		  ["slayer's"] = HELP_SLAYERS_CREST,
 		  ["stance"] = HELP_STANCE,
 		  ["talents"] = HELP_TALENTS,
 		  ["threat"] = HELP_THREAT,
@@ -2080,13 +2094,20 @@ function Fury_SlashCommand(msg)
 		}
 		if options == nil or options == "" then
 			local cmds = ""
+			cmds = SLASH_FURY_HELP
 			for k,_ in pairs(helps) do
-				if cmds ~= "" then
+				if cmds ~= "" and cmds ~= SLASH_FURY_HELP then
 					cmds = cmds..", "
+				else 
+				
 				end
 				cmds = cmds..k
+				if string.len(cmds) > 80 then
+					Print(cmds)
+					cmds = ""
+				end
 			end
-			Print(SLASH_FURY_HELP ..cmds)
+			Print(cmds)
 
 		elseif helps[options] ~= nil then
 			Print(helps[options])
