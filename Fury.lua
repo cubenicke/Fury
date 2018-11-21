@@ -183,6 +183,9 @@ local function Fury_Configuration_Init()
 	if Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] == nil then
 		Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = false -- use on cooldown
 	end
+	if Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] == nil then
+		Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] = true -- use on cooldown
+	end
 end
 
 local function Fury_Configuration_Default()
@@ -1368,15 +1371,23 @@ function Fury()
 			Debug("39. Death Wish")
 			CastSpellByName(ABILITY_DEATH_WISH_FURY)
 
-		-- 40, Bloodrage
+		-- 40 Earthstrike
+		elseif Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE]
+		  and FuryCombat 
+		  and FuryAttack == true
+		  and IsTrinketEquipped(ITEM_TRINKET_EARTHSTRIKE) then
+			Debug("40. Earthstrike")
+			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_EARTHSTRIKE))
+
+		-- 41, Bloodrage
 		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
 		  and UnitMana("player") <= tonumber(Fury_Configuration["MaximumRage"])
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["BloodrageHealth"])
 		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
-			Debug("40. Bloodrage")
+			Debug("41. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 41, Dump rage with Heroic Strike or Cleave
+		-- 42, Dump rage with Heroic Strike or Cleave
 		elseif (Fury_Configuration[MODE_HEADER_AOE]
 		  or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 		  and FuryMortalStrike
@@ -1392,7 +1403,7 @@ function Fury()
 		  and not SpellReady(ABILITY_WHIRLWIND_FURY))
 		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]) then
 
-			-- 42, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+			-- 43, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
 			if Fury_Configuration[ABILITY_HAMSTRING_FURY]
 			  and Weapon()
@@ -1409,19 +1420,19 @@ function Fury()
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
 				FuryLastSpellCast = GetTime()
 
-			-- 43, Heroic Strike
+			-- 44, Heroic Strike
 			elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 			  and Weapon()
 			  and not Fury_Configuration[MODE_HEADER_AOE]
 			  and UnitMana("player") >= FuryHeroicStrikeCost
 			  and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
 			  and SpellReady(ABILITY_HEROIC_STRIKE_FURY) then
-				Debug("43. Heroic Strike")
+				Debug("44. Heroic Strike")
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
-			-- 44, Cleave
+			-- 45, Cleave
 			elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
 			  or Fury_Configuration[MODE_HEADER_AOE])
 			  and Weapon()
@@ -1429,7 +1440,7 @@ function Fury()
 			  and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
 			  or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
 			  and SpellReady(ABILITY_CLEAVE_FURY) then
-				Debug("44. Cleave")
+				Debug("45. Cleave")
 				CastSpellByName(ABILITY_CLEAVE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
@@ -1524,6 +1535,29 @@ local function Fury_Charge()
 				FuryLastStanceCast = GetTime()
 
 			end
+
+		elseif Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
+		  and dist <= 7
+		  and not SnareDebuff("target")
+		  and UnitMana("player") >= 20
+		  and SpellReady(ABILITY_THUNDER_CLAP_FURY) then
+			if ActiveStance() == 1 then
+				Debug("Thunder Clap")
+				FuryDanceDone = true
+				CastSpellByName(ABILITY_THUNDER_CLAP_FURY)
+				FuryLastSpellCast = GetTime()
+			else
+				if FuryLastStanceCast + 1.5 <= GetTime() then
+					if not FuryOldStance then
+						FuryOldStance = ActiveStance()
+					end
+					Debug("Battle Stance (Thunder Clap)")
+					CastShapeshiftForm(1)
+					FuryLastStanceCast = GetTime()
+				end
+			end
+			CastSpellByName(ABILITY_THUNDER_CLAP_FURY)
+			FuryLastSpellCast = GetTime()
 		end
 	else
 		Debug("Out of combat")
@@ -1735,6 +1769,18 @@ local function Fury_ScanTalents()
 	FuryTalents = true
 end
 
+local function toggleOption(option, text)
+	if Fury_Configuration[option] == true then
+		Fury_Configuration[option] = false
+		Print(text .. " " .. SLASH_FURY_DISABLED .. ".")
+	elseif Fury_Configuration[option] == false then
+		Fury_Configuration[option] = true
+		Print(text .. " " .. SLASH_FURY_ENABLED .. ".")
+	else
+		return false
+	end
+	return true
+end
 --------------------------------------------------
 --
 -- Chat Handlers
@@ -1764,31 +1810,13 @@ function Fury_SlashCommand(msg)
 		Fury_ScanTalents()
 
 	elseif command == "aoe" then
-		if Fury_Configuration[MODE_HEADER_AOE] then
-			Fury_Configuration[MODE_HEADER_AOE] = false
-			Print(MODE_HEADER_AOE .. " " .. SLASH_FURY_DISABLED .. ".")
-		else
-			Fury_Configuration[MODE_HEADER_AOE] = true
-			Print(MODE_HEADER_AOE .. " " .. SLASH_FURY_ENABLED .. ".")
-		end
+		toggleOption(MODE_HEADER_AOE, MODE_HEADER_AOE)
 
 	elseif command == "toggle" then
-		if Fury_Configuration["Enabled"] then
-			Fury_Configuration["Enabled"] = false
-			Print(BINDING_HEADER_FURY .. " " .. SLASH_FURY_DISABLED .. ".")
-		else
-			Fury_Configuration["Enabled"] = true
-			Print(BINDING_HEADER_FURY .. " " .. SLASH_FURY_ENABLED .. ".")
-		end
+		toggleOption("Enabled", BINDING_HEADER_FURY)
 
 	elseif command == "debug" then
-		if Fury_Configuration["Debug"] then
-			Fury_Configuration["Debug"] = false
-			Print(SLASH_FURY_DEBUG .. " " .. SLASH_FURY_DISABLED .. ".")
-		else
-			Fury_Configuration["Debug"] = true
-			Print(SLASH_FURY_DEBUG .. " " .. SLASH_FURY_ENABLED .. ".")
-		end
+		toggleOption("Debug", SLASH_FURY_DEBUG)
 
 	elseif command == "dance" then
 		if options ~= "" then
@@ -1804,13 +1832,7 @@ function Fury_SlashCommand(msg)
 		Print(SLASH_FURY_DANCE .. options .. ".")
 
 	elseif command == "attack" then
-		if Fury_Configuration["AutoAttack"] then
-			Fury_Configuration["AutoAttack"] = false
-			Print(SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_DISABLED .. ".")
-		else
-			Fury_Configuration["AutoAttack"] = true
-			Print(SLASH_FURY_AUTOATTACK .. " " .. SLASH_FURY_ENABLED .. ".")
-		end
+		toggleOption("AutoAttack", SLASH_FURY_AUTOATTACK)
 
 	elseif command == "rage" then
 		if options ~= "" then
@@ -1941,57 +1963,24 @@ function Fury_SlashCommand(msg)
 
 	elseif command == "juju" then
 		if options == "flurry" then
-			if Fury_Configuration[ITEM_CONS_JUJU_FLURRY] then
-				Print(ITEM_CONS_JUJU_FLURRY .. " "..SLASH_FURY_DISABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_FLURRY] = false
-			else
-				Print(ITEM_CONS_JUJU_FLURRY .. " "..SLASH_FURY_ENABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_FLURRY] = true
-			end
+			toggleOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
 		elseif options == "chill" then
-			if Fury_Configuration[ITEM_CONS_JUJU_CHILL] then
-				Print(ITEM_CONS_JUJU_CHILL .. " "..SLASH_FURY_DISABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_CHILL] = false
-			else
-				Print(ITEM_CONS_JUJU_CHILL .. " "..SLASH_FURY_ENABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_CHILL] = true
-			end
+			toggleOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
 		elseif options == "might" then
-			if Fury_Configuration[ITEM_CONS_JUJU_MIGHT] then
-				Print(ITEM_CONS_JUJU_MIGHT .. " "..SLASH_FURY_DISABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_MIGHT] = false
-			else
-				Print(ITEM_CONS_JUJU_MIGHT .. " "..SLASH_FURY_ENABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_MIGHT] = true
-			end
+			toggleOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
 		elseif options == "ember" then
-			if Fury_Configuration[ITEM_CONS_JUJU_EMBER] then
-				Print(ITEM_CONS_JUJU_EMBER .. " "..SLASH_FURY_DISABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_EMBER] = false
-			else
-				Print(ITEM_CONS_JUJU_EMBER .. " "..SLASH_FURY_ENABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_EMBER] = true
-			end
+			toggleOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
 		elseif options == "power" then
-			if Fury_Configuration[ITEM_CONS_JUJU_POWER] then
-				Print(ITEM_CONS_JUJU_POWER .. " "..SLASH_FURY_DISABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_POWER] = false
-			else
-				Print(ITEM_CONS_JUJU_POWER .. " "..SLASH_FURY_ENABLED..".")
-				Fury_Configuration[ITEM_CONS_JUJU_POWER] = true
-			end
+			toggleOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
 		else
 			Print(HELP_JUJU)
 		end
 
 	elseif command == "ooi" then
-		if Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] then
-			Print(ITEM_CONS_OIL_OF_IMMOLATION .. " "..SLASH_FURY_DISABLED..".")
-			Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = false
-		else
-			Print(ITEM_CONS_OIL_OF_IMMOLATION .. " "..SLASH_FURY_ENABLED..".")
-			Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = true
-		end
+		toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+
+	elseif command == "earthstrike" then
+		toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
 
 	elseif command == "distance" then
 		if UnitCanAttack("player", "target") then
@@ -2074,6 +2063,7 @@ function Fury_SlashCommand(msg)
 		  ["debug"] = HELP_DEBUG,
 		  ["demodiff"] = HELP_DEMODIFF,
 		  ["distance"] = HELP_DISTANCE,
+		  ["earthstrike"] = HELP_EARTHSTRIKE,
 		  ["hamstring"] = HELP_HAMSTRING,
 		  ["help"] = HELP_HELP,
 		  ["juju"] = HELP_JUJU,
@@ -2327,6 +2317,7 @@ function Fury_OnEvent(event)
 		local _,_,name = string.find(arg1, CHAT_DISARM_IMMUNE_FURY)
 		if name ~= nil then
 			Fury_ImmuneDisarm[name] = true
+			Print("Added "..name.." to immune disarm list")
 		end
 	end
 end

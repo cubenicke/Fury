@@ -54,6 +54,7 @@ Juju Power
 Oil of Immolation  
 Blood Fury (Orc racial)  
 Death Wish (on every cooldown)  
+Earthstrike (on every cooldown)  
 Hamstring  
 Heroic Strike / Cleave  
 
@@ -89,6 +90,10 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/ability_whirlwind.jpg) [Whirlwind](https://classicdb.ch/?spell=1680)  
 
 ### Items in rotation
+
+#### On cooldown
+https://classicdb.ch/images/icons/small/spell_nature_abolishmagic.jpg) [Earthstrike](https://classicdb.ch/?item=21180
+
 #### For rage calculations
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_23.jpg) [Knight-Lieutenant's Plate Gauntlets](https://classicdb.ch/?item=16406)  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_29.jpg) [Marshal's Plate Gauntlets](https://classicdb.ch/?item=16484)  
@@ -122,6 +127,7 @@ Heroic Strike / Cleave
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
+/fury earthstrike - toggles use of Earthstrike on every cooldown
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 ```
 ### Setup commands

@@ -121,7 +121,7 @@ CHAT_MISSING_SPELL_SHOOT_THROW_FURY	= "Missing spell on action bar Shoot or Thro
 CHAT_MISSING_SPELL_INTERCEPT_CHARGE_FURY	= "Missing spell on action bar Intercept or Charge";
 CHAT_MISSING_SPELL_THUNDERCLAP_FURY	= "Missing spell on action bar Thunder Clap";
 CHAT_MISSING_SPELL_PUMMEL_FURY		= "Missing spell on action bar (any close combat spell, like Pummel)";
-CHAT_DISARM_IMMUNE_FURY			= "Your Disarm failed. (.+) is immune." 
+CHAT_DISARM_IMMUNE_FURY			= "Your Disarm failed. (.+) is immune.";
 
 CHAT_DISABLING_AOE_FURY			= "Disabling AoE";
 CHAT_BUFFS_FURY				= "Buffs:";
@@ -137,6 +137,7 @@ ITEM_TRINKET_INSIGNIA_OF_THE_ALLIANCE_FURY = "Insignia of the Alliance";
 ITEM_TRINKET_INSIGNIA_OF_THE_HORDE_FURY	= "Insignia of the Horde"
 ITEM_TRINKET_LINKENS_BOOMERANG_FURY	= "Linken's Boomerang";
 ITEM_TRINKET_TIDAL_CHARM		= "Tidal Charm";
+ITEM_TRINKET_EARTHSTRIKE		= "Earthstrike";
 ITEM_BELT_SPIDER_BELT_FURY		= "Spider Belt";
 ITEM_BOOTS_ORNATE_MITHRIL_BOOTS_FURY	= "Ornate Mithril Boots";
 
@@ -200,6 +201,7 @@ HELP_STANCE				= "/fury stance <name> - sets stance to return to after switching
 HELP_ABILITY				= "/fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.";
 HELP_BERSERK				= "/fury berserk <number> - sets minimum percent of health required when using Berserk";
 HELP_CHARGE				= "/fury charge - will use charge or intercept sequence"
+HELP_EARTHSTRIKE			= "/fury earthstrike -- toggles use of trinket on every cooldown"
 HELP_THREAT				= "/fury threat - enables Cleave or Heroic Strike based on current settings";
 HELP_HAMSTRING				= "/fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs";
 HELP_BLOODRAGE				= "/fury bloodrage <number> - sets minimum percent of health required when using Bloodrage";
