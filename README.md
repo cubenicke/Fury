@@ -53,8 +53,10 @@ Juju Might
 Juju Power  
 Oil of Immolation  
 Blood Fury (Orc racial)  
-Death Wish (on every cooldown)  
-Earthstrike (on every cooldown)  
+Death Wish  
+Earthstrike  
+Slayer's Crest  
+Kiss of the Spider  
 Hamstring  
 Heroic Strike / Cleave  
 
@@ -93,6 +95,7 @@ Heroic Strike / Cleave
 
 #### On cooldown
 ![](https://classicdb.ch/images/icons/small/spell_nature_abolishmagic.jpg) [Earthstrike](https://classicdb.ch/?item=21180)  
+![](https://classicdb.ch/images/icons/small/inv_trinket_naxxramas04.jpg) [Kiss of the Spider](https://classicdb.ch/?item=22954)  
 ![](https://classicdb.ch/images/icons/small/inv_trinket_naxxramas03.jpg) [Slayer's Crest](https://classicdb.ch/?item=23041)  
 
 #### For rage calculations
@@ -128,7 +131,9 @@ Heroic Strike / Cleave
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
-/fury earthstrike - toggles use of Earthstrike on every cooldown
+/fury Earthstrike - toggles use of Earthstrike on every cooldown
+/fury Slayer's Crest  - toggles use of Slayer's Crest on every cooldown
+/fury Kiss of the Spider - toggles use of KotS on every cooldown
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 ```
 ### Setup commands

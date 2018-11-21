@@ -189,6 +189,9 @@ local function Fury_Configuration_Init()
 	if Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] == nil then
 		Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] = true -- use on cooldown
 	end
+	if Fury_Configuration[ITEM_TRINKET_KOTS] == nil then
+		Fury_Configuration[ITEM_TRINKET_KOTS] = true -- use on cooldown
+	end
 end
 
 local function Fury_Configuration_Default()
@@ -1390,15 +1393,23 @@ function Fury()
 			Debug("41. Slayer's Crest")
 			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_SLAYERS_CREST))
 
-		-- 42, Bloodrage
+		-- 42 Kiss of the Spider
+		elseif Fury_Configuration[ITEM_TRINKET_KOTS]
+		  and FuryCombat 
+		  and FuryAttack == true
+		  and IsTrinketEquipped(ITEM_TRINKET_KOTS) then
+			Debug("42. Kiss of the Spider")
+			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_KOTS))
+
+		-- 43, Bloodrage
 		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
 		  and UnitMana("player") <= tonumber(Fury_Configuration["MaximumRage"])
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["BloodrageHealth"])
 		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
-			Debug("42. Bloodrage")
+			Debug("43. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 43, Dump rage with Heroic Strike or Cleave
+		-- 44, Dump rage with Heroic Strike or Cleave
 		elseif (Fury_Configuration[MODE_HEADER_AOE]
 		  or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 		  and FuryMortalStrike
@@ -1414,7 +1425,7 @@ function Fury()
 		  and not SpellReady(ABILITY_WHIRLWIND_FURY))
 		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]) then
 
-			-- 44, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+			-- 45, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
 			if Fury_Configuration[ABILITY_HAMSTRING_FURY]
 			  and Weapon()
@@ -1427,23 +1438,23 @@ function Fury()
 			  and SpellReady(ABILITY_HAMSTRING_FURY) then
 				-- Try trigger...
 				-- stun,imp attack speed, extra swing
-				Debug("44. Hamstring (Trigger ...)")
+				Debug("45. Hamstring (Trigger ...)")
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
 				FuryLastSpellCast = GetTime()
 
-			-- 45, Heroic Strike
+			-- 46, Heroic Strike
 			elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 			  and Weapon()
 			  and not Fury_Configuration[MODE_HEADER_AOE]
 			  and UnitMana("player") >= FuryHeroicStrikeCost
 			  and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
 			  and SpellReady(ABILITY_HEROIC_STRIKE_FURY) then
-				Debug("45. Heroic Strike")
+				Debug("46. Heroic Strike")
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
-			-- 46, Cleave
+			-- 47, Cleave
 			elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
 			  or Fury_Configuration[MODE_HEADER_AOE])
 			  and Weapon()
@@ -1451,12 +1462,12 @@ function Fury()
 			  and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
 			  or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
 			  and SpellReady(ABILITY_CLEAVE_FURY) then
-				Debug("46. Cleave")
+				Debug("47. Cleave")
 				CastSpellByName(ABILITY_CLEAVE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
 			elseif not FuryRageDumped then
-				Debug("47. Rage: "..tostring(UnitMana("player")))
+				Debug("48. Rage: "..tostring(UnitMana("player")))
 				FuryRageDumped = true
 			end
 		end
