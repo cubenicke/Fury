@@ -632,7 +632,7 @@ local function AntiStealthDebuff()
 	  or HasDebuff("target", "Ability_Rogue_Rupture")
 	  or HasDebuff("target", "Ability_Rogue_DualWeild")
 	  or HasDebuff("target", "Spell_Shadow_ShadowWordPain")
-	  or HasDebuff("target", "Spell_Fire_FlmaeBolt")
+	  or HasDebuff("target", "Spell_Fire_FlameBolt")
 	  or HasDebuff("target", "Spell_Fire_Incinerate")
 	  or HasDebuff("target", "Spell_Fire_Fireball02")
 	  or HasDebuff("target", "Spell_Shadow_AbominationExplosion")
@@ -2124,7 +2124,6 @@ function Fury_SlashCommand(msg)
 	else
 		Print(SLASH_FURY_HELP)
 	end
-
 end
 
 --------------------------------------------------

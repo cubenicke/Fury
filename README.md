@@ -126,7 +126,7 @@ Heroic Strike / Cleave
 /fury - uses Fury
 /fury charge - uses Intercept or Charge sequence
 /fury shoot - fires ranged weapon
-/fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Swithced off when fewer than 2 enemies)
+/fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Switched off when fewer than 2 enemies)
 /fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
