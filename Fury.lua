@@ -13,7 +13,7 @@
 
 local function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.3"
+	FURY_VERSION = "1.16.4"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
@@ -238,6 +238,9 @@ local function Fury_Configuration_Default()
 	Fury_Configuration[ITEM_CONS_JUJU_CHILL] = true
 	Fury_Configuration[ITEM_CONS_JUJU_EMBER] = false
 	Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = false
+	Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] = true
+	Fury_Configuration[ITEM_TRINKET_KOTS] = true
+	Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] = true
 end
 
 --------------------------------------------------
@@ -695,7 +698,6 @@ local function ItemExists(itemName)
 			end
 		end
 	end
-
 	return false
 end
 
@@ -795,7 +797,7 @@ function Fury()
 		if Fury_Configuration["AutoAttack"] and not FuryAttack then
 			AttackTarget()
 		end
-		
+
 		-- 2, Overpower 
 		if FuryOverpower then
 			if (GetTime() - FuryOverpower) > 4 then
@@ -1289,9 +1291,9 @@ function Fury()
 
 		-- 31, Juju Flurry
 		elseif FuryCombat
+		  and Fury_Configuration[ITEM_CONS_JUJU_FLURRY]
 		  and not HasBuff("player", "INV_Misc_MonsterScales_17")
 		  and FuryAttack == true
-		  and Fury_Configuration[ITEM_CONS_JUJU_FLURRY]
 		  and ItemReady(ITEM_CONS_JUJU_FLURRY) then
 			Debug("31. "..ITEM_CONS_JUJU_FLURRY)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUJU_FLURRY)
@@ -1379,7 +1381,7 @@ function Fury()
 
 		-- 40 Earthstrike
 		elseif Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE]
-		  and FuryCombat 
+		  and FuryCombat
 		  and FuryAttack == true
 		  and IsTrinketEquipped(ITEM_TRINKET_EARTHSTRIKE) then
 			Debug("40. Earthstrike")
@@ -1387,7 +1389,7 @@ function Fury()
 
 		-- 41 Slayer's Crest
 		elseif Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST]
-		  and FuryCombat 
+		  and FuryCombat
 		  and FuryAttack == true
 		  and IsTrinketEquipped(ITEM_TRINKET_SLAYERS_CREST) then
 			Debug("41. Slayer's Crest")
@@ -1395,7 +1397,7 @@ function Fury()
 
 		-- 42 Kiss of the Spider
 		elseif Fury_Configuration[ITEM_TRINKET_KOTS]
-		  and FuryCombat 
+		  and FuryCombat
 		  and FuryAttack == true
 		  and IsTrinketEquipped(ITEM_TRINKET_KOTS) then
 			Debug("42. Kiss of the Spider")
@@ -1551,11 +1553,9 @@ local function Fury_Charge()
 				if FuryOldStance == nil then
 					FuryOldStance = ActiveStance()
 					FuryLastStanceCast = GetTime()
-
 				end
 				CastShapeshiftForm(3)
 				FuryLastStanceCast = GetTime()
-
 			end
 
 		elseif Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
@@ -1622,11 +1622,9 @@ local function Fury_Charge()
 				if FuryOldStance == nil then
 					FuryOldStance = ActiveStance()
 					FuryLastStanceCast = GetTime()
-
 				end
 				CastShapeshiftForm(3)
 				FuryLastStanceCast = GetTime()
-
 			end
 
 		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
@@ -1816,7 +1814,6 @@ function Fury_SlashCommand(msg)
 	end
 	if not (UnitClass("player") == CLASS_WARRIOR_FURY) then
 		return
-
 	end
 	if command == nil
 	  or command == "" then
@@ -2119,18 +2116,13 @@ function Fury_SlashCommand(msg)
 				end
 			end
 			Print(cmds)
-
 		elseif helps[options] ~= nil then
 			Print(helps[options])
-
 		else
 			Print(HELP_UNKNOWN)
-
 		end
-
 	else
 		Print(SLASH_FURY_HELP)
-
 	end
 
 end
@@ -2243,10 +2235,8 @@ function Fury_OnEvent(event)
 		if WWEnemies.CleaveCount == nil then
 			WWEnemies.CleaveCount = 1
 			WWEnemies.CleaveTime = GetTime()
-
 		else
 			WWEnemies.CleaveCount = WWEnemies.CleaveCount + 1
-
 		end
 
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE" then
