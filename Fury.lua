@@ -13,7 +13,7 @@
 
 local function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.4"
+	FURY_VERSION = "1.16.5"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
@@ -662,13 +662,14 @@ end
 
 local function SnareDebuff(unit)
 	--Detect snaring debuffs
-	--Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock
+	--Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock, Piercing Howl
 	if HasDebuff(unit, "Ability_ShockWave")
 	  or HasDebuff(unit, "Ability_Rogue_Trip")
 	  or HasDebuff(unit, "Spell_Shadow_GrimWard")
 	  or HasDebuff(unit, "Ability_PoisonSting")
 	  or HasDebuff(unit, "Spell_Frost_FrostBolt02")
 	  or HasDebuff(unit, "Spell_Frost_Glacier")
+	  or HasDebuff(unit, "Spell_Shadow_DeathScream")
 	  or HasDebuff(unit, "Spell_Frost_FrostShock") then
 		return true
 	end
@@ -994,6 +995,8 @@ function Fury()
 		  and Weapon()
 		  and (not SnareDebuff("target") or (FuryImpHamstring and UnitMana("player") < 30))
 		  and FuryAttack == true
+		  and not HasBuff("target", "INV_Potion_04")
+		  and not HasBuff("target", "Spell_Holy_SealOfValor")
 		  and Fury_Distance() == 5
 		  and UnitMana("player") >= HamstringCost()
 		  and (ActiveStance() ~= 2
@@ -1057,6 +1060,8 @@ function Fury()
 		  and Fury_Distance() <= 10
 		  and FuryAttack == true
 		  and not SnareDebuff("target")
+		  and not HasBuff("target", "INV_Potion_04")
+		  and not HasBuff("target", "Spell_Holy_SealOfValor")
 		  and UnitMana("player") >= 10
 		  and SpellReady(ABILITY_PIERCING_HOWL_FURY) then
 				Debug("17. Piercing Howl")
@@ -1252,6 +1257,8 @@ function Fury()
 		  and not HasDebuff("target", "Ability_Druid_DemoralizingRoar")
 		  and UnitMana("player") >= 10
 		  and not UnitIsPlayer("target")
+		  and (UnitClass("target") == CLASS_WARRIOR_FURY
+		  or UnitClass("target") == CLASS_ROGUE_FURY)
 		  and UnitLevel("Player") - UnitLevel("Target") < Fury_Configuration["DemoDiff"]
 		  and FuryAttack == true
 		  and SpellReady(ABILITY_DEMORALIZING_SHOUT_FURY) then
@@ -1604,7 +1611,7 @@ local function Fury_Charge()
 
 		elseif Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
 		  and ActiveStance() == 1
-		  and dist <= 7
+		  and dist <= 5
 		  and not SnareDebuff("target")
 		  and UnitMana("player") >= 20
 		  and SpellReady(ABILITY_THUNDER_CLAP_FURY) then
@@ -1615,6 +1622,7 @@ local function Fury_Charge()
 		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and ActiveStance() ~= 3
 		  and not SpellReady(ABILITY_CHARGE_FURY)
+		  and UnitMana("player") >= 10
 		  and SpellReady(ABILITY_INTERCEPT_FURY) then
 			Debug("Berserker Stance (Intercept)")
 			if (FuryLastStanceCast + 1.5 <= GetTime()) then
@@ -1661,6 +1669,7 @@ local function Fury_Charge()
 
 			end
 			CastShapeshiftForm(1)
+			CastSpellByName(ABILITY_CHARGE_FURY)
 			FuryLastStanceCast = GetTime()
 		end
 	end
@@ -1734,7 +1743,7 @@ local function Fury_ScanTalents()
 		Debug("Execute Cost")
 	end
 	--Check for Death Wish
-	local _, _, _, _, currRank = GetTalentInfo(2, 15)
+	local _, _, _, _, currRank = GetTalentInfo(2, 13)
 	if currRank > 0 then
 		Debug("Death Wish")
 		FuryDeathWish = true
