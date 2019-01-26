@@ -11,6 +11,7 @@ BINDING_NAME_FURY_THREAT		= "Toggle HS or Cleave";
 BINDING_NAME_FURY_DW			= "Toggle Death Wish";
 BINDING_HEADER_FURY			= "Fury";
 BINDING_NAME_FURY_CHARGE		= "Charge";
+BINDING_NAME_FURY_BLOCK			= "Block";
 
 CLASS_DRUID_FURY			= "Druid";
 CLASS_HUNTER_FURY			= "Hunter";
@@ -204,6 +205,7 @@ HELP_ATTACK				= "/fury attack - toggles the use of autoattack. Experimental.";
 HELP_ATTACKRAGE				= "/fury attackrage <number> - sets minimum rage required when using Heroic Strike or Cleave";
 HELP_ABILITY				= "/fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.";
 HELP_BERSERK				= "/fury berserk <number> - sets minimum percent of health required when using Berserk";
+HELP_BLOCK				= "/fury block - Shifts to defensive and activates block";
 HELP_BLOODRAGE				= "/fury bloodrage <number> - sets minimum percent of health required when using Bloodrage";
 HELP_CHARGE				= "/fury charge - will use charge or intercept sequence"
 HELP_DANCE				= "/fury dance <number> - sets rage allowed to be wasted when switching stance (dancing)";

@@ -1461,6 +1461,42 @@ function Fury()
 	end
 end
 
+--------------------
+--
+-- Handle Block command
+--
+--------------------------------------------------
+
+
+local function Fury_Block()
+
+	-- Shield Block
+	if ActiveStance() ~= 2 then
+		if FuryLastStanceCast + 1.5 <= GetTime() then
+			if not FuryOldStance then
+				FuryOldStance = ActiveStance()
+			end
+			Debug("B1. Defensive Stance (Block")
+			CastShapeshiftForm(2)
+			FuryLastStanceCast = GetTime()
+		end
+	end
+	if Fury_Configuration[ABILITY_SHIELD_BLOCK_FURY]
+	  and Shield()
+	  and UnitMana("player") >= 10
+	  and SpellReady(ABILITY_SHIELD_BLOCK_FURY) then
+		CastSpellByName(ABILITY_SHIELD_BLOCK_FURY)
+		Debug("B2. Shield Block")
+		FuryDanceDone = true
+		FuryLastSpellCast = GetTime()
+	elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
+	  and UnitMana("player") < 10
+	  and SpellReady(ABILITY_BLOODRAGE_FURY) then
+		Debug("B3. Bloodrage")
+		CastSpellByName(ABILITY_BLOODRAGE_FURY)
+	end
+end
+
 --------------------------------------------------
 --
 -- Handle charge command
@@ -1706,7 +1742,8 @@ local function Fury_ScanTalents()
 		FuryMortalStrike = true
 	else
 		FuryMortalStrike = false
-	end	--Check for Piercing Howl
+	end
+	--Check for Piercing Howl
 	local _, _, _, _, currRank = GetTalentInfo(2, 6)
 	if currRank > 0 then
 		Debug("Piercing Howl")
@@ -1808,6 +1845,9 @@ function Fury_SlashCommand(msg)
 
 	elseif command == "charge" then
 		Fury_Charge()
+
+	elseif command == "block" then
+		Fury_Block()
 
 	elseif command == "talents" then
 		Print(CHAT_TALENTS_RESCAN_FURY)
@@ -2065,6 +2105,7 @@ function Fury_SlashCommand(msg)
 		  ["attack"] = HELP_ATTACK,
 		  ["attackrage"] = HELP_ATTACKRAGE,
 		  ["berserk"] = HELP_BERSERK,
+		  ["block"] = HELP_BLOCK,
 		  ["bloodrage"] = HELP_BLOODRAGE,
 		  ["charge"] = HELP_CHARGE,
 		  ["dance"] = HELP_DANCE,

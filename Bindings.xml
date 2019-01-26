@@ -17,4 +17,7 @@
 	<Binding name="FURY_CHARGE" header="FURY">
 		Fury_SlashCommand("charge")
 	</Binding>
+	<Binding name="FURY_BLOCK" header="FURY">
+		Fury_SlashCommand("block")
+	</Binding>
 </Bindings>

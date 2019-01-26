@@ -10,6 +10,7 @@ the logic you can go into the other keybinds or even macros to finetune your pla
 
 ### KeyBinds
 Attack - One button Fury Warrior rotation. Spam it!  
+Block - Enter defencive stance and do Shield Block  
 Charge - Will charge or intercept, sometimes builds rage and or switch stance to be able to charge/intercept.  
 Toggle HS or Cleave - Dump excessing rage with Heroic Strike or Cleave. Useful in threat situations and for a AoE with single mob prio.  
 Toggle WW - Stops using Whirlwind during normal rotation, toggle it in CC situations. or Kel'Thuzad to don't do damage on Mind Controlled people.   
@@ -124,6 +125,7 @@ Heroic Strike / Cleave
 ### operational Control
 ```
 /fury - uses Fury
+/fury block - Enter Defencive Stance and do Shield Block
 /fury charge - uses Intercept or Charge sequence
 /fury shoot - fires ranged weapon
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Switched off when fewer than 2 enemies)
