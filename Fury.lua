@@ -13,7 +13,7 @@
 
 local function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.6"
+	FURY_VERSION = "1.16.7"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
@@ -192,6 +192,9 @@ local function Fury_Configuration_Init()
 	if Fury_Configuration[ITEM_TRINKET_KOTS] == nil then
 		Fury_Configuration[ITEM_TRINKET_KOTS] = true -- use on cooldown
 	end
+	if Fury_Configuration[MODE_HEADER_DEBUFF] == nil then
+		Fury_Configuration[MODE_HEADER_DEBUFF] = false -- use when have debuff <type>
+	end
 end
 
 local function Fury_Configuration_Default()
@@ -209,6 +212,7 @@ local function Fury_Configuration_Default()
 	Fury_Configuration["PrimaryStance"] = false
 	Fury_Configuration["DebugChannel"] = nil
 	Fury_Configuration[MODE_HEADER_AOE] = false
+	Fury_Configuration[MODE_HEADER_DEBUFF] = false
 	Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY] = true
 	Fury_Configuration[RACIAL_BERSERKING_FURY] = true
 	Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true
@@ -294,6 +298,18 @@ local function LogToFile(enable)
 	end
 end
 
+local function HasDebuffType(unit, type)
+	local id = 1
+	while UnitDebuff(unit, id) do
+		local _,_,debuffType = UnitDebuff(unit, id)
+		if debuffType ==  type then
+			return true
+		end
+		id = id + 1
+	end
+	return nil
+end
+
 local function PrintEffects(target)
 	local id = 1
 	if UnitBuff(target, id) then
@@ -303,6 +319,9 @@ local function PrintEffects(target)
 			id = id + 1
 		end
 		id = 1
+	end
+	if HasDebuffType(target) then
+		Print("Have treatable debuff")
 	end
 	if UnitDebuff(target, id) then
 		Print(CHAT_DEBUFFS_FURY)
@@ -488,7 +507,7 @@ local function SpellReady(spellname)
 		end
 		return false
 	end
-	Debug("SR: "..spellname.." unknown")
+	--Debug("SR: "..spellname.." unknown")
 	return false
 end
 
@@ -533,10 +552,14 @@ local function UseContainerItemByNameOnPlayer(search)
 	for bag = 0,4 do
 		for slot = 1,GetContainerNumSlots(bag) do
 			local item = GetContainerItemLink(bag,slot)
-			if item and string.find(item, search) then
-				UseContainerItem(bag,slot)
-				if SpellIsTargeting() then
-					SpellTargetUnit("player")
+			if item then
+				local _, _, itemCode = strfind(item, "(%d+):")
+				local itemName = GetItemInfo(itemCode)
+				if itemName == search then
+					UseContainerItem(bag,slot)
+					if SpellIsTargeting() then
+						SpellTargetUnit("player")
+					end
 				end
 			end
 		end
@@ -778,6 +801,53 @@ local function Fury_Shoot()
 		Debug(spell)
 		CastSpellByName(spell)
 		FuryLastSpellCast = GetTime()
+	end
+	return true
+end
+
+local function Fury_TreatDebuff(unit)
+	if HasDebuffType(unit, ITEM_DEBUFF_TYPE_POISON) then
+		if IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION) then
+			local slot = IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION)
+			UseInventoryItem(slot)
+
+		elseif UnitRace(unit) == RACE_DWARF and SpellReady(ABILITY_STONEFORM_FURY) then
+			CastSpellByName(ABILITY_STONEFORM_FURY) --- Bleed, poison and disease
+
+		elseif ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
+
+		elseif ItemReady(ITEM_CONS_POWERFUL_ANTIVENOM) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_POWERFUL_ANTIVENOM)
+
+		elseif ItemReady(ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE)
+
+		elseif ItemReady(ITEM_CONS_PURIFICATION_POTION) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
+
+		else
+			return false
+
+		end
+	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_DISEASE) then
+		if UnitRace(unit) == RACE_DWARF and SpellReady(ABILITY_STONEFORM_FURY) then
+			CastSpellByName(ABILITY_STONEFORM_FURY) -- Bleed, poison and disease
+
+		elseif ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
+			Print("jungleremedy")
+			UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
+
+		else
+			return false
+		end
+	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_CURSE) then
+		return false
+	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_MAGIC) then
+		return false
+	else
+		return false
+
 	end
 	return true
 end
@@ -1396,7 +1466,12 @@ function Fury()
 			Debug("43. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 44, Dump rage with Heroic Strike or Cleave
+		-- 44, Treat debuffs (poisons)
+		elseif Fury_Configuration[MODE_HEADER_DEBUFF]
+		  and Fury_TreatDebuff("player") then
+			Debug("44. Treated debuff")
+
+		-- 45, Dump rage with Heroic Strike or Cleave
 		elseif (Fury_Configuration[MODE_HEADER_AOE]
 		  or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 		  and FuryMortalStrike
@@ -1407,12 +1482,13 @@ function Fury()
 		  and FuryBloodthirst
 		  and not SpellReady(ABILITY_BLOODTHIRST_FURY))
 		  or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY]
-		  or not FuryBloodthirst))
+		  or not FuryBloodthirst)
 		  and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY]
 		  and not SpellReady(ABILITY_WHIRLWIND_FURY))
-		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]) then
+		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]
+		  or not FuryWhirlwind)) then
 
-			-- 45, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+			-- 46, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
 			if Fury_Configuration[ABILITY_HAMSTRING_FURY]
 			  and Weapon()
@@ -1425,23 +1501,25 @@ function Fury()
 			  and SpellReady(ABILITY_HAMSTRING_FURY) then
 				-- Try trigger...
 				-- stun,imp attack speed, extra swing
-				Debug("45. Hamstring (Trigger ...)")
+				Debug("46. Hamstring (Trigger ...)")
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
 				FuryLastSpellCast = GetTime()
 
-			-- 46, Heroic Strike
+			-- 47, Heroic Strike
 			elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 			  and Weapon()
 			  and not Fury_Configuration[MODE_HEADER_AOE]
 			  and UnitMana("player") >= FuryHeroicStrikeCost
-			  and UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
+			  and (UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
+			  or (not FuryMortalStrike
+			  and not FuryBloodthirst))
 			  and SpellReady(ABILITY_HEROIC_STRIKE_FURY) then
-				Debug("46. Heroic Strike")
+				Debug("47. Heroic Strike")
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
-			-- 47, Cleave
+			-- 48, Cleave
 			elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
 			  or Fury_Configuration[MODE_HEADER_AOE])
 			  and Weapon()
@@ -1449,12 +1527,12 @@ function Fury()
 			  and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
 			  or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
 			  and SpellReady(ABILITY_CLEAVE_FURY) then
-				Debug("47. Cleave")
+				Debug("48. Cleave")
 				CastSpellByName(ABILITY_CLEAVE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
 			elseif not FuryRageDumped then
-				Debug("48. Rage: "..tostring(UnitMana("player")))
+				Debug("49. Rage: "..tostring(UnitMana("player")))
 				FuryRageDumped = true
 			end
 		end
@@ -1810,6 +1888,11 @@ local function Fury_ScanTalents()
 	else
 		FuryRacialBerserking = false
 	end
+	if UnitLevel("player") >= 36 then
+		FuryWhirlwind = true
+	else
+		FuryWhirlwind = false
+	end
 	FuryTalents = true
 end
 
@@ -2024,11 +2107,17 @@ function Fury_SlashCommand(msg)
 	elseif command == "ooi" then
 		toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
 
+	elseif command == "debuff" then
+		toggleOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+
 	elseif command == "earthstrike" then
 		toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
 
 	elseif command == "slayer's" and options == "Crest" then
 		toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
+
+	elseif command == "kots" then
+		toggleOption(ITEM_TRINKET_KOTS, ITEM_TRINKET_KOTS)
 
 	elseif command == "distance" then
 		if UnitCanAttack("player", "target") then
@@ -2109,6 +2198,7 @@ function Fury_SlashCommand(msg)
 		  ["bloodrage"] = HELP_BLOODRAGE,
 		  ["charge"] = HELP_CHARGE,
 		  ["dance"] = HELP_DANCE,
+		  ["debuff"] = HELP_DEBUFF,
 		  ["debug"] = HELP_DEBUG,
 		  ["demodiff"] = HELP_DEMODIFF,
 		  ["distance"] = HELP_DISTANCE,
@@ -2116,6 +2206,7 @@ function Fury_SlashCommand(msg)
 		  ["hamstring"] = HELP_HAMSTRING,
 		  ["help"] = HELP_HELP,
 		  ["juju"] = HELP_JUJU,
+		  ["kots"] = HELP_KOTS,
 		  ["log"] = HELP_LOG,
 		  ["ooi"] = HELP_OOI,
 		  ["rage"] = HELP_RAGE,

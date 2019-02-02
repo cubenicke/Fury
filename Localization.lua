@@ -25,6 +25,7 @@ CLASS_WARRIOR_FURY			= "Warrior";
 
 RACE_ORC				= "Orc";
 RACE_TROLL				= "Troll";
+RACE_DWARF				= "Dwarf";
 
 ABILITY_BATTLE_SHOUT_FURY		= "Battle Shout";
 ABILITY_BATTLE_STANCE_FURY		= "Battle Stance";
@@ -64,6 +65,7 @@ ABILITY_SHIELD_SLAM_FURY		= "Shield Slam";
 ABILITY_SHOOT_BOW_FURY			= "Shoot Bow";
 ABILITY_SHOOT_CROSSBOW_FURY		= "Shoot Crossbow";
 ABILITY_SHOOT_GUN_FURY			= "Shoot Gun";
+ABILITY_STONEFORM_FURY			= "Stoneform";
 --ABILITY_SUNDER_ARMOR_FURY		= "Sunder Armor";
 ABILITY_SWEEPING_STRIKES_FURY		= "Sweeping Strikes";
 --ABILITY_TAUNT_FURY			= "Taunt";
@@ -141,6 +143,7 @@ ITEM_TRINKET_TIDAL_CHARM		= "Tidal Charm";
 ITEM_TRINKET_EARTHSTRIKE		= "Earthstrike";
 ITEM_TRINKET_KOTS			= "Kiss of the Spider";
 ITEM_TRINKET_SLAYERS_CREST		= "Slayer's Crest";
+ITEM_TRINKET_HEART_OF_NOXXION		= "Heart of Noxxion";
 ITEM_BELT_SPIDER_BELT_FURY		= "Spider Belt";
 ITEM_BOOTS_ORNATE_MITHRIL_BOOTS_FURY	= "Ornate Mithril Boots";
 
@@ -150,12 +153,21 @@ ITEM_TYPE_CROSSBOWS_FURY		= "Crossbows";
 ITEM_TYPE_GUNS_FURY			= "Guns";
 ITEM_TYPE_THROWN_FURY			= "Thrown";
 
+ITEM_DEBUFF_TYPE_POISON			= "Poison";
+ITEM_DEBUFF_TYPE_DISEASE		= "Disease";
+ITEM_DEBUFF_TYPE_CURSE			= "Curse";
+ITEM_DEBUFF_TYPE_MAGIC			= "Magic";
+
 ITEM_CONS_JUJU_FLURRY			= "Juju Flurry";
 ITEM_CONS_JUJU_POWER			= "Juju Power";
 ITEM_CONS_JUJU_MIGHT			= "Juju Might";
 ITEM_CONS_JUJU_EMBER			= "Juju Ember";
 ITEM_CONS_JUJU_CHILL			= "Juju Chill";
 ITEM_CONS_OIL_OF_IMMOLATION		= "Oil of Immolation";
+ITEM_CONS_JUNGLE_REMEDY			= "Jungle Remedy";
+ITEM_CONS_POWERFUL_ANTIVENOM		= "Powerful Anti-Venom";
+ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE	= "Elixir of Poison Resistance";
+ITEM_CONS_PURIFICATION_POTION		= "Purification Potion";
 
 BOSS_NAX_GOTHIK_THE_HARVESTER_FURY	= "Gothik the Harvester";
 BOSS_NAX_GRAND_WIDOW_FAERLINA_FURY	= "Grand Widow Faerlina";
@@ -176,6 +188,7 @@ BOSS_ONYXIA_FURY			= "Onyxia";
 BOSS_STRAT_BARON_RIVENDERE_FURY		= "Baron Rivendare";
 
 MODE_HEADER_AOE				= "AoE";
+MODE_HEADER_DEBUFF			= "Debuff";
 SLASH_FURY_ENABLED			= "enabled";
 SLASH_FURY_DISABLED			= "disabled";
 SLASH_FURY_DEFAULT			= "default";
@@ -209,6 +222,7 @@ HELP_BLOCK				= "/fury block - Shifts to defensive and activates block";
 HELP_BLOODRAGE				= "/fury bloodrage <number> - sets minimum percent of health required when using Bloodrage";
 HELP_CHARGE				= "/fury charge - will use charge or intercept sequence"
 HELP_DANCE				= "/fury dance <number> - sets rage allowed to be wasted when switching stance (dancing)";
+HELP_DEBUFF				= "/fury debuff - toggles use of debuff spells/cons";
 HELP_DEBUG				= "/fury debug - writes commands in log";
 HELP_DEMODIFF				= "/fury demodiff <number> - sets maximum level differrence to use Demoralizing Shout";
 HELP_DISTANCE				= "/fury distance - Gives distance to target";
@@ -216,10 +230,9 @@ HELP_EARTHSTRIKE			= "/fury Earthstrike -- toggles use of trinket on every coold
 HELP_HAMSTRING				= "/fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs";
 HELP_HELP				= "/fury help - outputs available commands";
 HELP_JUJU				= "/fury juju <juju> - Supports flurry, power, might, chill and ember toggles use of the <juju> on cooldown";
-HELP_KOTS				= "/fury Kiss of the Spider -- toggles use of trinket on every cooldown";
+HELP_KOTS				= "/fury kots - toggles use of trinket on every cooldown";
 HELP_LOG				= "/fury log [on|off] - Create a channel and log to <wow>\\Logs\\WowChatLog.txt";
 HELP_OOI				= "/fury ooi - toggle use of Oil of Immolation";
-
 HELP_RAGE				= "/fury rage <number> - sets maximum rage allowed when using abilities to gain rage";
 HELP_SHOOT				= "/fury shoot - Fires equipped ranged weapon";
 HELP_SLAYERS_CREST			= "/fury Slayer's Crest - toggle use of Slayer's Crest";

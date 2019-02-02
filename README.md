@@ -47,6 +47,7 @@ Demoralizing Shout (PvE only)
 Battle Shout  
 Mortal Strike / Bloodthirst  
 Whirlwind  
+Treat debuffs
 Juju Flurry  
 Juju Chill  
 Juju Ember  
@@ -86,6 +87,7 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/ability_warrior_shieldbash.jpg) [Shield Bash](https://classicdb.ch/?spell=72)  
 ![](https://classicdb.ch/images/icons/small/inv_shield_05.jpg) [Shield Slam](https://classicdb.ch/?spell=23925)  
 ![](https://classicdb.ch/images/icons/small/ability_marksmanship.jpg) [Shoot Bow,Crossbow,Gun](https://classicdb.ch/?spell=3018)  
+![](https://classicdb.ch/images/icons/small/spell_shadow_unholystrength.jpg) [Stoneform](https://classicdb.ch/?spell=20594)  
 ![](https://classicdb.ch/images/icons/small/ability_warrior_sunder.jpg) [Sunder Armor](https://classicdb.ch/?spell=11597)  
 ![](https://classicdb.ch/images/icons/small/ability_rogue_slicedice.jpg) [Sweeping Strikes](https://classicdb.ch/?spell=26654)  
 ![](https://classicdb.ch/images/icons/small/spell_nature_thunderclap.jpg) [Thunder Clap](https://classicdb.ch/?spell=11581)  
@@ -112,6 +114,7 @@ Heroic Strike / Cleave
 ![](https://classicdb.ch/images/icons/small/inv_boots_01.jpg) [Ornate Mithril Boots](https://classicdb.ch/?item=7936)  
 ![](https://classicdb.ch/images/icons/small/inv_misc_rune_01.jpg) [Tidal Charm](https://classicdb.ch/?item=1404)  
 ![](https://classicdb.ch/images/icons/small/inv_weapon_shortblade_10.jpg) [Linken's Boomerang](https://classicdb.ch/?item=11905)  
+![](https://classicdb.ch/images/icons/small/inv_misc_gem_pearl_06.jpg) [Heart of Noxxion](https://classicdb.ch/?item=17744)  
 
 ### Consumables
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_09.jpg) [Juju Chill](https://classicdb.ch/?item=12457) (Only on Kel'Thuzad and Sapphiron)
@@ -120,7 +123,10 @@ Heroic Strike / Cleave
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_07.jpg) [Juju Might](https://classicdb.ch/?item=12460) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_92.jpg) [Winterfall Firewater](https://classicdb.ch/?item=12820))
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_11.jpg) [Juju Power](https://classicdb.ch/?item=12451) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_61.jpg) [Elixir of Giants](https://classicdb.ch/?item=9206))
   * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956)
-
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Jungle Remedy](https://classicdb.ch/?item=2633)
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_14.jpg) [Powerful Anti-Venom](https://classicdb.ch/?item=19440)
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Elixir of Poison Resistance](https://classicdb.ch/?item=3386)
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_31.jpg) [Purification Potion](https://classicdb.ch/?item=13462)
 
 ### operational Control
 ```
@@ -135,7 +141,7 @@ Heroic Strike / Cleave
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
 /fury Earthstrike - toggles use of Earthstrike on every cooldown
 /fury Slayer's Crest  - toggles use of Slayer's Crest on every cooldown
-/fury Kiss of the Spider - toggles use of KotS on every cooldown
+/fury kots - toggles use of KotS on every cooldown
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 ```
 ### Setup commands
@@ -144,6 +150,7 @@ Heroic Strike / Cleave
 /fury attackrage <number> - sets minimum rage required when using Heroic Strike or Cleave
 /fury rage <number> - sets maximum rage allowed when using abilities to gain rage
 /fury bloodrage <number> - sets minimum percent of health required when using Bloodrage
+/fury debuff - Try remove debuff in rotation, might use consumables
 /fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs
 /fury berserk <number> - sets minimum percent of health required when using Berserk
 /fury deathwish <number> - sets minimum percent of health required when using Death Wish
