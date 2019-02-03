@@ -124,7 +124,7 @@ Heroic Strike / Cleave
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_11.jpg) [Juju Power](https://classicdb.ch/?item=12451) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_61.jpg) [Elixir of Giants](https://classicdb.ch/?item=9206))
   * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956)
   * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Jungle Remedy](https://classicdb.ch/?item=2633)
-  * ![](https://classicdb.ch/images/icons/small/inv_potion_14.jpg) [Powerful Anti-Venom](https://classicdb.ch/?item=19440)
+  * ![](https://classicdb.ch/images/icons/small/inv_drink_14.jpg) [Powerful Anti-Venom](https://classicdb.ch/?item=19440)
   * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Elixir of Poison Resistance](https://classicdb.ch/?item=3386)
   * ![](https://classicdb.ch/images/icons/small/inv_potion_31.jpg) [Purification Potion](https://classicdb.ch/?item=13462)
 

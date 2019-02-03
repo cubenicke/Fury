@@ -843,8 +843,10 @@ local function Fury_TreatDebuff(unit)
 		end
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_CURSE) then
 		return false
+
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_MAGIC) then
 		return false
+
 	else
 		return false
 
