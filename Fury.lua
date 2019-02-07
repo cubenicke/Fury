@@ -195,6 +195,9 @@ local function Fury_Configuration_Init()
 	if Fury_Configuration[MODE_HEADER_DEBUFF] == nil then
 		Fury_Configuration[MODE_HEADER_DEBUFF] = false -- use when have debuff <type>
 	end
+	if Fury_Configuration[ABILITY_REVENGE_FURY] == nil then
+		Fury_Configuration[ABILITY_REVENGE_FURY] = false
+	end
 end
 
 local function Fury_Configuration_Default()
@@ -233,6 +236,7 @@ local function Fury_Configuration_Default()
 	Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
 	Fury_Configuration[ABILITY_PUMMEL_FURY] = true
 	Fury_Configuration[ABILITY_REND_FURY] = true
+	Fury_Configuration[ABILITY_REVENGE_FURY] = false
 	Fury_Configuration[ABILITY_SHIELD_BASH_FURY] = true
 	Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true
 	Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true
@@ -812,7 +816,7 @@ local function Fury_TreatDebuff(unit)
 			UseInventoryItem(slot)
 
 		elseif UnitRace(unit) == RACE_DWARF and SpellReady(ABILITY_STONEFORM_FURY) then
-			CastSpellByName(ABILITY_STONEFORM_FURY) --- Bleed, poison and disease
+			CastSpellByName(ABILITY_STONEFORM_FURY)
 
 		elseif ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
@@ -832,7 +836,7 @@ local function Fury_TreatDebuff(unit)
 		end
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_DISEASE) then
 		if UnitRace(unit) == RACE_DWARF and SpellReady(ABILITY_STONEFORM_FURY) then
-			CastSpellByName(ABILITY_STONEFORM_FURY) -- Bleed, poison and disease
+			CastSpellByName(ABILITY_STONEFORM_FURY)
 
 		elseif ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
 			Print("jungleremedy")
@@ -842,7 +846,12 @@ local function Fury_TreatDebuff(unit)
 			return false
 		end
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_CURSE) then
-		return false
+		if ItemReady(ITEM_CONS_PURIFICATION_POTION) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
+
+		else
+			return false
+		end
 
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_MAGIC) then
 		return false
@@ -941,7 +950,8 @@ function Fury()
 		  and not Fury_Configuration[MODE_HEADER_AOE]
 		  and UnitMana("player") >= FuryExecuteCost
 		  and (ActiveStance() ~= 2
-		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
+		  or (Fury_Configuration["PrimaryStance"] ~= 2
+		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0))
 		  and (UnitHealth("target") / UnitHealthMax("target") * 100) < 20
 		  and SpellReady(ABILITY_EXECUTE_FURY) then
@@ -968,7 +978,9 @@ function Fury()
 		  and not Fury_Configuration[MODE_HEADER_AOE]
 		  and UnitMana("player") >= 5
 		  and (ActiveStance() == 1
-		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
+		  or ((Fury_Configuration["PrimaryStance"] ~= 2
+		  or UnitIsPlayer("target"))
+		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0))
 		  and SpellReady(ABILITY_OVERPOWER_FURY) then
 			if ActiveStance() ~= 1 then
@@ -1163,7 +1175,8 @@ function Fury()
 		  and UnitName("target") ~= BOSS_MC_MAGMADAR_FURY
 		  and UnitMana("player") <= Fury_Configuration["MaximumRage"]
 		  and (ActiveStance() == 3
-		  or (UnitMana("player") <= FuryTacticalMastery
+		  or (Fury_Configuration["PrimaryStance"] ~= 2
+		  and UnitMana("player") <= FuryTacticalMastery
 		  and Fury_Configuration["PrimaryStance"] ~= 0))
 		  and SpellReady(ABILITY_BERSERKER_RAGE_FURY) then
 			if ActiveStance() ~= 3 then
@@ -1261,7 +1274,8 @@ function Fury()
 		  and Weapon()
 		  and UnitMana("player") >= 25
 		  and (ActiveStance() == 3
-		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
+		  or (Fury_Configuration["PrimaryStance"] ~= 2
+		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0))
 		  and SpellReady(ABILITY_WHIRLWIND_FURY) then
 			if ActiveStance() ~= 3 then
@@ -1316,104 +1330,113 @@ function Fury()
 			CastSpellByName(ABILITY_DEMORALIZING_SHOUT_FURY)
 			FuryLastSpellCast = GetTime()
 
-		-- 29, Shield Block
+		--29, Revenge
+		elseif Fury_Configuration[ABILITY_REVENGE_FURY]
+		  and FuryCombat
+		  and UnitMana("player") >= 5
+		  and FuryRevengeReadyUntil > GetTime()
+		  and SpellReady(ABILITY_REVENGE_FURY) then
+			Debug("29. Revenge")
+			CastSpellByName(ABILITY_REVENGE_FURY)
+
+		-- 30, Shield Block
 		elseif Fury_Configuration[ABILITY_SHIELD_BLOCK_FURY]
 		  and Shield()
 		  and FuryCombat
 		  and UnitMana("player") >= 15
 		  and SpellReady(ABILITY_SHIELD_BLOCK_FURY) then
-			Debug("29. Shield Block")
+			Debug("30. Shield Block")
 			CastSpellByName(ABILITY_SHIELD_BLOCK_FURY)
 
-		-- 30, Stance dance (part 2)
+		-- 31, Stance dance (part 2)
 		elseif FuryDanceDone
 		  and FuryOldStance
 		  and FuryLastStanceCast + 1.5 <= GetTime()
 		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) then
 			--Initiate stance dance
 			if not Fury_Configuration["PrimaryStance"] then
-				Debug("30. Old Stance (" .. FuryOldStance .. ")")
+				Debug("31. Old Stance (" .. FuryOldStance .. ")")
 				CastShapeshiftForm(FuryOldStance)
 			else
-				Debug("30. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
+				Debug("31. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
 				CastShapeshiftForm(Fury_Configuration["PrimaryStance"])
 			end
 			FuryLastStanceCast = GetTime()
 			if FuryOldStance == ActiveStance()
 			  or Fury_Configuration["PrimaryStance"] == ActiveStance() then
-				Debug("Variables cleared (Dance done)")
+				Debug("31. Variables cleared (Dance done)")
 				FuryOldStance = nil
 				FuryDanceDone = nil
 			end
 
-		-- 31, Juju Flurry
+		-- 32, Juju Flurry
 		elseif FuryCombat
 		  and Fury_Configuration[ITEM_CONS_JUJU_FLURRY]
 		  and not HasBuff("player", "INV_Misc_MonsterScales_17")
 		  and FuryAttack == true
 		  and ItemReady(ITEM_CONS_JUJU_FLURRY) then
-			Debug("31. "..ITEM_CONS_JUJU_FLURRY)
+			Debug("32. "..ITEM_CONS_JUJU_FLURRY)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUJU_FLURRY)
 
-		-- 32, Juju Chill
+		-- 33, Juju Chill
 		elseif FuryCombat
 		  and FuryAttack == true
 		  and Fury_Configuration[ITEM_CONS_JUJU_CHILL]
 		  and not HasBuff("player", "INV_Misc_MonsterScales_09")
 		  and UseRes("frost")
 		  and ItemReady(ITEM_CONS_JUJU_CHILL) then
-			Debug("32. "..ITEM_CONS_JUJU_CHILL)
+			Debug("33. "..ITEM_CONS_JUJU_CHILL)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUJU_CHILL)
 
-		-- 33, Juju Ember
+		-- 34, Juju Ember
 		elseif FuryCombat
 		  and Fury_Configuration[ITEM_CONS_JUJU_EMBER]
 		  and not HasBuff("player", "INV_Misc_MonsterScales_15")
 		  and UseRes("fire")
 		  and ItemReady(ITEM_CONS_JUJU_EMBER) then
-			Debug("33. "..ITEM_CONS_JUJU_EMBER)
+			Debug("34. "..ITEM_CONS_JUJU_EMBER)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUJU_EMBER)
 
-		-- 34, Juju Might
+		-- 35, Juju Might
 		elseif FuryCombat
 		  and FuryAttack == true
 		  and Fury_Configuration[ITEM_CONS_JUJU_MIGHT]
 		  and not HasBuff("player", "INV_Misc_MonsterScales_07")
 		  and not HasBuff("player", "INV_Potion_92") -- Winterfall Firewater
 		  and ItemReady(ITEM_CONS_JUJU_MIGHT) then
-			Debug("34. "..ITEM_CONS_JUJU_MIGHT)
+			Debug("35. "..ITEM_CONS_JUJU_MIGHT)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUJU_MIGHT)
 
-		-- 35, Juju Power
+		-- 36, Juju Power
 		elseif FuryCombat
 		  and FuryAttack == true
 		  and Fury_Configuration[ITEM_CONS_JUJU_POWER]
 		  and not HasBuff("player", "INV_Misc_MonsterScales_11")
 		  and not HasBuff("player", "INV_Potion_61") -- Elixir of Giants
 		  and ItemReady(ITEM_CONS_JUJU_POWER) then
-			Debug("35. "..ITEM_CONS_JUJU_POWER)
+			Debug("36. "..ITEM_CONS_JUJU_POWER)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUJU_POWER)
 
-		-- 36, Immolation potion
+		-- 37, Immolation potion
 		elseif FuryCombat
 		  and Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION]
 		  and not HasBuff("player", "Spell_Fire_Immolation")
 		  and ItemReady(ITEM_CONS_OIL_OF_IMMOLATION) then
-			Debug("36. "..ITEM_CONS_OIL_OF_IMMOLATION)
+			Debug("37. "..ITEM_CONS_OIL_OF_IMMOLATION)
 			UseContainerItemByNameOnPlayer(ITEM_CONS_OIL_OF_IMMOLATION)
 
-		-- 37, Racial berserking
+		-- 38, Racial berserking
 		elseif FuryRacialBerserking
 		  and Fury_Configuration[RACIAL_BERSERKING_FURY]
 		  and UnitMana("player") >= 5
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) <= tonumber(Fury_Configuration["BerserkHealth"])
 		  and not HasBuff("player", "Racial_Berserk")
 		  and SpellReady(RACIAL_BERSERKING_FURY) then
-			Debug("37. Berserking")
+			Debug("38. Berserking")
 			CastSpellByName(RACIAL_BERSERKING_FURY)
 			FuryLastSpellCast = GetTime()
 			
-		-- 38, Blood Fury (Orc racial ability)
+		-- 39, Blood Fury (Orc racial ability)
 		elseif FuryRacialBloodFury
 		  and Fury_Configuration[ABILITY_BLOOD_FURY]
 		  and FuryAttack == true
@@ -1421,10 +1444,10 @@ function Fury()
 		  and FuryCombat
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
 		  and SpellReady(ABILITY_BLOOD_FURY) then
-			Debug("38. Blood Fury")
+			Debug("39. Blood Fury")
 			CastSpellByName(ABILITY_BLOOD_FURY)
 
-		-- 39, Death Wish
+		-- 40, Death Wish
 		elseif FuryDeathWish
 		  and Fury_Configuration[ABILITY_DEATH_WISH_FURY]
 		  and UnitMana("player") >= 10
@@ -1433,47 +1456,47 @@ function Fury()
 		  and FuryCombat
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
 		  and SpellReady(ABILITY_DEATH_WISH_FURY) then
-			Debug("39. Death Wish")
+			Debug("40. Death Wish")
 			CastSpellByName(ABILITY_DEATH_WISH_FURY)
 
-		-- 40 Earthstrike
+		-- 41 Earthstrike
 		elseif Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE]
 		  and FuryCombat
 		  and FuryAttack == true
 		  and IsTrinketEquipped(ITEM_TRINKET_EARTHSTRIKE) then
-			Debug("40. Earthstrike")
+			Debug("41. Earthstrike")
 			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_EARTHSTRIKE))
 
-		-- 41 Slayer's Crest
+		-- 42 Slayer's Crest
 		elseif Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST]
 		  and FuryCombat
 		  and FuryAttack == true
 		  and IsTrinketEquipped(ITEM_TRINKET_SLAYERS_CREST) then
-			Debug("41. Slayer's Crest")
+			Debug("42. Slayer's Crest")
 			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_SLAYERS_CREST))
 
-		-- 42 Kiss of the Spider
+		-- 43 Kiss of the Spider
 		elseif Fury_Configuration[ITEM_TRINKET_KOTS]
 		  and FuryCombat
 		  and FuryAttack == true
 		  and IsTrinketEquipped(ITEM_TRINKET_KOTS) then
-			Debug("42. Kiss of the Spider")
+			Debug("43. Kiss of the Spider")
 			UseInventoryItem(IsTrinketEquipped(ITEM_TRINKET_KOTS))
 
-		-- 43, Bloodrage
+		-- 44, Bloodrage
 		elseif Fury_Configuration[ABILITY_BLOODRAGE_FURY]
 		  and UnitMana("player") <= tonumber(Fury_Configuration["MaximumRage"])
 		  and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["BloodrageHealth"])
 		  and SpellReady(ABILITY_BLOODRAGE_FURY) then
-			Debug("43. Bloodrage")
+			Debug("44. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 44, Treat debuffs (poisons)
+		-- 45, Treat debuffs (poisons)
 		elseif Fury_Configuration[MODE_HEADER_DEBUFF]
 		  and Fury_TreatDebuff("player") then
-			Debug("44. Treated debuff")
+			Debug("45. Treated debuff")
 
-		-- 45, Dump rage with Heroic Strike or Cleave
+		-- 46, Dump rage with Heroic Strike or Cleave
 		elseif (Fury_Configuration[MODE_HEADER_AOE]
 		  or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
 		  and FuryMortalStrike
@@ -1490,7 +1513,7 @@ function Fury()
 		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]
 		  or not FuryWhirlwind)) then
 
-			-- 46, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+			-- 47, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
 			if Fury_Configuration[ABILITY_HAMSTRING_FURY]
 			  and Weapon()
@@ -1503,11 +1526,11 @@ function Fury()
 			  and SpellReady(ABILITY_HAMSTRING_FURY) then
 				-- Try trigger...
 				-- stun,imp attack speed, extra swing
-				Debug("46. Hamstring (Trigger ...)")
+				Debug("47. Hamstring (Trigger ...)")
 				CastSpellByName(ABILITY_HAMSTRING_FURY)
 				FuryLastSpellCast = GetTime()
 
-			-- 47, Heroic Strike
+			-- 48, Heroic Strike
 			elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
 			  and Weapon()
 			  and not Fury_Configuration[MODE_HEADER_AOE]
@@ -1516,12 +1539,12 @@ function Fury()
 			  or (not FuryMortalStrike
 			  and not FuryBloodthirst))
 			  and SpellReady(ABILITY_HEROIC_STRIKE_FURY) then
-				Debug("47. Heroic Strike")
+				Debug("48. Heroic Strike")
 				CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
-			-- 48, Cleave
+			-- 49, Cleave
 			elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
 			  or Fury_Configuration[MODE_HEADER_AOE])
 			  and Weapon()
@@ -1529,12 +1552,12 @@ function Fury()
 			  and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
 			  or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
 			  and SpellReady(ABILITY_CLEAVE_FURY) then
-				Debug("48. Cleave")
+				Debug("49. Cleave")
 				CastSpellByName(ABILITY_CLEAVE_FURY)
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
 			elseif not FuryRageDumped then
-				Debug("49. Rage: "..tostring(UnitMana("player")))
+				Debug("50. Rage: "..tostring(UnitMana("player")))
 				FuryRageDumped = true
 			end
 		end
@@ -1608,7 +1631,7 @@ local function Fury_Charge()
 			AttackTarget()
 		end
 		if Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
-		  and dist <= 7
+		  and dist <= 5
 		  and not SnareDebuff("target")
 		  and UnitMana("player") >= 20
 		  and SpellReady(ABILITY_THUNDER_CLAP_FURY) then
@@ -1890,7 +1913,8 @@ local function Fury_ScanTalents()
 	else
 		FuryRacialBerserking = false
 	end
-	if UnitLevel("player") >= 36 then
+	if SpellId("Whirlwind") then
+		Debug("Whirlwind")
 		FuryWhirlwind = true
 	else
 		FuryWhirlwind = false
@@ -2056,6 +2080,24 @@ function Fury_SlashCommand(msg)
 
 	elseif command == "shoot" then
 		Fury_Shoot()
+
+	elseif command == "prot" then
+		if Fury_Configuration["PrimaryStance"] == 2 then
+			Fury_Configuration["PrimaryStance"] = Fury_Configuration["ProtOldStance"]
+			Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
+			Fury_Configuration[ABILITY_REVENGE_FURY] = false
+			Print(MODE_HEADER_PROT .. " " .. SLASH_FURY_DISABLED .. ".")
+		else
+			if Fury_Configuration["PrimaryStance"] == 2 then
+				Fury_Configuration["ProtOldStance"] = 3
+			else
+				Fury_Configuration["ProtOldStance"] = Fury_Configuration["PrimaryStance"]
+			end
+			Fury_Configuration["PrimaryStance"] = 2
+			Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
+			Fury_Configuration[ABILITY_REVENGE_FURY] = true
+			Print(MODE_HEADER_PROT .. " " .. SLASH_FURY_ENABLED .. ".")
+		end
 
 	elseif command == "berserk" then
 		if options ~= "" then

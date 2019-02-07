@@ -29,38 +29,6 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
     END
 
 ## Reference
-### Logic
-Dismount (Mounted only)  
-Berserker Rage (Feared only)  
-Execute  
-Overpower  
-Pummel / Shield Bash  
-Hamstring  
-Piercing Howl  
-Rend (PvP only)  
-Sweeping Strikes  
-Berserker Rage (PvE only)  
-Bloodrage  
-Berserking (Troll racial)  
-Disarm (PvP only)  
-Demoralizing Shout (PvE only)  
-Battle Shout  
-Mortal Strike / Bloodthirst  
-Whirlwind  
-Treat debuffs
-Juju Flurry  
-Juju Chill  
-Juju Ember  
-Juju Might  
-Juju Power  
-Oil of Immolation  
-Blood Fury (Orc racial)  
-Death Wish  
-Earthstrike  
-Slayer's Crest  
-Kiss of the Spider  
-Hamstring  
-Heroic Strike / Cleave  
 
 ### Abilities
 **Name, Icon**  
@@ -138,6 +106,7 @@ Heroic Strike / Cleave
 /fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
+/fury prot - enables shield block and sunder and makes defensive stance default stance.
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
 /fury Earthstrike - toggles use of Earthstrike on every cooldown
 /fury Slayer's Crest  - toggles use of Slayer's Crest on every cooldown
