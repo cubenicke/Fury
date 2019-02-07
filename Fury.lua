@@ -13,7 +13,7 @@
 
 local function Fury_Configuration_Init()
 
-	FURY_VERSION = "1.16.7"
+	FURY_VERSION = "1.17.1"
 
 	if not Fury_Configuration then
 		Fury_Configuration = { }
