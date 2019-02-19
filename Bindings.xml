@@ -20,4 +20,7 @@
 	<Binding name="FURY_BLOCK" header="FURY">
 		Fury_SlashCommand("block")
 	</Binding>
+	<Binding name="FURY_SHOOT" header="FURY">
+		Fury_SlashCommand("shoot")
+	</Binding>
 </Bindings>

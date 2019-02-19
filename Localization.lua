@@ -12,6 +12,7 @@ BINDING_NAME_FURY_DW			= "Toggle Death Wish";
 BINDING_HEADER_FURY			= "Fury";
 BINDING_NAME_FURY_CHARGE		= "Charge";
 BINDING_NAME_FURY_BLOCK			= "Block";
+BINDING_NAME_FURY_SHOOT			= "Shoot";
 
 CLASS_DRUID_FURY			= "Druid";
 CLASS_HUNTER_FURY			= "Hunter";

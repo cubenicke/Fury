@@ -265,10 +265,14 @@ local function Print(msg)
 end
 
 local function Debug(msg)
+	if (msg or "") == "" then
+		FuryRageDumped = nil
+		return
+	end
 	if Fury_Configuration and Fury_Configuration["Debug"] then
 		Print(msg)
 	end
-	if Fury_Configuration["DebugChannel"] then
+	if Fury_Configuration["DebugChannel"] and UnitLevel("player") >= 10 then
 		if  GetTime() > FuryLastLog + 0.1 then
 			SendChatMessage(msg..(FuryLogMsg or ""), "CHANNEL", nil, Fury_Configuration["DebugChannel"])
 			FuryLastLog = GetTime()
@@ -291,7 +295,12 @@ local function LogToFile(enable)
 			Fury_Configuration["DebugChannel"] = id
 		else
 			local _, channel = GetChannelName(Fury_Configuration["DebugChannel"])
-			JoinChannelByName(channel, "test", nil, 1)
+			if channel ~= nil then
+				JoinChannelByName(channel, "test", nil, 1)
+			else
+				Fury_Configuration["DebugChannel"] = nil
+				LogToFile(enable)
+			end
 		end
 		Print("Logging to channel turned on")
 	else
@@ -410,7 +419,8 @@ local function Fury_InitDistance()
 				end
 			end
 			if not yard10 then
-				if string.find(t, "Ability_GolemThunderClap") then -- Thunder Clap
+				if string.find(t, "Ability_GolemThunderClap")
+				  or string.find(t, "Spell_Nature_ThunderClap") then -- Thunder Clap
 					yard10 = i
 					Debug("10 yard: "..t)
 					found = found + 1
@@ -1199,6 +1209,8 @@ function Fury()
 		  and not FuryDanceDone
 		  and FuryLastStanceCast + 1.5 <= GetTime()
 		  and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
+		  and (FuryBerserkerStance or ActiveStance() ~= 3)
+		  and (FuryDefensiveStance or ActiveStance() ~= 1)
 		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0 then
 			--Initiate stance dance
@@ -1633,7 +1645,7 @@ local function Fury_Charge()
 		if Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
 		  and dist <= 5
 		  and not SnareDebuff("target")
-		  and UnitMana("player") >= 20
+		  and UnitMana("player") >= FuryThunderClapCost
 		  and SpellReady(ABILITY_THUNDER_CLAP_FURY) then
 			if ActiveStance() ~= 1 then
 				if FuryOldStance == nil then
@@ -1725,7 +1737,7 @@ local function Fury_Charge()
 		  and ActiveStance() == 1
 		  and dist <= 5
 		  and not SnareDebuff("target")
-		  and UnitMana("player") >= 20
+		  and UnitMana("player") >= FuryThunderClapCost
 		  and SpellReady(ABILITY_THUNDER_CLAP_FURY) then
 			Debug("O3. Thunder Clap")
 			CastSpellByName(ABILITY_THUNDER_CLAP_FURY)
@@ -1793,6 +1805,22 @@ local function Fury_Charge()
 end
 
 local function Fury_ScanTalents()
+	local i = 1
+	Debug("Scanning Spell Book")
+	while true do
+		local spellName, spellRank = GetSpellName(i, BOOKTYPE_SPELL)
+		if not spellName then
+			break
+		end
+		if spellName == ABILITY_BERSERKER_STANCE_FURY then
+			FuryBerserkerStance = true
+			Debug(ABILITY_BERSERKER_STANCE_FURY)
+		elseif spellName == ABILITY_DEFENSIVE_STANCE_FURY then
+			FuryDefensiveStance = true
+			Debug(ABILITY_DEFENSIVE_STANCE_FURY)
+		end
+		i = i + 1
+	end
 	Debug("Scanning Talent Tree")
 	--Calculate the cost of Heroic Strike based on talents
 	local _, _, _, _, currRank = GetTalentInfo(1, 1)
@@ -1805,6 +1833,11 @@ local function Fury_ScanTalents()
 	FuryTacticalMastery = (tonumber(currRank) * 5)
 	if FuryTacticalMastery > 0 then
 		Debug("Tactical Mastery")
+	end
+	local _, _, _, _, currRank = GetTalentInfo(1, 6)
+	FuryThunderClapCost = (20 - tonumber(currRank))
+	if FuryThunderClapCost < 20 then
+		Debug("Improved Thunder Clap")
 	end
 	-- Check for Sweeping Strikes
 	local _, _, _, _, currRank = GetTalentInfo(1, 13)
@@ -1922,6 +1955,22 @@ local function Fury_ScanTalents()
 	FuryTalents = true
 end
 
+--------------------------------------------------
+local function setOptionRange(option, text, v, vmin, vmax)
+	if v ~= "" then
+		if tonumber(v) < vmin then
+			v = vmin
+		elseif tonumber(v) > vmax then
+			v = vmax
+		end
+		Fury_Configuration[option] = tonumber(v)
+	else
+		v = Fury_Configuration[option]
+	end
+	Print(text .. v .. ".")
+end
+
+--------------------------------------------------
 local function toggleOption(option, text)
 	if Fury_Configuration[option] == true then
 		Fury_Configuration[option] = false
@@ -1958,10 +2007,8 @@ function Fury_SlashCommand(msg)
 	elseif command == "block" then
 		Fury_Block()
 
-	elseif command == "talents" then
-		Print(CHAT_TALENTS_RESCAN_FURY)
-		Fury_InitDistance()
-		Fury_ScanTalents()
+	elseif command == "shoot" then
+		Fury_Shoot()
 
 	elseif command == "aoe" then
 		toggleOption(MODE_HEADER_AOE, MODE_HEADER_AOE)
@@ -1972,99 +2019,32 @@ function Fury_SlashCommand(msg)
 	elseif command == "debug" then
 		toggleOption("Debug", SLASH_FURY_DEBUG)
 
-	elseif command == "dance" then
-		if options ~= "" then
-			if tonumber(options) < 0 then
-				options = 0
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["StanceChangeRage"] = options
-		else
-			options = Fury_Configuration["StanceChangeRage"]
-		end
-		Print(SLASH_FURY_DANCE .. options .. ".")
-
 	elseif command == "attack" then
 		toggleOption("AutoAttack", SLASH_FURY_AUTOATTACK)
 
+	elseif command == "dance" then
+		setOptionRange("StanceChangeRage", SLASH_FURY_DANCE, options, 0, 100)
+
 	elseif command == "rage" then
-		if options ~= "" then
-			if tonumber(options) < 0 then
-				options = 0
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["MaximumRage"] = options
-		else
-			options = Fury_Configuration["MaximumRage"]
-		end
-		Print(SLASH_FURY_RAGE .. options .. ".")
+		setOptionRange("MaximumRage", SLASH_FURY_RAGE, options, 0, 100)
 
 	elseif command == "attackrage" then
-		if options ~= "" then
-			if tonumber(options) < 0 then
-				options = 0
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["NextAttackRage"] = options
-		else
-			options = Fury_Configuration["NextAttackRage"]
-		end
-		Print(SLASH_FURY_ATTACKRAGE .. options .. ".")
+		setOptionRange("NextAttackRage", SLASH_FURY_ATTACKRAGE, options, 0 , 100)
 
 	elseif command == "bloodrage" then
-		if options ~= "" then
-			if tonumber(options) < 1 then
-				options = 1
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["BloodrageHealth"] = options
-		else
-			options = Fury_Configuration["BloodrageHealth"]
-		end
-		Print(SLASH_FURY_BLOODRAGE .. options .. ".")
+		setOptionRange("BloodrageHealth", SLASH_FURY_BLOODRAGE, options, 1, 100)
 
 	elseif command == "demodiff" then
-		if options ~="" then 
-			if tonumber(options) < -3 then
-				options = -3
-			elseif tonumber(options) > 60 then
-				options = 60
-			end
-			Fury_Configuration["DemoDiff"] = options
-		else
-			options = Fury_Configuration["DemoDiff"]
-		end
-		Print(SLASH_FURY_DEMODIFF .. options.. ".")
+		setOptionRange("DemoDiff", SLASH_FURY_DEMODIFF, options, -3, 60)
 
 	elseif command == "deathwish" then
-		if options ~= "" then
-			if tonumber(options) < 1 then
-				options = 1
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["DeathWishHealth"] = options
-		else
-			options = Fury_Configuration["DeathWishHealth"]
-		end
-		Print(SLASH_FURY_DEATHWISH .. options .. ".")
+		setOptionRange("DeathWishHealth", SLASH_FURY_DEATHWISH, options, 1, 100)
 
 	elseif command == "hamstring" then
-		if options ~= "" then
-			if tonumber(options) < 1 then
-				options = 1
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["HamstringHealth"] = options
-		else
-			options = Fury_Configuration["HamstringHealth"]
-		end
-		Print(SLASH_FURY_HAMSTRING .. options .. ".")
+		setOptionRange("HamstringHealth", SLASH_FURY_HAMSTRING, options, 1, 100)
+
+	elseif command == "berserk" then
+		setOptionRange("BerserkHealth", SLASH_FURY_TROLL, options, 1, 100)
 
 	elseif command == "threat" then
 		--If HS then use cleave, if cleave then use HS
@@ -2077,9 +2057,6 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
 			Print(SLASH_FURY_HIGHTHREAT)
 		end
-
-	elseif command == "shoot" then
-		Fury_Shoot()
 
 	elseif command == "prot" then
 		if Fury_Configuration["PrimaryStance"] == 2 then
@@ -2098,19 +2075,6 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration[ABILITY_REVENGE_FURY] = true
 			Print(MODE_HEADER_PROT .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
-
-	elseif command == "berserk" then
-		if options ~= "" then
-			if tonumber(options) < 1 then
-				options = 1
-			elseif tonumber(options) > 100 then
-				options = 100
-			end
-			Fury_Configuration["BerserkHealth"] = options
-		else
-			options = Fury_Configuration["BerserkHealth"]
-		end
-		Print(SLASH_FURY_TROLL .. options .. ".")
 
 	elseif command == "stance" then
 		if options == ABILITY_BATTLE_STANCE_FURY
@@ -2157,7 +2121,7 @@ function Fury_SlashCommand(msg)
 	elseif command == "earthstrike" then
 		toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
 
-	elseif command == "slayer's" and options == "Crest" then
+	elseif command == "slayer" or (command == "slayer's" and options == "crest") then
 		toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
 
 	elseif command == "kots" then
@@ -2169,6 +2133,11 @@ function Fury_SlashCommand(msg)
 		else
 			Print(SLASH_FURY_NO_ATTACKABLE_TARGET)
 		end
+
+	elseif command == "talents" then
+		Print(CHAT_TALENTS_RESCAN_FURY)
+		Fury_InitDistance()
+		Fury_ScanTalents()
 
 	elseif command == "where" then
 		Print("GetMinimapZoneText "..(GetMinimapZoneText() or ""))
