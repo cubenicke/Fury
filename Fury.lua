@@ -2066,6 +2066,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["PrimaryStance"] = Fury_Configuration["ProtOldStance"]
 			Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
 			Fury_Configuration[ABILITY_REVENGE_FURY] = false
+			Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
 			Print(MODE_HEADER_PROT .. " " .. SLASH_FURY_DISABLED .. ".")
 		else
 			if Fury_Configuration["PrimaryStance"] == 2 then
@@ -2076,6 +2077,7 @@ function Fury_SlashCommand(msg)
 			Fury_Configuration["PrimaryStance"] = 2
 			Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
 			Fury_Configuration[ABILITY_REVENGE_FURY] = true
+			Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
 			Print(MODE_HEADER_PROT .. " " .. SLASH_FURY_ENABLED .. ".")
 		end
 
