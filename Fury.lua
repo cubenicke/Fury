@@ -519,10 +519,13 @@ local function SpellReadyIn(spellname)
 		if start == 0 and duration == 0 and FuryLastSpellCast + 1 <= GetTime() then
 			return 0
 		end
-		return duration
+		local remaining = duration - (GetTime() - start)
+		if remaining >= 0 then
+			return remaining
+		end
 	end
-	Debug("SR: "..spellname.." unknown")
-	return nil
+	--Debug("SR: "..spellname.." unknown")
+	return 86400
 end
 
 local function HasDebuff(unit, texturename, amount)
@@ -1522,9 +1525,9 @@ function Fury()
 		  or not Fury_Configuration[ABILITY_BLOODTHIRST_FURY]
 		  or not FuryBloodthirst)
 		  and ((Fury_Configuration[ABILITY_WHIRLWIND_FURY]
-		  and not SpellReadyIn(ABILITY_WHIRLWIND_FURY) == 0)
+		  and not SpellReadyIn(ABILITY_WHIRLWIND_FURY) ~= 0)
 		  or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]
-		  or not FuryWhirlwind)) then
+		  or not FuryWhirlwind))  then
 
 			-- 47, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
 			-- Hamstring
@@ -1645,7 +1648,7 @@ local function Fury_Charge()
 		end
 		if Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
 		  and FuryLastChargeCast + 0.5 <= GetTime()
-		  and GetTime() < FuryLastChargeCast + 5
+		  and GetTime() < FuryLastChargeCast + 2
 		  and not SnareDebuff("target")
 		  and UnitMana("player") >= FuryThunderClapCost
 		  and SpellReadyIn(ABILITY_THUNDER_CLAP_FURY) == 0 then
@@ -1670,7 +1673,7 @@ local function Fury_Charge()
 		  and dist <= 25
 		  and dist > 7
 		  and UnitMana("player") >= 10
-		  and FuryLastChargeCast + 3 < GetTime()
+		  and FuryLastChargeCast + 1 < GetTime()
 		  and SpellReadyIn(ABILITY_INTERCEPT_FURY) == 0 then
 			Debug("C2. Intercept")
 			CastSpellByName(ABILITY_INTERCEPT_FURY)
@@ -1761,10 +1764,10 @@ local function Fury_Charge()
 				if FuryOldStance == 3 then
 					FuryDanceDone = true
 				end
+				CastSpellByName(ABILITY_INTERCEPT_FURY)
+				FuryLastChargeCast = GetTime()
+				FuryLastSpellCast = GetTime()
 			end
-			CastSpellByName(ABILITY_INTERCEPT_FURY)
-			FuryLastChargeCast = GetTime()
-			FuryLastSpellCast = GetTime()
 
 		elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
 		  and FuryBerserkerRage
