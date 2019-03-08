@@ -823,6 +823,12 @@ local function Fury_Shoot()
 end
 
 local function Fury_TreatDebuff(unit)
+	local allowCombatCooldown = true
+	if UnitName("target") == BOSS_NAX_LOATHEB_FURY
+	  or UnitName("target") == BOSS_NAX_SAPPHIRON_FURY then
+		allowCombatCooldown = false -- Save for Shadow/frost Protection Potion
+	end
+	-- add Restorative Potion (magic, poison curse or disease)
 	if HasDebuffType(unit, ITEM_DEBUFF_TYPE_POISON) then
 		if IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION) then
 			local slot = IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION)
@@ -831,7 +837,7 @@ local function Fury_TreatDebuff(unit)
 		elseif UnitRace(unit) == RACE_DWARF and SpellReadyIn(ABILITY_STONEFORM_FURY) == 0 then
 			CastSpellByName(ABILITY_STONEFORM_FURY)
 
-		elseif ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
+		elseif allowCombatCooldown and ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
 
 		elseif ItemReady(ITEM_CONS_POWERFUL_ANTIVENOM) then
@@ -840,8 +846,11 @@ local function Fury_TreatDebuff(unit)
 		elseif ItemReady(ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE) then
 			UseContainerItemByNameOnPlayer(ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE)
 
-		elseif ItemReady(ITEM_CONS_PURIFICATION_POTION) then
+		elseif allowCombatCooldown and ItemReady(ITEM_CONS_PURIFICATION_POTION) then
 			UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
+
+		elseif allowCombatCooldown and ItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
 
 		else
 			return false
@@ -851,23 +860,34 @@ local function Fury_TreatDebuff(unit)
 		if UnitRace(unit) == RACE_DWARF and SpellReadyIn(ABILITY_STONEFORM_FURY) == 0 then
 			CastSpellByName(ABILITY_STONEFORM_FURY)
 
-		elseif ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
+		elseif allowCombatCooldown and ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
 			Print("jungleremedy")
 			UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
 
-		else
+		elseif allowCombatCooldown and ItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
+
+			else
 			return false
 		end
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_CURSE) then
-		if ItemReady(ITEM_CONS_PURIFICATION_POTION) then
+		if allowCombatCooldown and ItemReady(ITEM_CONS_PURIFICATION_POTION) then
 			UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
 
-		else
+		elseif allowCombatCooldown and ItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
+
+			else
 			return false
 		end
 
 	elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_MAGIC) then
-		return false
+		if allowCombatCooldown and ItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+			UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
+
+		else
+			return false
+		end
 
 	else
 		return false
@@ -893,7 +913,7 @@ function Fury()
 			AttackTarget()
 		end
 
-		-- 2, Overpower 
+		-- 2, Overpower
 		if FuryOverpower then
 			if (GetTime() - FuryOverpower) > 4 then
 				FuryOverpower = nil
@@ -1005,9 +1025,9 @@ function Fury()
 				FuryLastStanceCast = GetTime()
 			else
 				Debug("12. Overpower")
+				CastSpellByName(ABILITY_OVERPOWER_FURY)
+				FuryLastSpellCast = GetTime()
 			end
-			CastSpellByName(ABILITY_OVERPOWER_FURY)
-			FuryLastSpellCast = GetTime()
 
 		-- 13, Pummel if casting
 		elseif Fury_Configuration[ABILITY_PUMMEL_FURY]
@@ -1210,6 +1230,7 @@ function Fury()
 		elseif Fury_Configuration["PrimaryStance"]
 		  and not FuryOldStance
 		  and not FuryDanceDone
+		  and FuryLastStanceCast
 		  and FuryLastStanceCast + 1.5 <= GetTime()
 		  and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
 		  and (FuryBerserkerStance or ActiveStance() ~= 3)
@@ -1358,7 +1379,9 @@ function Fury()
 		elseif Fury_Configuration[ABILITY_SHIELD_BLOCK_FURY]
 		  and Shield()
 		  and FuryCombat
+		  and ActiveStance() == 2
 		  and UnitName("targettarget") == UnitName("player")
+		  and UnitLevel("Player") - UnitLevel("Target") < Fury_Configuration["DemoDiff"]
 		  and UnitMana("player") >= 15
 		  and SpellReadyIn(ABILITY_SHIELD_BLOCK_FURY) == 0 then
 			Debug("30. Shield Block")
@@ -1451,7 +1474,7 @@ function Fury()
 			Debug("38. Berserking")
 			CastSpellByName(RACIAL_BERSERKING_FURY)
 			FuryLastSpellCast = GetTime()
-			
+
 		-- 39, Blood Fury (Orc racial ability)
 		elseif FuryRacialBloodFury
 		  and Fury_Configuration[ABILITY_BLOOD_FURY]
@@ -1573,7 +1596,7 @@ function Fury()
 				FuryLastSpellCast = GetTime()
 				--No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
 			elseif not FuryRageDumped then
-				Debug("50. Rage: "..tostring(UnitMana("player")))
+				--Debug("50. Rage: "..tostring(UnitMana("player")))
 				FuryRageDumped = true
 			end
 		end
@@ -1647,7 +1670,7 @@ local function Fury_Charge()
 			AttackTarget()
 		end
 		if Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
-		  and FuryLastChargeCast + 0.5 <= GetTime()
+		  and FuryLastChargeCast + 0.6 <= GetTime()
 		  and GetTime() < FuryLastChargeCast + 2
 		  and not SnareDebuff("target")
 		  and UnitMana("player") >= FuryThunderClapCost
@@ -1719,7 +1742,7 @@ local function Fury_Charge()
 		  and ActiveStance() == 1
 		  and dist <= 25
 		  and dist > 7
-		  and FuryLastChargeCast + 3 < GetTime()
+		  and FuryLastChargeCast + 0.5 < GetTime()
 		  and SpellReadyIn(ABILITY_CHARGE_FURY) == 0 then
 			Debug("O1. Charge")
 			CastSpellByName(ABILITY_CHARGE_FURY)
@@ -1730,7 +1753,7 @@ local function Fury_Charge()
 		  and dist <= 25
 		  and dist > 7
 		  and UnitMana("player") >= 10
-		  and FuryLastChargeCast + 3 < GetTime()
+		  and FuryLastChargeCast + 2 < GetTime()
 		  and SpellReadyIn(ABILITY_INTERCEPT_FURY) == 0 then
 			Debug("O2. Intercept")
 			CastSpellByName(ABILITY_INTERCEPT_FURY)
@@ -1750,6 +1773,7 @@ local function Fury_Charge()
 		elseif Fury_Configuration[ABILITY_INTERCEPT_FURY]
 		  and SpellReadyIn(ABILITY_CHARGE_FURY) ~= 0
 		  and UnitMana("player") >= 10
+		  and FuryBerserkerStance
 		  and FuryLastChargeCast + 1 < GetTime()
 		  and SpellReadyIn(ABILITY_INTERCEPT_FURY) == 0 then
 			if ActiveStance() ~= 3 then
@@ -2246,8 +2270,6 @@ function Fury_SlashCommand(msg)
 			for k,_ in pairs(helps) do
 				if cmds ~= "" and cmds ~= SLASH_FURY_HELP then
 					cmds = cmds..", "
-				else 
-				
 				end
 				cmds = cmds..k
 				if string.len(cmds) > 80 then
@@ -2294,7 +2316,7 @@ function Fury_OnLoad()
 		"PLAYER_TARGET_CHANGED",
 		"VARIABLES_LOADED",
 	}
-	for _, ev in pairs(evs) do 
+	for _, ev in pairs(evs) do
 		this:RegisterEvent(ev)
 	end
 
@@ -2319,10 +2341,11 @@ function Fury_OnEvent(event)
 		--Check for settings
 		Fury_Configuration_Init()
 
-	elseif event == "CHAT_MSG_COMBAT_SELF_MISSES"
-	  and string.find(arg1, CHAT_OVERPOWER1_FURY)
+	elseif (event == "CHAT_MSG_COMBAT_SELF_MISSES"
 	  or event == "CHAT_MSG_SPELL_SELF_DAMAGE"
-	  and string.find(arg1, CHAT_OVERPOWER2_FURY) then
+	  or event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF")
+	  and (string.find(arg1, CHAT_OVERPOWER1_FURY)
+	  or string.find(arg1, CHAT_OVERPOWER2_FURY)) then
 		--Check to see if enemy dodges
 		FuryOverpower = GetTime()
 
