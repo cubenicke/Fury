@@ -2445,6 +2445,12 @@ function Fury_OnEvent(event)
 			if FuryFlurryStart then
 				FlurryCombatTotal = FlurryCombatTotal + (GetTime() - FuryFlurryStart)
 				FuryFlurryStart = nil
+				if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) then
+					local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
+					Debug("Flurry: " .. p .. "%")
+					FlurryCombatTotal = 0
+					FuryCombatTotal = 0
+				end
 			end
 		end
 
@@ -2516,6 +2522,7 @@ function Fury_OnEvent(event)
 
 	elseif event == "PLAYER_ENTER_COMBAT" then
 		FuryAttack = true
+		FuryAttackEnd = nil
 		FuryAttackStart = GetTime()
 		if HasBuff("player", "Ability_GhoulFrenzy") then
 			FuryFlurryStart = GetTime()

@@ -13,6 +13,7 @@ BINDING_HEADER_FURY			= "Fury";
 BINDING_NAME_FURY_CHARGE		= "Charge";
 BINDING_NAME_FURY_BLOCK			= "Block";
 BINDING_NAME_FURY_SHOOT			= "Shoot";
+BINDING_NAME_FURY_AUTOATTACK		= "Auto Attack";
 
 CLASS_DRUID_FURY			= "Druid";
 CLASS_HUNTER_FURY			= "Hunter";
@@ -120,6 +121,8 @@ CHAT_SAP2_FURY				= "Sap fades from you.";
 CHAT_GOUGE2_FURY			= "Gouge fades from you.";
 CHAT_REPENTANCE2_FURY			= "Repentance fades from you.";
 CHAT_ROCKET_HELM2_FURY			= "Reckless Charge fades from you.";
+CHAT_LOST_FLURRY_FURY			= "Flurry fades from you.";
+CHAT_GAINED_FLURRY_FURY			= "You gain Flurry.";
 CHAT_IS_ON_CD_FURY			= "is on CD, replace?";
 CHAT_MISSING_SPELL_SHOOT_THROW_FURY	= "Missing spell on action bar Shoot or Throw";
 CHAT_MISSING_SPELL_INTERCEPT_CHARGE_FURY	= "Missing spell on action bar Intercept or Charge";

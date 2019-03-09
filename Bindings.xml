@@ -23,4 +23,7 @@
 	<Binding name="FURY_SHOOT" header="FURY">
 		Fury_SlashCommand("shoot")
 	</Binding>
+	<Binding name="FURY_AUTOATTACK" header = "Fury">
+		Fury_SlashCommand("attack")
+	</Binding>
 </Bindings>
