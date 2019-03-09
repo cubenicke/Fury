@@ -1659,7 +1659,6 @@ local function Fury_Charge()
 		Debug("No target")
 		return
 	end
-	Debug("Distance: "..dist)
 	if FuryMount
 	  and dist <= 25 then
 		-- Dismount as a first step
