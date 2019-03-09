@@ -680,7 +680,7 @@ local function AntiStealthDebuff()
 	  or HasDebuff("target", "Spell_Nature_FaerieFire")
 	  or HasDebuff("target", "Spell_Nature_StarFall")
 	  or HasDebuff("target", "Ability_Druid_Disembowel")
-	  or HasDebuff("target", "Ability_GhoulFrenzy")
+	  --or HasDebuff("target", "Ability_GhoulFrenzy")
 	  or HasDebuff("target", "Ability_Druid_SurpriseAttack")
 	  or HasDebuff("target", "Spell_Nature_InsectSwarm")
 	  or HasDebuff("target", "Spell_Holy_SearingLight")
@@ -1665,7 +1665,6 @@ local function Fury_Charge()
 		FuryMount = nil
 	end
 	if FuryCombat then
-		Debug("In combat")
 		if Fury_Configuration["AutoAttack"] and not FuryAttack then
 			-- Auto attack closest target
 			AttackTarget()
@@ -1738,7 +1737,6 @@ local function Fury_Charge()
 
 		end
 	else
-		Debug("Out of combat")
 		if Fury_Configuration[ABILITY_CHARGE_FURY]
 		  and ActiveStance() == 1
 		  and dist <= 25
@@ -2302,6 +2300,7 @@ function Fury_OnLoad()
 		"CHAT_MSG_COMBAT_SELF_MISSES",
 		"CHAT_MSG_MONSTER_EMOTE",
 		"CHAT_MSG_SPELL_AURA_GONE_SELF",
+		"CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
 		"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF",
 		"CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
 		"CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF",
@@ -2332,6 +2331,8 @@ function Fury_OnLoad()
 	FuryRevengeTime = 0
 	FuryLastChargeCast = 0
 	FuryRevengeReadyUntil = 0
+	FlurryCombatTotal = 0
+	FuryCombatTotal = 0
 	SlashCmdList["FURY"] = Fury_SlashCommand
 	SLASH_FURY1 = "/fury"
 end
@@ -2420,6 +2421,7 @@ function Fury_OnEvent(event)
 		  or arg1 == CHAT_TERRIFYING_SCREECH_FURY
 		  or arg1 == CHAT_HOWL_OF_TERROR_FURY then
 			FuryFear = true
+
 		end
 
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_SELF" then
@@ -2439,6 +2441,11 @@ function Fury_OnEvent(event)
 		  or arg1 == CHAT_TERRIFYING_SCREECH2_FURY
 		  or arg1 == CHAT_HOWL_OF_TERROR2_FURY then
 			FuryFear = nil
+		elseif arg1 == CHAT_LOST_FLURRY_FURY then
+			if FuryFlurryStart then
+				FlurryCombatTotal = FlurryCombatTotal + (GetTime() - FuryFlurryStart)
+				FuryFlurryStart = nil
+			end
 		end
 
 	elseif event == "CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES" then
@@ -2446,7 +2453,6 @@ function Fury_OnEvent(event)
 		if string.find(arg1, CHAT_BLOCK_FURY)
 		  or string.find(arg1, CHAT_PARRY_FURY)
 		  or string.find(arg1, CHAT_DODGE_FURY) then
-			Debug("Revenge soon ready")
 			FuryRevengeReadyUntil = GetTime() + 4
 		end
 
@@ -2460,6 +2466,11 @@ function Fury_OnEvent(event)
 			FuryMount = true
 		else
 			FuryMount = false
+		end
+
+	elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS" then
+		if arg1 == CHAT_GAINED_FLURRY_FURY then
+			FuryFlurryStart = GetTime()
 		end
 
 	elseif event == "PLAYER_TARGET_CHANGED"
@@ -2481,11 +2492,21 @@ function Fury_OnEvent(event)
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		FuryCombat = true
+		FuryCombatStart = GetTime()
+		FlurryCombatTotal = 0
+		FuryCombatTotal = 0
 
 	elseif event == "PLAYER_REGEN_ENABLED" then
+		FuryCombatEnd = GetTime()
 		FuryCombat = nil
 		FuryDanceDone = nil
 		FuryOldStance = nil
+		if FuryFlurry and (FlurryCombatTotal > 0) then
+			local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
+			Debug("Flurry: " .. p .. "%")
+			FlurryCombatTotal = 0
+			FuryCombatTotal = 0
+		end
 		for slot = 1, 18 do
 			local name = CheckCooldown(slot)
 			if name then
@@ -2495,9 +2516,19 @@ function Fury_OnEvent(event)
 
 	elseif event == "PLAYER_ENTER_COMBAT" then
 		FuryAttack = true
+		FuryAttackStart = GetTime()
+		if HasBuff("player", "Ability_GhoulFrenzy") then
+			FuryFlurryStart = GetTime()
+		end
 
 	elseif event == "PLAYER_LEAVE_COMBAT" then
 		FuryAttack = nil
+		FuryAttackEnd = GetTime()
+		FuryCombatTotal = FuryCombatTotal + (FuryAttackEnd - FuryAttackStart)
+		if FuryFlurryStart then
+			FlurryCombatTotal = FlurryCombatTotal + (FuryAttackEnd - FuryFlurryStart)
+			FuryFlurryStart = nil
+		end
 
 	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
 		local _,_,name = string.find(arg1, CHAT_DISARM_IMMUNE_FURY)
