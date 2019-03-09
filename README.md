@@ -1,7 +1,7 @@
 # Fury
-Fury Addon originally by Bhaerau, modifications for end game raiding in vanilla by cubenicke. Purpose for the addon is to make a Fury warriors life easier while raiding in vanilla wow.
-Fury makes one button for the warrior rotation, but still makes it possible to adapt the rotation with manual settings to make it adapt for each fight. Also gives some aid with mid-fight buffs
-like Jujus.
+Fury Addon originally by Bhaerau, modifications/expanded by cubenicke. Purpose for the addon is to make a Warriors life easier while raiding/Farming in vanilla wow.
+Fury makes one button for the Warrior rotation, but still makes it possible to adapt the rotation with manual settings to make it adapt for each fight. Also gives some aid with mid-fight buffs
+like Jujus and poison cleaning.
 
 ## Usage
 In key bindings, bind these actions to some keys available to you mid fight (Same commands can also be created as macros - to create a button on action bar). Easiest way to get going
@@ -16,6 +16,8 @@ Shoot - Will use currently equipped ranged weapon (Bow, Thrown or Gun)
 Toggle HS or Cleave - Dump excessing rage with Heroic Strike or Cleave. Useful in threat situations and for a AoE with single mob prio.  
 Toggle WW - Stops using Whirlwind during normal rotation, toggle it in CC situations. or Kel'Thuzad to don't do damage on Mind Controlled people.   
 Toggle DW - Enable it a bit into fights when you want your first Death Wish to fire off (Also controls Orc racial Blood Fury).  
+Toggle AoE - Just use AoE attacks
+Toggle Auto Attack - When in raiding it's important to have same target.
 
 ### Usage as Macros
 Some commands exists as key bindings, but for most commands one has to write a macro to make them usable during combat.
