@@ -86,17 +86,17 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 ![](https://classicdb.ch/images/icons/small/inv_misc_gem_pearl_06.jpg) [Heart of Noxxion](https://classicdb.ch/?item=17744)  
 
 ### Consumables
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Elixir of Poison Resistance](https://classicdb.ch/?item=3386)
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_09.jpg) [Juju Chill](https://classicdb.ch/?item=12457) (Only on Kel'Thuzad and Sapphiron)
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_15.jpg) [Juju Ember](https://classicdb.ch/?item=12455)
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_17.jpg) [Juju Flurry](https://classicdb.ch/?item=12450)
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_07.jpg) [Juju Might](https://classicdb.ch/?item=12460) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_92.jpg) [Winterfall Firewater](https://classicdb.ch/?item=12820))
   * ![](https://classicdb.ch/images/icons/small/inv_misc_monsterscales_11.jpg) [Juju Power](https://classicdb.ch/?item=12451) (Doesn't overrride ![](https://classicdb.ch/images/icons/small/inv_potion_61.jpg) [Elixir of Giants](https://classicdb.ch/?item=9206))
-  * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956)
   * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Jungle Remedy](https://classicdb.ch/?item=2633)
-  * ![](https://classicdb.ch/images/icons/small/inv_potion_12.jpg) [Elixir of Poison Resistance](https://classicdb.ch/?item=3386)
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_11.jpg) [Oil of Immolation](https://classicdb.ch/?item=8956)
   * ![](https://classicdb.ch/images/icons/small/inv_drink_14.jpg) [Powerful Anti-Venom](https://classicdb.ch/?item=19440)
-  * ![](https://classicdb.ch/images/icons/small/inv_potion_01.jpg) [Restorative Potion](https://classicdb.ch/?item=9030)
   * ![](https://classicdb.ch/images/icons/small/inv_potion_31.jpg) [Purification Potion](https://classicdb.ch/?item=13462)
+  * ![](https://classicdb.ch/images/icons/small/inv_potion_01.jpg) [Restorative Potion](https://classicdb.ch/?item=9030)
 
 ### operational Control
 ```
