@@ -908,6 +908,9 @@ function Fury()
 	  and UnitClass("player") == CLASS_WARRIOR_FURY
 	  and FuryTalents then
 		local debuffImmobilizing = ImmobilizingDebuff()
+
+		Debug(" stance "..SpellReadyIn(Fury_Configuration["PrimaryStance"]))
+
 		-- 1, Auto attack closest target
 		if Fury_Configuration["AutoAttack"] and not FuryAttack then
 			AttackTarget()
@@ -1233,10 +1236,11 @@ function Fury()
 		  and FuryLastStanceCast
 		  and FuryLastStanceCast + 1.5 <= GetTime()
 		  and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
-		  and (FuryBerserkerStance or ActiveStance() ~= 3)
-		  and (FuryDefensiveStance or ActiveStance() ~= 1)
+		  --and (FuryBerserkerStance and Fury_Configuration["PrimaryStance"] == 3 ir not FuryBerserkerStance Fury_Configuration["PrimaryStance"] ~ 3)
+		  --and (Fury_Configuration["PrimaryStance"] ~= 2 abd not FuryDefensiveStance) or FuryDefensiveStance and Fury_Configuration["PrimaryStance"] == 2
 		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
-		  and Fury_Configuration["PrimaryStance"] ~= 0 then
+		  and Fury_Configuration["PrimaryStance"] ~= 0
+			and SpellReadyIn(Fury_Configuration["PrimaryStance"]) == 0 then
 			--Initiate stance dance
 			Debug("20. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
 			CastShapeshiftForm(Fury_Configuration["PrimaryStance"])

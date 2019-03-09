@@ -2,7 +2,7 @@ Fury
 
 This addon is an attempt at simplifying the DPS aspect of Warrior combat.
 
-To use Fury, simply set up a key in the keybindings menu or make a macro containing /fury, and press this repeatedly when in combat. Each keypres will attempt to activate a warrior ability, running though a list with different requirements for each ability.
+To use Fury, simply set up a key in the keybindings menu or make a macro containing /fury, and press this repeatedly when in combat. Each keypress will attempt to activate a warrior ability, running though a list with different requirements for each ability.
 
 ----------
 
