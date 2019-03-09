@@ -1675,7 +1675,7 @@ local function Fury_Charge()
 		end
 		if Fury_Configuration[ABILITY_THUNDER_CLAP_FURY]
 		  and FuryLastChargeCast + 0.6 <= GetTime()
-		  and GetTime() < FuryLastChargeCast + 2
+		  and dist <= 7
 		  and not SnareDebuff("target")
 		  and UnitMana("player") >= FuryThunderClapCost
 		  and SpellReadyIn(ABILITY_THUNDER_CLAP_FURY) == 0 then
