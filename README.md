@@ -10,7 +10,7 @@ the logic you can go into the other keybinds or even macros to finetune your pla
 
 ### KeyBinds
 Attack - One button Fury Warrior rotation. Spam it!  
-Block - Enter defencive stance and do Shield Block  
+Block - Enter Defensive Stance and do Shield Block  
 Charge - Will charge or intercept, sometimes builds rage and or switch stance to be able to charge/intercept.  
 Shoot - Will use currently equipped ranged weapon (Bow, Thrown or Gun)  
 Toggle HS or Cleave - Dump excessing rage with Heroic Strike or Cleave. Useful in threat situations and for a AoE with single mob prio.  
@@ -101,19 +101,20 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 ### operational Control
 ```
 /fury - uses Fury
-/fury block - Enter Defencive Stance and do Shield Block
+/fury block - Enter Defensive Stance and do Shield Block
 /fury charge - uses Intercept or Charge sequence
 /fury shoot - fires ranged weapon
 /fury aoe - enables cleave and whirlwind, disables overpower, bloodhtirst, Heroic Strike (Switched off when fewer than 2 enemies)
 /fury toggle - toggles Fury on/off
 /fury threat - enables Cleave or Heroic Strike based on current settings, use on threat critical fights to decrease threat build up
 /fury juju flurry|power|might|ember|chill - enables buff on every cooldown, chill only on Kel'Thuzad and Sapphiron
-/fury prot - enables shield block and sunder and makes defensive stance default stance.
+/fury prot - enables shield block and sunder and makes Defensive Stance default stance.
 /fury ooi - enables Oil of Immolation whenever OoI buff is not up
 /fury Earthstrike - toggles use of Earthstrike on every cooldown
 /fury Slayer's Crest  - toggles use of Slayer's Crest on every cooldown
 /fury kots - toggles use of KotS on every cooldown
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
+/fury attack - toggles the use of auto select target.
 ```
 ### Setup commands
 ```
@@ -132,7 +133,6 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 ### Debugging
 ```
 /fury help [command] - prints help text
-/fury attack - toggles the use of autoattack. Experimental.
 /fury debug - toggles debug mode
 /fury distance - show distance to target  
 /fury log [on|off] - Start a new channel for logging commands will be saved to Logs folder
