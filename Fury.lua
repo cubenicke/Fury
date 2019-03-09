@@ -909,8 +909,6 @@ function Fury()
 	  and FuryTalents then
 		local debuffImmobilizing = ImmobilizingDebuff()
 
-		Debug(" stance "..SpellReadyIn(Fury_Configuration["PrimaryStance"]))
-
 		-- 1, Auto attack closest target
 		if Fury_Configuration["AutoAttack"] and not FuryAttack then
 			AttackTarget()
