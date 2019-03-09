@@ -1232,13 +1232,12 @@ function Fury()
 		  and not FuryOldStance
 		  and not FuryDanceDone
 		  and FuryLastStanceCast
-		  and FuryLastStanceCast + 1.5 <= GetTime()
+		  and FuryLastStanceCast + 1 <= GetTime()
 		  and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
 		  --and (FuryBerserkerStance and Fury_Configuration["PrimaryStance"] == 3 ir not FuryBerserkerStance Fury_Configuration["PrimaryStance"] ~ 3)
 		  --and (Fury_Configuration["PrimaryStance"] ~= 2 abd not FuryDefensiveStance) or FuryDefensiveStance and Fury_Configuration["PrimaryStance"] == 2
 		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
-		  and Fury_Configuration["PrimaryStance"] ~= 0
-			and SpellReadyIn(Fury_Configuration["PrimaryStance"]) == 0 then
+		  and Fury_Configuration["PrimaryStance"] ~= 0 then
 			--Initiate stance dance
 			Debug("20. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
 			CastShapeshiftForm(Fury_Configuration["PrimaryStance"])
@@ -2445,12 +2444,12 @@ function Fury_OnEvent(event)
 			if FuryFlurryStart then
 				FlurryCombatTotal = FlurryCombatTotal + (GetTime() - FuryFlurryStart)
 				FuryFlurryStart = nil
-				if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) then
-					local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-					Debug("Flurry: " .. p .. "%")
-					FlurryCombatTotal = 0
-					FuryCombatTotal = 0
-				end
+			end
+			if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FlurryCombatTotal > 0) then
+				local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
+				Debug("Flurry: " .. p .. "%")
+				FlurryCombatTotal = 0
+				FuryCombatTotal = 0
 			end
 		end
 
@@ -2507,6 +2506,7 @@ function Fury_OnEvent(event)
 		FuryCombat = nil
 		FuryDanceDone = nil
 		FuryOldStance = nil
+		FuryFlurryStart = nil
 		if FuryFlurry and (FlurryCombatTotal > 0) then
 			local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
 			Debug("Flurry: " .. p .. "%")

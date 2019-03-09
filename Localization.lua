@@ -218,6 +218,7 @@ SLASH_FURY_TROLL			= "Maximum percent of health allowed when using Berserking se
 SLASH_FURY_STANCE			= "Primary stance set to ";
 SLASH_FURY_NOSTANCE			= "Stance switching ";
 SLASH_FURY_HELP				= "use /fury help <cmd> to get more help, commands are: ";
+SLASH_DISABLING_AOE_FURY		= "AoE disabled."
 HELP_AOE				= "/fury aoe - disables bloodthirst/mortal strike and enables Cleave";
 HELP_ATTACK				= "/fury attack - toggles the use of autoattack. Experimental.";
 HELP_ATTACKRAGE				= "/fury attackrage <number> - sets minimum rage required when using Heroic Strike or Cleave";
