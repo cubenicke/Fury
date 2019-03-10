@@ -178,7 +178,7 @@ local function Fury_Configuration_Init()
 		Fury_Configuration[ITEM_CONS_JUJU_CHILL] = true -- use on cooldown for bosses with frost dmg
 	end
 	if Fury_Configuration[ITEM_CONS_JUJU_EMBER] == nil then
-		Fury_Configuration[ITEM_CONS_JUJU_EMBER] = false -- use on cooldown for bosses with fire dmg
+		Fury_Configuration[ITEM_CONS_JUJU_EMBER] = true -- use on cooldown for bosses with fire dmg
 	end
 	if Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] == nil then
 		Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = false -- use on cooldown
@@ -473,6 +473,7 @@ local function Fury_InitDistance()
 		Print(CHAT_MISSING_SPELL_PUMMEL_FURY)
 	end
 end
+--------------------------------------------------
 
 local function Fury_Distance()
 	if not UnitCanAttack("player", "target") then
@@ -511,6 +512,7 @@ local function SpellId(spellname)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function SpellReadyIn(spellname)
 	local id = SpellId(spellname)
@@ -524,9 +526,9 @@ local function SpellReadyIn(spellname)
 			return remaining
 		end
 	end
-	--Debug("SR: "..spellname.." unknown")
 	return 86400
 end
+--------------------------------------------------
 
 local function HasDebuff(unit, texturename, amount)
 	local id = 1
@@ -543,6 +545,7 @@ local function HasDebuff(unit, texturename, amount)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function HasBuff(unit, texturename)
 	local id = 1
@@ -555,6 +558,7 @@ local function HasBuff(unit, texturename)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function HasBuffId(target, spellId)
 	for i=1,40 do
@@ -564,6 +568,7 @@ local function HasBuffId(target, spellId)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function UseContainerItemByNameOnPlayer(search)
 	for bag = 0,4 do
@@ -594,6 +599,7 @@ local function ActiveStance()
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function Weapon()
 	--Detect if a suitable weapon (not a skinning knife/mining pick and not broken) is present
@@ -607,6 +613,7 @@ local function Weapon()
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function Shield()
 	--Detect if a shield is present
@@ -620,6 +627,7 @@ local function Shield()
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function IsTrinketEquipped(name)
 	for slot = 13, 14 do
@@ -634,6 +642,7 @@ local function IsTrinketEquipped(name)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function Ranged()
 	--Detect if a ranged weapon is equipped and return type
@@ -645,6 +654,7 @@ local function Ranged()
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function HamstringCost()
 	--Calculate the cost of Hamstring based on gear
@@ -659,6 +669,7 @@ local function HamstringCost()
 	end
 	return 10 - i
 end
+--------------------------------------------------
 
 local function AntiStealthDebuff()
 	--Detect anti-stealth debuffs
@@ -690,6 +701,7 @@ local function AntiStealthDebuff()
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function ImmobilizingDebuff()
 	-- Detect immobilizing buffs
@@ -699,6 +711,7 @@ local function ImmobilizingDebuff()
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function SnareDebuff(unit)
 	--Detect snaring debuffs
@@ -715,6 +728,7 @@ local function SnareDebuff(unit)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function Fury_RunnerDetect(arg1, arg2)
 	--Thanks to HateMe
@@ -722,6 +736,7 @@ local function Fury_RunnerDetect(arg1, arg2)
 		Fury_Runners[arg2] = true
 	end
 end
+--------------------------------------------------
 
 local function ItemExists(itemName)
 	for bag = 4, 0, -1 do
@@ -741,6 +756,7 @@ local function ItemExists(itemName)
 	end
 	return false
 end
+--------------------------------------------------
 
 local function ItemReady(item)
 	if ItemExists(item) == false then
@@ -752,6 +768,7 @@ local function ItemReady(item)
 	end
 	return false
 end
+--------------------------------------------------
 
 local function EquippedAndReady(slot, name)
 	local item = GetInventoryItemLink("player", slot)
@@ -765,6 +782,7 @@ local function EquippedAndReady(slot, name)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function CheckCooldown(slot)
 	local start, duration = GetInventoryItemCooldown("player", slot)
@@ -779,6 +797,7 @@ local function CheckCooldown(slot)
 	end
 	return nil
 end
+--------------------------------------------------
 
 local function Fury_SetEnemies(count)
 	for i=5,1,-1 do
@@ -786,6 +805,7 @@ local function Fury_SetEnemies(count)
 	end
 	WWEnemies.Hist[0] = Enemies
 end
+--------------------------------------------------
 
 local function addEnemyCount(Enemies)
 	Fury_SetEnemies(Enemies)
@@ -795,10 +815,12 @@ local function addEnemyCount(Enemies)
 		Fury_Configuration[MODE_HEADER_AOE] = false
 	end
 end
+--------------------------------------------------
 
 local function Fury_GetEnemies()
 	return WWEnemies.Hist[0] or 0
 end
+--------------------------------------------------
 
 local function Fury_Shoot()
 	local ranged_type = Ranged()
@@ -821,6 +843,7 @@ local function Fury_Shoot()
 	end
 	return true
 end
+--------------------------------------------------
 
 local function Fury_TreatDebuff(unit)
 	local allowCombatCooldown = true
@@ -1273,8 +1296,8 @@ function Fury()
 			FuryLastSpellCast = GetTime()
 
 		-- 22, Sweeping Strikes
-		elseif Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY]
-		  and FurySweepingStrikes
+		elseif FurySweepingStrikes
+		  and Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY]
 		  and Fury_GetEnemies() > 1
 		  and UnitMana("player") >= 30
 		  and SpellReadyIn(ABILITY_SWEEPING_STRIKES_FURY) == 0 then
@@ -1327,6 +1350,7 @@ function Fury()
 				end
 			end
 			CastSpellByName(ABILITY_WHIRLWIND_FURY)
+			FuryLastSpellCast = GetTime()
 			WWEnemies.WWCount = 0
 			FuryLastSpellCast = GetTime()
 			WWEnemies.WWTime = GetTime()
@@ -1529,8 +1553,8 @@ function Fury()
 			Debug("44. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 45, Treat debuffs (poisons)
-		elseif Fury_Configuration[MODE_HEADER_DEBUFF]
+		-- 45, Treat debuffs
+		elseif Fury_Configursation[MODE_HEADER_DEBUFF]
 		  and Fury_TreatDebuff("player") then
 			Debug("45. Treated debuff")
 
