@@ -1350,7 +1350,6 @@ function Fury()
 				end
 			end
 			CastSpellByName(ABILITY_WHIRLWIND_FURY)
-			FuryLastSpellCast = GetTime()
 			WWEnemies.WWCount = 0
 			FuryLastSpellCast = GetTime()
 			WWEnemies.WWTime = GetTime()
@@ -1553,8 +1552,8 @@ function Fury()
 			Debug("44. Bloodrage")
 			CastSpellByName(ABILITY_BLOODRAGE_FURY)
 
-		-- 45, Treat debuffs
-		elseif Fury_Configursation[MODE_HEADER_DEBUFF]
+		-- 45, Treat debuffs (poisons)
+		elseif Fury_Configuration[MODE_HEADER_DEBUFF]
 		  and Fury_TreatDebuff("player") then
 			Debug("45. Treated debuff")
 
