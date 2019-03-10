@@ -1997,6 +1997,12 @@ local function setOptionRange(option, text, v, vmin, vmax)
 end
 
 --------------------------------------------------
+local function printOption(option, text)
+	if Fury_Configuration[option] == true then
+		Print(text .. " " .. SLASH_FURY_ENABLED .. ".")
+	end
+end
+--------------------------------------------------
 local function toggleOption(option, text)
 	if Fury_Configuration[option] == true then
 		Fury_Configuration[option] = false
@@ -2162,6 +2168,15 @@ function Fury_SlashCommand(msg)
 			Print(SLASH_FURY_NO_ATTACKABLE_TARGET)
 		end
 
+	elseif command == "cons" then
+		printOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
+		printOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
+		printOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
+		printOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
+		printOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
+		printOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+		printOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+
 	elseif command == "talents" then
 		Print(CHAT_TALENTS_RESCAN_FURY)
 		Fury_InitDistance()
@@ -2238,6 +2253,7 @@ function Fury_SlashCommand(msg)
 		  ["block"] = HELP_BLOCK,
 		  ["bloodrage"] = HELP_BLOODRAGE,
 		  ["charge"] = HELP_CHARGE,
+		  ["cons"] = HELP_CONS,
 		  ["dance"] = HELP_DANCE,
 		  ["debuff"] = HELP_DEBUFF,
 		  ["debug"] = HELP_DEBUG,

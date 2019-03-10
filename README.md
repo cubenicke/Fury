@@ -117,6 +117,7 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 /fury kots - toggles use of KotS on every cooldown
 /fury ability <name> - toggles the use of abilities. Must use correct names with capitalization, ie. Heroic Strike, Rend etc.
 /fury attack - toggles the use of auto select target.
+/fury cons - will report enabled consumables
 ```
 ### Setup commands
 ```

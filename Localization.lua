@@ -227,6 +227,7 @@ HELP_BERSERK				= "/fury berserk <number> - sets minimum percent of health requi
 HELP_BLOCK				= "/fury block - Shifts to defensive and activates block";
 HELP_BLOODRAGE				= "/fury bloodrage <number> - sets minimum percent of health required when using Bloodrage";
 HELP_CHARGE				= "/fury charge - will use charge or intercept sequence"
+HELP_CONS				= "/fury cons - will report enabled consumables"
 HELP_DANCE				= "/fury dance <number> - sets rage allowed to be wasted when switching stance (dancing)";
 HELP_DEBUFF				= "/fury debuff - toggles use of debuff spells/cons";
 HELP_DEBUG				= "/fury debug - writes commands in log";
