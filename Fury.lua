@@ -1074,8 +1074,7 @@ function Fury()
 		  and UnitClass("target") ~= CLASS_WARRIOR_FURY
 		  and UnitClass("target") ~= CLASS_HUNTER_FURY)))
 		  and (ActiveStance() ~= 3
-		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
-		  and Fury_Configuration["PrimaryStance"] ~= 0))
+		  or (UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])))
 		  and SpellReadyIn(ABILITY_SHIELD_BASH_FURY) == 0 then
 			if ActiveStance() == 3 then
 				if not FuryOldStance then
@@ -1228,14 +1227,13 @@ function Fury()
 			CastSpellByName(ABILITY_BERSERKER_RAGE_FURY)
 
 		-- 20, Stance dance
-		elseif Fury_Configuration["PrimaryStance"]
+	elseif Fury_Configuration["PrimaryStance"]
+		  and Fury_Configuration["PrimaryStance"] ~= false
 		  and not FuryOldStance
 		  and not FuryDanceDone
 		  and FuryLastStanceCast
 		  and FuryLastStanceCast + 1 <= GetTime()
 		  and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
-		  --and (FuryBerserkerStance and Fury_Configuration["PrimaryStance"] == 3 ir not FuryBerserkerStance Fury_Configuration["PrimaryStance"] ~ 3)
-		  --and (Fury_Configuration["PrimaryStance"] ~= 2 abd not FuryDefensiveStance) or FuryDefensiveStance and Fury_Configuration["PrimaryStance"] == 2
 		  and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
 		  and Fury_Configuration["PrimaryStance"] ~= 0 then
 			--Initiate stance dance
