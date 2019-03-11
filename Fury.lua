@@ -811,7 +811,7 @@ local function addEnemyCount(Enemies)
 	Fury_SetEnemies(Enemies)
 	Debug("Enemies "..Enemies)
 	if Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE] then
-		Print(SLASH_DISABLING_AOE_FURY)
+		Print(SLASH_FURY_DISABLING_AOE)
 		Fury_Configuration[MODE_HEADER_AOE] = false
 	end
 end
@@ -853,6 +853,9 @@ local function Fury_TreatDebuff(unit)
 	end
 	-- add Restorative Potion (magic, poison curse or disease)
 	if HasDebuffType(unit, ITEM_DEBUFF_TYPE_POISON) then
+		if UnitName("target") == BOSS_NAX_GROBBULUS_FURY then
+			return false
+		end
 		if IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION) then
 			local slot = IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION)
 			UseInventoryItem(slot)
@@ -2484,7 +2487,7 @@ function Fury_OnEvent(event)
 			end
 			if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FlurryCombatTotal > 0) then
 				local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-				Debug("Flurry: " .. p .. "%")
+				Print("Flurry: " .. p .. "%")
 				FlurryCombatTotal = 0
 				FuryCombatTotal = 0
 			end
@@ -2546,7 +2549,7 @@ function Fury_OnEvent(event)
 		FuryFlurryStart = nil
 		if FuryFlurry and (FlurryCombatTotal > 0) then
 			local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-			Debug("Flurry: " .. p .. "%")
+			Print("Flurry: " .. p .. "%")
 			FlurryCombatTotal = 0
 			FuryCombatTotal = 0
 		end
