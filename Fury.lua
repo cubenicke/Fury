@@ -811,7 +811,7 @@ local function addEnemyCount(Enemies)
 	Fury_SetEnemies(Enemies)
 	Debug("Enemies "..Enemies)
 	if Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE] then
-		Print(SLASH_FURY_DISABLING_AOE)
+		Print(CHAT_DISABLING_AOE_FURY)
 		Fury_Configuration[MODE_HEADER_AOE] = false
 	end
 end
@@ -2570,11 +2570,13 @@ function Fury_OnEvent(event)
 
 	elseif event == "PLAYER_LEAVE_COMBAT" then
 		FuryAttack = nil
-		FuryAttackEnd = GetTime()
-		FuryCombatTotal = FuryCombatTotal + (FuryAttackEnd - FuryAttackStart)
-		if FuryFlurryStart then
-			FlurryCombatTotal = FlurryCombatTotal + (FuryAttackEnd - FuryFlurryStart)
-			FuryFlurryStart = nil
+		if FuryAttackStart then
+			FuryAttackEnd = GetTime()
+			FuryCombatTotal = FuryCombatTotal + (FuryAttackEnd - FuryAttackStart)
+			if FuryFlurryStart then
+				FlurryCombatTotal = FlurryCombatTotal + (FuryAttackEnd - FuryFlurryStart)
+				FuryFlurryStart = nil
+			end
 		end
 
 	elseif event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF" then
