@@ -130,10 +130,12 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 /fury berserk <number> - sets minimum percent of health required when using Berserk
 /fury deathwish <number> - sets minimum percent of health required when using Death Wish
 /fury demodiff <number> - If Target is x levels below Demoralizing Shout is not used
-/fury executeswap - Toggles use of [Outfitter](https://github.com/isitLoVe/Outfitter) addon, name the item set 'Execute'.
+/fury executeswap - Toggles use of Outfitter addon, name the item set 'Execute'.
 /fury stance <name> - sets stance to return to after switching stance. If default is selected it will return to your last used stance. If no stance is selected it will disable stance switching. Must use correct names with capitalization.
 /fury talents - Rescan range spells and talent tree (needed after action bar buttons have moved)
 ```
+Oufitter addon can be downloaded [here](https://github.com/isitLoVe/Outfitter)!
+
 ### Debugging
 ```
 /fury help [command] - prints help text
