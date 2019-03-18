@@ -5,6 +5,6 @@
 ## eMail: cubenicke@gmail.com (Orig bhaerau@gmail.com)
 ## DefaultState: enabled
 ## SavedVariables: Fury_Configuration, Fury_Runners, Fury_ImmuneDisarm
-## OptionalDeps: IsMounted
+## OptionalDeps: IsMounted, Outfitter
 IsMounted\IsMounted.xml
 Fury.xml

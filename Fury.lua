@@ -198,6 +198,12 @@ local function Fury_Configuration_Init()
     if Fury_Configuration[ABILITY_REVENGE_FURY] == nil then
         Fury_Configuration[ABILITY_REVENGE_FURY] = false
     end
+     if Fury_Configuration["ExecuteSwap"] == nil then
+         Fury_Configuration["ExecuteSwap"] = true
+     end
+     if Fury_Configuration["ExecuteSwapped"] == nil then
+         Fury_Configuration["ExecuteSwapped"] = false
+     end
 end
 
 local function Fury_Configuration_Default()
@@ -249,6 +255,8 @@ local function Fury_Configuration_Default()
     Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] = true
     Fury_Configuration[ITEM_TRINKET_KOTS] = true
     Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] = true
+    Fury_Configuration["ExecuteSwap"] = true
+    Fury_Configuration["ExecuteSwapped"] = false
 end
 
 --------------------------------------------------
@@ -1027,6 +1035,12 @@ function Fury()
           and Fury_Configuration["PrimaryStance"] ~= 0))
           and (UnitHealth("target") / UnitHealthMax("target") * 100) < 20
           and SpellReadyIn(ABILITY_EXECUTE_FURY) == 0 then
+            if Fury_Configuration["ExecuteSwap"]
+              and not Fury_Configuration["ExecuteSwapped"]
+              and Outfitter_ExecuteCommand then
+                Outfitter_ExecuteCommand("wear Execute")
+                Fury_Configuration["ExecuteSwapped"] = true
+            end
             if ActiveStance() == 2 then
                 Debug("11. Berserker Stance (Execute)")
                 if not FuryOldStance then
@@ -1572,7 +1586,14 @@ function Fury()
           and Fury_TreatDebuff("player") then
             Debug("45. Treated debuff")
 
-        -- 46, Dump rage with Heroic Strike or Cleave
+        -- 46, Swap back to normal weapons
+        elseif Fury_Configuration["ExecuteSwapped"]
+          and Outfitter_ExecuteCommand then
+            Debug("46. unwear Execute weapon")
+            Outfitter_ExecuteCommand("unwear Execute")
+            Fury_Configuration["ExecuteSwapped"] = false
+
+        -- 47, Dump rage with Heroic Strike or Cleave
         elseif (Fury_Configuration[MODE_HEADER_AOE]
           or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
           and FuryMortalStrike
@@ -1589,7 +1610,7 @@ function Fury()
           or not Fury_Configuration[ABILITY_WHIRLWIND_FURY]
           or not FuryWhirlwind))  then
 
-            -- 47, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
+            -- 48, Will try to lessen the amounts of Heroic Strike, when instanct attacks (MS, BT, WW) are enabled
             -- Hamstring
             if Fury_Configuration[ABILITY_HAMSTRING_FURY]
               and Weapon()
@@ -1602,11 +1623,11 @@ function Fury()
               and SpellReadyIn(ABILITY_HAMSTRING_FURY) == 0 then
                 -- Try trigger...
                 -- stun,imp attack speed, extra swing
-                Debug("47. Hamstring (Trigger ...)")
+                Debug("48. Hamstring (Trigger ...)")
                 CastSpellByName(ABILITY_HAMSTRING_FURY)
                 FuryLastSpellCast = GetTime()
 
-            -- 48, Heroic Strike
+            -- 49, Heroic Strike
             elseif Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY]
               and Weapon()
               and not Fury_Configuration[MODE_HEADER_AOE]
@@ -1615,12 +1636,12 @@ function Fury()
               or (not FuryMortalStrike
               and not FuryBloodthirst))
               and SpellReadyIn(ABILITY_HEROIC_STRIKE_FURY) == 0 then
-                Debug("48. Heroic Strike")
+                Debug("49. Heroic Strike")
                 CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
                 FuryLastSpellCast = GetTime()
                 --No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
-            -- 49, Cleave
+            -- 50, Cleave
             elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
               or Fury_Configuration[MODE_HEADER_AOE])
               and Weapon()
@@ -1628,12 +1649,12 @@ function Fury()
               and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
               or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
               and SpellReadyIn(ABILITY_CLEAVE_FURY) == 0 then
-                Debug("49. Cleave")
+                Debug("50. Cleave")
                 CastSpellByName(ABILITY_CLEAVE_FURY)
                 FuryLastSpellCast = GetTime()
                 --No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
             elseif not FuryRageDumped then
-                --Debug("50. Rage: "..tostring(UnitMana("player")))
+                --Debug("51. Rage: "..tostring(UnitMana("player")))
                 FuryRageDumped = true
             end
         end
@@ -2205,6 +2226,9 @@ function Fury_SlashCommand(msg)
     elseif command == "kots" then
         toggleOption(ITEM_TRINKET_KOTS, ITEM_TRINKET_KOTS)
 
+    elseif command == "executeswap" then
+        toggleOption("ExecuteSwap", "Execute Swap")
+
     elseif command == "distance" then
         if UnitCanAttack("player", "target") then
             Print(TEXT_FURY_DISTANCE.." "..Fury_Distance().." "..TEXT_FURY_YARDS)
@@ -2304,6 +2328,7 @@ function Fury_SlashCommand(msg)
           ["demodiff"] = HELP_DEMODIFF,
           ["distance"] = HELP_DISTANCE,
           ["earthstrike"] = HELP_EARTHSTRIKE,
+          ["executeswap"] = HELP_EXECUTESWAP,
           ["hamstring"] = HELP_HAMSTRING,
           ["help"] = HELP_HELP,
           ["juju"] = HELP_JUJU,
