@@ -1436,8 +1436,8 @@ function Fury()
           and FuryCombat
           and ActiveStance() == 2
           and UnitName("targettarget") == UnitName("player")
-          and UnitLevel("Player") - UnitLevel("Target") < Fury_Configuration["DemoDiff"]
-          and UnitMana("player") >= 15
+          and UnitLevel("Target") > UnitLevel("Player") - Fury_Configuration["DemoDiff"]
+          and UnitMana("player") >= 10
           and SpellReadyIn(ABILITY_SHIELD_BLOCK_FURY) == 0 then
             Debug("30. Shield Block")
             CastSpellByName(ABILITY_SHIELD_BLOCK_FURY)
