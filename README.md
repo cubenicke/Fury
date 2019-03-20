@@ -126,6 +126,7 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 /fury rage <number> - sets maximum rage allowed when using abilities to gain rage
 /fury bloodrage <number> - sets minimum percent of health required when using Bloodrage
 /fury debuff - Try remove debuff in rotation, might use consumables
+/fury flurrytrigger <number> - Set rage level, when to start using Hamstring when Flurry isn't up
 /fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs
 /fury berserk <number> - sets minimum percent of health required when using Berserk
 /fury deathwish <number> - sets minimum percent of health required when using Death Wish

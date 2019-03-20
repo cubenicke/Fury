@@ -251,6 +251,7 @@ HELP_DEMODIFF      = "/fury demodiff <number> - sets maximum level differrence t
 HELP_DISTANCE      = "/fury distance - Gives distance to target"
 HELP_EARTHSTRIKE   = "/fury Earthstrike -- toggles use of trinket on every cooldown"
 HELP_EXECUTESWAP   = "/fury executeswap -- toggles use of swap weapon when Execute is used (Uses Outfitter, Execute)"
+HELP_FLURRYTRIGGER = "/fury flurrytrigger <number> - Set rage level, when to start using Hamstring when Flurry isn't up"
 HELP_HAMSTRING     = "/fury hamstring <number> - sets maximum percent of health allowed when using Hamstring on NPCs"
 HELP_HELP          = "/fury help - outputs available commands"
 HELP_JUJU          = "/fury juju <juju> - Supports flurry, power, might, chill and ember toggles use of the <juju> on cooldown"

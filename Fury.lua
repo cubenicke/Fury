@@ -46,6 +46,9 @@ local function Fury_Configuration_Init()
     if Fury_Configuration["NextAttackRage"] == nil then
         Fury_Configuration["NextAttackRage"] = 30 --Set this to the minimum rage to have to use next attack abilities (Cleave and Heroic Strike)
     end
+    if Fury_Configuration["FlurryTriggerRage"] == nil then
+        Fury_Configuration["FlurryTriggerRage"] = 52 --Set this to the minimum rage to have to use Hamtring to trigger Flurry
+    end
     if Fury_Configuration["BerserkHealth"] == nil then
         Fury_Configuration["BerserkHealth"] = 60 --Set this to the minimum percent of health to have when using Berserk
     end
@@ -214,6 +217,7 @@ local function Fury_Configuration_Default()
     Fury_Configuration["BloodrageHealth"] = 50
     Fury_Configuration["DeathwishHealth"] = 60
     Fury_Configuration["NextAttackRage"] = 40
+    Fury_Configuration["FlurryTriggerRage"] = 52
     Fury_Configuration["BerserkHealth"] = 60
     Fury_Configuration["HamstringHealth"] = 40
     Fury_Configuration["DemoDiff"] = 7
@@ -1615,6 +1619,7 @@ function Fury()
             if Fury_Configuration[ABILITY_HAMSTRING_FURY]
               and Weapon()
               and UnitMana("player") >= HamstringCost()
+              and UnitMana("player") >= tonumber(Fury_Configuration["FlurryTriggerRage"])
               and ((FuryFlurry
               and not HasBuff("player", "Ability_GhoulFrenzy"))
               or FuryImpHamstring
@@ -2128,6 +2133,9 @@ function Fury_SlashCommand(msg)
     elseif command == "attackrage" then
         setOptionRange("NextAttackRage", SLASH_FURY_ATTACKRAGE, options, 0 , 100)
 
+    elseif command == "flurrytrigger" then
+        setOptionRange("FlurryTriggerRage", SLASH_FURY_FLURRYTRIGGER, options, 0, 100)
+
     elseif command == "bloodrage" then
         setOptionRange("BloodrageHealth", SLASH_FURY_BLOODRAGE, options, 1, 100)
 
@@ -2329,6 +2337,7 @@ function Fury_SlashCommand(msg)
           ["distance"] = HELP_DISTANCE,
           ["earthstrike"] = HELP_EARTHSTRIKE,
           ["executeswap"] = HELP_EXECUTESWAP,
+          ["flurrytrigger"] = HELP_FLURRYTRIGGER,
           ["hamstring"] = HELP_HAMSTRING,
           ["help"] = HELP_HELP,
           ["juju"] = HELP_JUJU,
