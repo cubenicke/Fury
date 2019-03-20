@@ -1600,6 +1600,7 @@ function Fury()
 
         -- 47, Dump rage with Heroic Strike or Cleave
         elseif (Fury_Configuration[MODE_HEADER_AOE]
+          or Fury_Configuration["PrimaryStance"] == 2
           or ((Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY]
           and FuryMortalStrike
           and SpellReadyIn(ABILITY_MORTAL_STRIKE_FURY) ~= 0)
@@ -1640,7 +1641,8 @@ function Fury()
               and UnitMana("player") >= FuryHeroicStrikeCost
               and (UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"])
               or (not FuryMortalStrike
-              and not FuryBloodthirst))
+              and not FuryBloodthirst)
+              or Fury_Configuration["PrimaryStance"] == 2)
               and SpellReadyIn(ABILITY_HEROIC_STRIKE_FURY) == 0 then
                 Debug("49. Heroic Strike")
                 CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
@@ -1653,16 +1655,20 @@ function Fury()
               and Weapon()
               and UnitMana("player") >= 20
               and ((UnitMana("player") >= tonumber(Fury_Configuration["NextAttackRage"]))
-              or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25))
+              or (Fury_Configuration[MODE_HEADER_AOE] and UnitMana("player") >= 25)
+              or Fury_Configuration["PrimaryStance"] == 2)
               and SpellReadyIn(ABILITY_CLEAVE_FURY) == 0 then
                 Debug("50. Cleave")
                 CastSpellByName(ABILITY_CLEAVE_FURY)
                 FuryLastSpellCast = GetTime()
                 --No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
             elseif not FuryRageDumped then
-                --Debug("51. Rage: "..tostring(UnitMana("player")))
+                Debug("51. Rage: "..tostring(UnitMana("player")))
                 FuryRageDumped = true
             end
+        else
+            Debug("52. Rage: "..tostring(UnitMana("player")))
+            FuryRageDumped = true
         end
     end
 end
