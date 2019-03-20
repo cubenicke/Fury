@@ -1037,11 +1037,12 @@ function Fury()
           or (Fury_Configuration["PrimaryStance"] ~= 2
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
           and Fury_Configuration["PrimaryStance"] ~= 0))
-          and (UnitHealth("target") / UnitHealthMax("target") * 100) < 20
+          and (UnitHealth("target") / UnitHealthMax("target") * 100) <= 20
           and SpellReadyIn(ABILITY_EXECUTE_FURY) == 0 then
             if Fury_Configuration["ExecuteSwap"]
               and not Fury_Configuration["ExecuteSwapped"]
               and Outfitter_ExecuteCommand then
+                Debug("Swap to Execute Profile in Outfitter")
                 Outfitter_ExecuteCommand("wear Execute")
                 Fury_Configuration["ExecuteSwapped"] = true
             end
@@ -2169,6 +2170,7 @@ function Fury_SlashCommand(msg)
             Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
             Fury_Configuration[ABILITY_REVENGE_FURY] = false
             Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
+            Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = false
             Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_DISABLED .. ".")
         else
             if Fury_Configuration["PrimaryStance"] == 2 then
@@ -2180,6 +2182,7 @@ function Fury_SlashCommand(msg)
             Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
             Fury_Configuration[ABILITY_REVENGE_FURY] = true
             Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
+            Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true
             Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_ENABLED .. ".")
         end
 
