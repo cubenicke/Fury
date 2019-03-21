@@ -2175,7 +2175,7 @@ function Fury_SlashCommand(msg)
             Fury_Configuration["PrimaryStance"] = Fury_Configuration["ProtOldStance"]
             Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
             Fury_Configuration[ABILITY_REVENGE_FURY] = false
-            Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
+            Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
             Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = false
             Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_DISABLED .. ".")
         else
@@ -2187,7 +2187,7 @@ function Fury_SlashCommand(msg)
             Fury_Configuration["PrimaryStance"] = 2
             Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
             Fury_Configuration[ABILITY_REVENGE_FURY] = true
-            Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
+            Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
             Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true
             Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_ENABLED .. ".")
         end
