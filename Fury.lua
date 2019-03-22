@@ -457,7 +457,6 @@ local function Fury_InitDistance()
                   or string.find(t, "Ability_Gouge") -- Rend
                   or string.find(t, "INV_Sword_48") -- Execute
                   or string.find(t, "ability_warrior_savageblow") -- Mortal Strike
-                  or string.find(t, "Ability_Warrior_Cleave") -- Cleave
                   or string.find(t, "INV_Shield_05") -- Shield Slam
                   or string.find(t, "Spell_Nature_Bloodlust") then -- Bloodthirst
                     yard05 = i
@@ -1288,6 +1287,8 @@ function Fury()
           and Fury_Configuration["PrimaryStance"] ~= false
           and not FuryOldStance
           and not FuryDanceDone
+          and (Fury_Configuration["PrimaryStance"] ~= 3
+          or FuryBerserkerStance)
           and FuryLastStanceCast
           and FuryLastStanceCast + 1 <= GetTime()
           and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
