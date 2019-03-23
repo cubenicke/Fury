@@ -77,6 +77,7 @@ To get the correct Icon for the macro, edit the macro file in a text editor **WT
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_29.jpg) [Marshal's Plate Gauntlets](https://classicdb.ch/?item=16484)  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_26.jpg) [Blood Guard's Plate Gloves](https://classicdb.ch/?item=16510)  
 ![](https://classicdb.ch/images/icons/small/inv_gauntlets_10.jpg) [General's Plate Gauntlets](https://classicdb.ch/?item=16548)  
+![](https://classicdb.ch/images/icons/small/inv_jewelry_necklace_26.jpg) [Rage of Mugamba](https://classicdb.ch/?item=19577)  
 
 #### Situational
 ![](https://classicdb.ch/images/icons/small/inv_jewelry_trinketpvp_01.jpg) [Insignia of the Alliance](https://classicdb.ch/?item=18854)  

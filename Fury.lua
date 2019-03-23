@@ -11,7 +11,7 @@
 --
 --------------------------------------------------
 
-local function setup(defaults)
+local function updateConfiguration(defaults)
     local configs = {
 
       AutoAttack = true,       -- Set to false to disable auto-attack
@@ -96,11 +96,7 @@ local function Fury_Configuration_Init()
     if not Fury_ImmuneDisarm then
         Fury_ImmuneDisarm = { }
     end
-    setup(false) -- Set to value if nil
-end
-
-local function Fury_Configuration_Default()
-    setup(true) -- Setup to defaults
+    updateConfiguration(false) -- Set to value if nil
 end
 
 --------------------------------------------------
@@ -508,14 +504,25 @@ end
 --------------------------------------------------
 
 local function HamstringCost()
-    --Calculate the cost of Hamstring based on gear
+    -- Calculate the cost of Hamstring based on gear
     local i = 0
     local item = GetInventoryItemLink("player", 10)
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
         local itemName = GetItemInfo(itemCode)
-        if itemName == ITEM_GAUNTLETS1_FURY or itemName == ITEM_GAUNTLETS2_FURY or itemName == ITEM_GAUNTLETS3_FURY or itemName == ITEM_GAUNTLETS4_FURY then
-            i = 3
+        if itemName == ITEM_GAUNTLETS1_FURY
+          or itemName == ITEM_GAUNTLETS2_FURY
+          or itemName == ITEM_GAUNTLETS3_FURY
+          or itemName == ITEM_GAUNTLETS4_FURY then
+            i = i + 3
+        end
+    end
+    item = GetInventoryItemLink("player", 2)
+    if item then
+        local _, _, itemCode = strfind(item, "(%d+):")
+        local itemName = GetItemInfo(itemCode)
+        if itemName == ITEM_NECK_RAGE_OF_MUGAMBA_FURY then
+            i = i + 2
         end
     end
     return 10 - i
@@ -542,7 +549,7 @@ local function AntiStealthDebuff()
       or HasDebuff("target", "Spell_Nature_FaerieFire")
       or HasDebuff("target", "Spell_Nature_StarFall")
       or HasDebuff("target", "Ability_Druid_Disembowel")
-      --or HasDebuff("target", "Ability_GhoulFrenzy") --triggered on fury warrs Flurry
+      -- or HasDebuff("target", "Ability_GhoulFrenzy") -- triggered on fury warrs Flurry
       or HasDebuff("target", "Ability_Druid_SurpriseAttack")
       or HasDebuff("target", "Spell_Nature_InsectSwarm")
       or HasDebuff("target", "Spell_Holy_SearingLight")
@@ -565,8 +572,8 @@ end
 --------------------------------------------------
 
 local function SnareDebuff(unit)
-    --Detect snaring debuffs
-    --Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock, Piercing Howl
+    -- Detect snaring debuffs
+    -- Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock, Piercing Howl
     if HasDebuff(unit, "Ability_ShockWave")
       or HasDebuff(unit, "Ability_Rogue_Trip")
       or HasDebuff(unit, "Spell_Shadow_GrimWard")
@@ -582,7 +589,7 @@ end
 --------------------------------------------------
 
 local function Fury_RunnerDetect(arg1, arg2)
-    --Thanks to HateMe
+    -- Thanks to HateMe
     if arg1 == CHAT_RUNNER_FURY then
         Fury_Runners[arg2] = true
     end
@@ -1134,7 +1141,7 @@ function Fury()
           and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
           and Fury_Configuration["PrimaryStance"] ~= 0 then
-            --Initiate stance dance
+            -- Initiate stance dance
             Debug("20. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
             CastShapeshiftForm(Fury_Configuration["PrimaryStance"])
             FuryLastStanceCast = GetTime()
@@ -1263,7 +1270,7 @@ function Fury()
             CastSpellByName(ABILITY_DEMORALIZING_SHOUT_FURY)
             FuryLastSpellCast = GetTime()
 
-        --29, Revenge
+        -- 29, Revenge
         elseif Fury_Configuration[ABILITY_REVENGE_FURY]
           and FuryCombat
           and UnitMana("player") >= 5
@@ -1289,7 +1296,7 @@ function Fury()
           and FuryOldStance
           and FuryLastStanceCast + 1.5 <= GetTime()
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) then
-            --Initiate stance dance
+            -- Initiate stance dance
             if not Fury_Configuration["PrimaryStance"] then
                 Debug("31. Old Stance (" .. FuryOldStance .. ")")
                 CastShapeshiftForm(FuryOldStance)
@@ -1488,7 +1495,7 @@ function Fury()
                 Debug("49. Heroic Strike")
                 CastSpellByName(ABILITY_HEROIC_STRIKE_FURY)
                 FuryLastSpellCast = GetTime()
-                --No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
+                -- No global cooldown, added anyway to prevent Heroic Strike from being spammed over other abilities
 
             -- 50, Cleave
             elseif (Fury_Configuration[ABILITY_CLEAVE_FURY]
@@ -1502,7 +1509,7 @@ function Fury()
                 Debug("50. Cleave")
                 CastSpellByName(ABILITY_CLEAVE_FURY)
                 FuryLastSpellCast = GetTime()
-                --No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
+                -- No global cooldown, added anyway to prevent Cleave from being spammed over other abilities
             elseif not FuryRageDumped then
                 Debug("51. Rage: "..tostring(UnitMana("player")))
                 FuryRageDumped = true
@@ -1762,13 +1769,13 @@ local function Fury_ScanTalents()
         i = i + 1
     end
     Debug("Scanning Talent Tree")
-    --Calculate the cost of Heroic Strike based on talents
+    -- Calculate the cost of Heroic Strike based on talents
     local _, _, _, _, currRank = GetTalentInfo(1, 1)
     FuryHeroicStrikeCost = (15 - tonumber(currRank))
     if FuryHeroicStrikeCost < 15 then
         Debug("Heroic Cost")
     end
-    --Calculate the rage retainment of Tactical Mastery
+    -- Calculate the rage retainment of Tactical Mastery
     local _, _, _, _, currRank = GetTalentInfo(1, 5)
     FuryTacticalMastery = (tonumber(currRank) * 5)
     if FuryTacticalMastery > 0 then
@@ -1811,7 +1818,7 @@ local function Fury_ScanTalents()
     else
         FuryImpHamstring = false
     end
-    --Check for Mortal Strike
+    -- Check for Mortal Strike
     local _, _, _, _, currRank = GetTalentInfo(1, 18)
     if currRank > 0 then
         Debug("Mortal Strike")
@@ -1819,7 +1826,7 @@ local function Fury_ScanTalents()
     else
         FuryMortalStrike = false
     end
-    --Check for Piercing Howl
+    -- Check for Piercing Howl
     local _, _, _, _, currRank = GetTalentInfo(2, 6)
     if currRank > 0 then
         Debug("Piercing Howl")
@@ -1827,13 +1834,13 @@ local function Fury_ScanTalents()
     else
         FuryPiercingHowl = false
     end
-    --Calculate the cost of Execute based on talents
+    -- Calculate the cost of Execute based on talents
     local _, _, _, _, currRank = GetTalentInfo(2, 10)
     FuryExecuteCost = (15 - strsub(tonumber(currRank) * 2.5, 1, 2))
     if FuryExecuteCost < 15 then
         Debug("Execute Cost")
     end
-    --Check for Death Wish
+    -- Check for Death Wish
     local _, _, _, _, currRank = GetTalentInfo(2, 13)
     if currRank > 0 then
         Debug("Death Wish")
@@ -1849,7 +1856,7 @@ local function Fury_ScanTalents()
     else
         FuryBerserkerRage = false
     end
-    --Check for Flurry
+    -- Check for Flurry
     local _, _, _, _, currRank = GetTalentInfo(2, 16)
     if currRank > 0 then
         Debug("Flurry")
@@ -1858,7 +1865,7 @@ local function Fury_ScanTalents()
         FuryFlurry = false
     end
 
-    --Check for Bloodthirst
+    -- Check for Bloodthirst
     local _, _, _, _, currRank = GetTalentInfo(2, 17)
     if currRank > 0 then
         Debug("Bloodthirst")
@@ -1866,7 +1873,7 @@ local function Fury_ScanTalents()
     else
         FuryBloodthirst = false
     end
-    --Check for Shield Slam
+    -- Check for Shield Slam
     local _, _, _, _, currRank = GetTalentInfo(3, 17)
     if currRank > 0 then
         Debug("Shield Slam")
@@ -2000,7 +2007,7 @@ function Fury_SlashCommand(msg)
         setOptionRange("BerserkHealth", SLASH_FURY_TROLL, options, 1, 100)
 
     elseif command == "threat" then
-        --If HS then use cleave, if cleave then use HS
+        -- If HS then use cleave, if cleave then use HS
         if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
             Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = false
             Fury_Configuration[ABILITY_CLEAVE_FURY] = true
@@ -2166,6 +2173,9 @@ function Fury_SlashCommand(msg)
             LogToFile(false)
         end
 
+    elseif command == "default" then
+        updateConfiguration(true) -- Set configurtion to default
+
     elseif command == "version" then
         Print(SLASH_FURY_VERSION.." "..FURY_VERSION)
 
@@ -2183,6 +2193,7 @@ function Fury_SlashCommand(msg)
           ["dance"] = HELP_DANCE,
           ["debuff"] = HELP_DEBUFF,
           ["debug"] = HELP_DEBUG,
+          ["default"] = HEL_DEFAULT,
           ["demodiff"] = HELP_DEMODIFF,
           ["distance"] = HELP_DISTANCE,
           ["earthstrike"] = HELP_EARTHSTRIKE,
@@ -2283,7 +2294,7 @@ end
 function Fury_OnEvent(event)
 
     if event == "VARIABLES_LOADED" then
-        --Check for settings
+        -- Check for settings
         Fury_Configuration_Init()
 
     elseif (event == "CHAT_MSG_COMBAT_SELF_MISSES"
@@ -2291,21 +2302,21 @@ function Fury_OnEvent(event)
       or event == "CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF")
       and (string.find(arg1, CHAT_OVERPOWER1_FURY)
       or string.find(arg1, CHAT_OVERPOWER2_FURY)) then
-        --Check to see if enemy dodges
+        -- Check to see if enemy dodges
         FuryOverpower = GetTime()
 
     elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE"
       and (string.find(arg1, CHAT_OVERPOWER3_FURY)
       or string.find(arg1, CHAT_OVERPOWER4_FURY)
       or string.find(arg1, CHAT_OVERPOWER5_FURY)) then
-        --Check to see if Overpower is used
+        -- Check to see if Overpower is used
         FuryOverpower = nil
 
     elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE"
       or event == "CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF"
       or event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF"
       or event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"  then
-        --Check to see if enemy casts spell
+        -- Check to see if enemy casts spell
         for mob, spell in string.gfind(arg1, CHAT_CAST_FURY) do
             if mob == UnitName("target")
               and UnitCanAttack("player", "target")
@@ -2325,7 +2336,7 @@ function Fury_OnEvent(event)
       and string.find(arg1, CHAT_INTERRUPT4_FURY)
       or event == "CHAT_MSG_COMBAT_SELF_MISSES"
       and string.find(arg1, CHAT_INTERRUPT5_FURY) then
-        --Check to see if Pummel/Shield Bash is used
+        -- Check to see if Pummel/Shield Bash is used
         FurySpellInterrupt = nil
 
     elseif (event == "CHAT_MSG_SPELL_SELF_DAMAGE"
@@ -2348,7 +2359,7 @@ function Fury_OnEvent(event)
         end
 
     elseif event == "CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE" then
-        --Check to see if getting affected by breakable effects
+        -- Check to see if getting affected by breakable effects
         if arg1 == CHAT_SAP_FURY
           or arg1 == CHAT_GOUGE_FURY
           or arg1 == CHAT_REPENTANCE_FURY
@@ -2367,7 +2378,7 @@ function Fury_OnEvent(event)
         end
 
     elseif event == "CHAT_MSG_SPELL_AURA_GONE_SELF" then
-        --Check to see if breakable effects fades
+        -- Check to see if breakable effects fades
         if arg1 == CHAT_SAP2_FURY
           or arg1 == CHAT_GOUGE2_FURY
           or arg1 == CHAT_REPENTANCE2_FURY
@@ -2405,11 +2416,11 @@ function Fury_OnEvent(event)
         end
 
     elseif event == "CHAT_MSG_MONSTER_EMOTE" then
-        --Check to see if enemy flees
+        -- Check to see if enemy flees
         Fury_RunnerDetect(arg1, arg2)
 
     elseif event == "PLAYER_AURAS_CHANGED" then
-        --Check to see if mounted
+        -- Check to see if mounted
         if UnitIsMounted("player") then
             FuryMount = true
         else
@@ -2424,7 +2435,7 @@ function Fury_OnEvent(event)
     elseif event == "PLAYER_TARGET_CHANGED"
       or (event == "CHARACTER_POINTS_CHANGED"
       and arg1 == -1) then
-        --Reset Overpower and interrupts, check to see if talents are being calculated
+        -- Reset Overpower and interrupts, check to see if talents are being calculated
         if event == "PLAYER_TARGET_CHANGED" then
             Fury_SetEnemies(1)
             FuryOverpower = nil
