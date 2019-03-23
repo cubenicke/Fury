@@ -10,7 +10,7 @@
 -- Variables
 --
 --------------------------------------------------
-
+-- Setup configuration to default or only new ones
 local function updateConfiguration(defaults)
     local configs = {
 
@@ -83,6 +83,8 @@ local function updateConfiguration(defaults)
     end
 end
 
+--------------------------------------------------
+-- Init function
 local function Fury_Configuration_Init()
 
     FURY_VERSION = "1.17.4"
@@ -104,7 +106,7 @@ end
 -- Normal Functions
 --
 --------------------------------------------------
-
+-- Print msg to console
 local function Print(msg)
     if not DEFAULT_CHAT_FRAME then
         return
@@ -112,6 +114,8 @@ local function Print(msg)
     DEFAULT_CHAT_FRAME:AddMessage(BINDING_HEADER_FURY .. ": "..(msg or ""))
 end
 
+--------------------------------------------------
+-- Output debug info to console
 local function Debug(msg)
     if (msg or "") == "" then
         FuryRageDumped = nil
@@ -132,6 +136,8 @@ local function Debug(msg)
     FuryRageDumped = nil
 end
 
+--------------------------------------------------
+-- Log fury debug to channel and log file
 local function LogToFile(enable)
     if enable then
         LoggingChat(1)
@@ -144,6 +150,7 @@ local function LogToFile(enable)
         else
             local _, channel = GetChannelName(Fury_Configuration["DebugChannel"])
             if channel ~= nil then
+                Print("Joining channel : "..channel)
                 JoinChannelByName(channel, "test", nil, 1)
             else
                 Fury_Configuration["DebugChannel"] = nil
@@ -159,6 +166,8 @@ local function LogToFile(enable)
     end
 end
 
+--------------------------------------------------
+-- Check if unit has debuff of specific type
 local function HasDebuffType(unit, type)
     local id = 1
     while UnitDebuff(unit, id) do
@@ -171,28 +180,32 @@ local function HasDebuffType(unit, type)
     return nil
 end
 
-local function PrintEffects(target)
+--------------------------------------------------
+-- Print unit buffs and debuffs
+local function PrintEffects(unit)
     local id = 1
-    if UnitBuff(target, id) then
+    if UnitBuff(unit, id) then
         Print(SLASH_BUFFS_FURY)
-        while (UnitBuff(target, id)) do
-            Print(UnitBuff(target, id))
+        while (UnitBuff(unit, id)) do
+            Print(UnitBuff(unit, id))
             id = id + 1
         end
         id = 1
     end
-    if HasDebuffType(target) then
+    if HasDebuffType(unit) then
         Print(TEXT_FURY_HAVE_DEBUFF)
     end
-    if UnitDebuff(target, id) then
+    if UnitDebuff(unit, id) then
         Print(CHAT_DEBUFFS_FURY)
-        while UnitDebuff(target, id) do
-            Print(UnitDebuff(target, id))
+        while UnitDebuff(unit, id) do
+            Print(UnitDebuff(unit, id))
             id = id + 1
         end
     end
 end
 
+--------------------------------------------------
+-- list of targets requiring resistances
 local res = {
     ["fire"] = {
         BOSS_NAX_GRAND_WIDOW_FAERLINA_FURY,
@@ -225,6 +238,8 @@ local res = {
     }
 }
 
+--------------------------------------------------
+-- Check if boss 'requires' resistance of specific type
 local function UseRes(type)
     for _, name in pairs(res[type]) do
         if UnitName("target") == name then
@@ -239,7 +254,7 @@ end
 -- Distance handling
 --
 --------------------------------------------------
-
+-- Detect spells on action bars, to be used for range checks
 local function Fury_InitDistance()
     local found = 0
     yard30 = nil
@@ -320,31 +335,29 @@ local function Fury_InitDistance()
         Print(CHAT_MISSING_SPELL_PUMMEL_FURY)
     end
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Detect distance to target
 local function Fury_Distance()
     if not UnitCanAttack("player", "target") then
         return 100 -- invalid target
-    end
-    if yard05 and IsActionInRange(yard05) == 1 then
-        return 5 -- 0 - 5
-    end
-    if yard10 and IsActionInRange(yard10) == 1 then
+    elseif yard05 and IsActionInRange(yard05) == 1 then
+        return 5 -- 0 - 5 yards
+    elseif yard10 and IsActionInRange(yard10) == 1 then
         if yard08 and IsActionInRange(yard08) == 0 then
-            return 7 -- 6 - 7
+            return 7 -- 6 - 7 yards
         end
-        return 10 -- 8 - 10
+        return 10 -- 8 - 10 yards
+    elseif yard25 and IsActionInRange(yard25) == 1 then
+        return 25 -- 11 - 25 yards
+    elseif yard30 and IsActionInRange(yard30) == 1 then
+        return 30 -- 26 - 30 yards
     end
-    if yard25 and IsActionInRange(yard25) == 1 then
-        return 25 -- 11 - 25
-    end
-    if yard30 and IsActionInRange(yard30) == 1 then
-        return 30 -- 26 - 30
-    end
-    return 100 -- 31 - <na>
+    return 100 -- 31 - <na> yards
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Get spell id from name
 local function SpellId(spellname)
     local id = 1
     for i = 1, GetNumSpellTabs() do
@@ -359,8 +372,9 @@ local function SpellId(spellname)
     end
     return nil
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Check remaining cooldown on spell (0 - Ready)
 local function SpellReadyIn(spellname)
     local id = SpellId(spellname)
     if id then
@@ -375,12 +389,13 @@ local function SpellReadyIn(spellname)
     end
     return 86400
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Detect if unit has specific number of debuffs
 local function HasDebuff(unit, texturename, amount)
     local id = 1
     while UnitDebuff(unit, id) do
-        local debuffTexture,debuffAmount = UnitDebuff(unit, id)
+        local debuffTexture, debuffAmount = UnitDebuff(unit, id)
         if string.find(debuffTexture, texturename) then
             if (amount or 1) <= debuffAmount then
                 return true
@@ -392,8 +407,9 @@ local function HasDebuff(unit, texturename, amount)
     end
     return nil
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Detect if unit has buff
 local function HasBuff(unit, texturename)
     local id = 1
     while UnitBuff(unit, id) do
@@ -406,26 +422,27 @@ local function HasBuff(unit, texturename)
     return nil
 end
 --------------------------------------------------
-
-local function HasBuffId(target, spellId)
+-- Detect if unit has buff id
+local function HasBuffId(unit, spellId)
     for i = 1, 40 do
-        if select(11, UnitBuff(target, i)) == spellid then
+        if select(11, UnitBuff(unit, i)) == spellid then
             return true
         end
     end
     return nil
 end
---------------------------------------------------
 
-local function UseContainerItemByNameOnPlayer(search)
-    for bag = 0,4 do
+--------------------------------------------------
+-- Use item on player
+local function UseContainerItemByNameOnPlayer(name)
+    for bag = 0, 4 do
         for slot = 1,GetContainerNumSlots(bag) do
-            local item = GetContainerItemLink(bag,slot)
+            local item = GetContainerItemLink(bag, slot)
             if item then
                 local _, _, itemCode = strfind(item, "(%d+):")
                 local itemName = GetItemInfo(itemCode)
-                if itemName == search then
-                    UseContainerItem(bag,slot)
+                if itemName == name then
+                    UseContainerItem(bag, slot)
                     if SpellIsTargeting() then
                         SpellTargetUnit("player")
                     end
@@ -434,8 +451,9 @@ local function UseContainerItemByNameOnPlayer(search)
         end
     end
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Return active stance
 local function ActiveStance()
     --Detect the active stance
     for i = 1, 3 do
@@ -446,10 +464,10 @@ local function ActiveStance()
     end
     return nil
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Detect if a suitable weapon (not a skinning knife/mining pick and not broken) is present
 local function Weapon()
-    --Detect if a suitable weapon (not a skinning knife/mining pick and not broken) is present
     local item = GetInventoryItemLink("player", 16)
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
@@ -460,10 +478,10 @@ local function Weapon()
     end
     return nil
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Detect if a shield is present
 local function Shield()
-    --Detect if a shield is present
     local item = GetInventoryItemLink("player", 17)
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
@@ -474,8 +492,9 @@ local function Shield()
     end
     return nil
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Return trinket slot if trinket is equipped and not on cooldown
 local function IsTrinketEquipped(name)
     for slot = 13, 14 do
         local item = GetInventoryItemLink("player", slot)
@@ -702,8 +721,8 @@ local function Fury_Shoot()
     return true
 end
 --------------------------------------------------
-
-local function Fury_TreatDebuff(unit)
+-- Treat debuff on player
+local function Fury_TreatDebuffPlayer()
     local allowCombatCooldown = true
     if UnitName("target") == BOSS_NAX_LOATHEB_FURY
       or UnitName("target") == BOSS_NAX_SAPPHIRON_FURY then
@@ -1436,7 +1455,7 @@ function Fury()
 
         -- 45, Treat debuffs (poisons)
         elseif Fury_Configuration[MODE_HEADER_DEBUFF]
-          and Fury_TreatDebuff("player") then
+          and Fury_TreatDebuffPlayer() then
             Debug("45. Treated debuff")
 
         -- 46, Swap back to normal weapons
@@ -1527,10 +1546,7 @@ end
 --
 --------------------------------------------------
 
-
 local function Fury_Block()
-
-    -- Shield Block
     if ActiveStance() ~= 2 then
         if FuryLastStanceCast + 1.5 <= GetTime() then
             if not FuryOldStance then
@@ -1750,7 +1766,7 @@ local function Fury_Charge()
 end
 
 --------------------------------------------------
-
+-- Scan spell book and talents
 local function Fury_ScanTalents()
     local i = 1
     Debug("Scanning Spell Book")
@@ -1903,30 +1919,35 @@ local function Fury_ScanTalents()
 end
 
 --------------------------------------------------
-
-local function setOptionRange(option, text, v, vmin, vmax)
-    if v ~= "" then
-        if tonumber(v) < vmin then
-            v = vmin
-        elseif tonumber(v) > vmax then
-            v = vmax
+--
+-- Chat Handlers
+--
+--------------------------------------------------
+-- Helper to set option to value
+local function setOptionRange(option, text, value, vmin, vmax)
+    if value ~= "" then
+        if tonumber(value) < vmin then
+            value = vmin
+        elseif tonumber(value) > vmax then
+            value = vmax
         end
-        Fury_Configuration[option] = tonumber(v)
+        Fury_Configuration[option] = tonumber(value)
     else
-        v = Fury_Configuration[option]
+        value = Fury_Configuration[option]
     end
-    Print(text .. v .. ".")
+    Print(text .. value .. ".")
 end
 
 --------------------------------------------------
-
-local function printOption(option, text)
+-- Print option if it is enabled
+local function printEnabledOption(option, text)
     if Fury_Configuration[option] == true then
         Print(text .. " " .. TEXT_FURY_ENABLED .. ".")
     end
 end
---------------------------------------------------
 
+--------------------------------------------------
+-- Helper to toggle option
 local function toggleOption(option, text)
     if Fury_Configuration[option] == true then
         Fury_Configuration[option] = false
@@ -1941,11 +1962,7 @@ local function toggleOption(option, text)
 end
 
 --------------------------------------------------
---
--- Chat Handlers
---
---------------------------------------------------
-
+-- Handle incomming slash commands
 function Fury_SlashCommand(msg)
     local _, _, command, options = string.find(msg, "([%w%p]+)%s*(.*)$")
     if command then
@@ -2102,13 +2119,13 @@ function Fury_SlashCommand(msg)
         end
 
     elseif command == "cons" then
-        printOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
-        printOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
-        printOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
-        printOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
-        printOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
-        printOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
-        printOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+        printEnabledOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
+        printEnabledOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
+        printEnabledOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
+        printEnabledOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
+        printEnabledOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
+        printEnabledOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+        printEnabledOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
 
     elseif command == "talents" then
         Print(CHAT_TALENTS_RESCAN_FURY)
@@ -2244,7 +2261,7 @@ end
 -- Event Handlers
 --
 --------------------------------------------------
-
+-- Callback on load
 function Fury_OnLoad()
     local evs = {
         "CHARACTER_POINTS_CHANGED",
@@ -2290,7 +2307,7 @@ function Fury_OnLoad()
 end
 
 --------------------------------------------------
-
+-- Event handler
 function Fury_OnEvent(event)
 
     if event == "VARIABLES_LOADED" then
