@@ -76,15 +76,9 @@ local function setup(defaults)
       RACIAL_STONEFORM_FURY = true,           -- Racial
     }
 
-    if defaults then
-        for k, v in configs do
+    for k, v in configs do
+        if defaults or Fury_Configuration[k] == nil then
             Fury_Configuration[k] = v
-        end
-    else
-        for k, v in configs do
-            if Fury_Configuration[k] == nil then
-                Fury_Configuration[k] = v
-            end
         end
     end
 end
@@ -418,8 +412,8 @@ end
 --------------------------------------------------
 
 local function HasBuffId(target, spellId)
-    for i=1,40 do
-        if select(11,UnitBuff(target,i)) == spellid then
+    for i = 1, 40 do
+        if select(11, UnitBuff(target, i)) == spellid then
             return true
         end
     end
@@ -1513,7 +1507,7 @@ function Fury()
                 Debug("51. Rage: "..tostring(UnitMana("player")))
                 FuryRageDumped = true
             end
-        else
+        elseif not FuryRageDumped then
             Debug("52. Rage: "..tostring(UnitMana("player")))
             FuryRageDumped = true
         end
@@ -2396,7 +2390,7 @@ function Fury_OnEvent(event)
             end
             if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FlurryCombatTotal > 0) then
                 local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-                Print(TEXT_FURY_FLURRY .. p .. "%")
+                Debug(TEXT_FURY_FLURRY .. p .. "%")
                 FlurryCombatTotal = 0
                 FuryCombatTotal = 0
             end
@@ -2463,7 +2457,7 @@ function Fury_OnEvent(event)
         FuryFlurryStart = nil
         if FuryFlurry and (FlurryCombatTotal > 0) then
             local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-            Print(TEXT_FURY_FLURRY .. p .. "%")
+            Debug(TEXT_FURY_FLURRY .. p .. "%")
             FlurryCombatTotal = 0
             FuryCombatTotal = 0
         end
