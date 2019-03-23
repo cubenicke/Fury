@@ -11,9 +11,87 @@
 --
 --------------------------------------------------
 
+local function setup(defaults)
+    local configs = {
+
+      AutoAttack = true,       -- Set to false to disable auto-attack
+      BerserkHealth = 60,      -- Set this to the minimum percent of health to have when using Berserk
+      BloodrageHealth = 50,    -- Set this to the minimum percent of health to have when using Bloodrage
+      DeathWishHealth = 60,    -- Set this to the minimum percent of health to have when using Death Wish
+      Debug = false,           -- Set to true to enable debugging feedback
+      DebugChannel = nil,      -- Channel to log to
+      DemoDiff = 7,            -- When level difference is greater don't do Demoralizing Shout
+      Enabled = true,          -- Set to false to disable the addon
+      ExecuteSwap  = false,    -- Swap weapon at execute
+      ExecuteSwapped = false,  -- If execute outfit is equipped
+      FlurryTriggerRage = 52,  -- Set this to the minimum rage to have to use Hamtring to trigger Flurry
+      HamstringHealth = 40,    -- Set this to the maximum percent of health allowed when using Hamstring on NPCs
+      InstantBuildTime = 2,    -- Set the time to spend building rage for upcoming 31 point instant attacks
+      MaximumRage = 60,        -- Set this to the maximum amount of rage allowed when using abilities to increase rage
+      NextAttackRage = 30,     -- Set this to the minimum rage to have to use next attack abilities (Cleave and Heroic Strike)
+      StanceChangeRage = 25,   -- Set this to the amount of rage allowed to be wasted when switching stances
+      PrimaryStance = false,   -- Set this to the stance to fall back to after performing an attack requiring another stance
+
+      MODE_HEADER_AOE = false,                -- Disable auto use of aoe (Disables OP, HS, BT, Exe, Enablse Cleave, Whirlwind)
+      MODE_HEADER_DEBUFF = false,             -- use when have debuff <type>
+
+      ABILITY_BATTLE_SHOUT_FURY = true,       -- Set to false to disable use of ability
+      ABILITY_BERSERKER_RAGE_FURY = true,     -- Used to counter fears
+      ABILITY_BLOODRAGE_FURY = true,          -- Gives extra rage
+      ABILITY_BLOODTHIRST_FURY = true,        -- Fury main attack
+      ABILITY_CHARGE_FURY = true,             -- Charge when out of combat
+      ABILITY_CLEAVE_FURY = false,            -- Cleave to lower threat and on used in aoe situations
+      ABILITY_DEMORALIZING_SHOUT_FURY = true, -- Decreases enemy attack power
+      ABILITY_DISARM_FURY = true,             -- Used in pvp agains hard hitters
+      ABILITY_EXECUTE_FURY = true,            -- Execute
+      ABILITY_HAMSTRING_FURY = true,          -- Hamstring
+      ABILITY_PIERCING_HOWL_FURY = true,      -- Piercing Howl
+      ABILITY_HEROIC_STRIKE_FURY = true,      -- HS, to dump rage and at low levels
+      ABILITY_INTERCEPT_FURY = true,          -- in combat charge
+      ABILITY_MORTAL_STRIKE_FURY = true,      -- Arms main attack
+      ABILITY_SWEEPING_STRIKES_FURY = true,   -- Aoe for arms
+      ABILITY_OVERPOWER_FURY = true,          -- Counterattack dodge
+      ABILITY_PUMMEL_FURY = true,             -- Counter spellcast
+      ABILITY_REND_FURY = true,               -- Counter rogues vanish
+      ABILITY_SHIELD_BASH_FURY = true,        -- Prot
+      ABILITY_SHIELD_SLAM_FURY = true,        -- Prot
+      ABILITY_DEATH_WISH_FURY = true,         -- Deth wish on cooldown
+      ABILITY_THUNDER_CLAP_FURY = true,       -- slow enemies
+      ABILITY_WHIRLWIND_FURY = true,          -- Fury rotation and aoe
+      ABILITY_REVENGE_FURY = false,           -- Prot
+
+      ITEM_CONS_JUJU_CHILL = true,           -- use on cooldown for bosses with frost dmg
+      ITEM_CONS_JUJU_EMBER = true,            -- use on cooldown for bosses with fire dmg
+      ITEM_CONS_JUJU_FLURRY = false,          -- use on cooldown
+      ITEM_CONS_JUJU_MIGHT = false,           -- use on cooldown
+      ITEM_CONS_JUJU_POWER = false,           -- use on cooldown
+      ITEM_CONS_OIL_OF_IMMOLATION = false,    -- use on cooldown
+
+      ITEM_TRINKET_EARTHSTRIKE = true,        -- use on cooldown
+      ITEM_TRINKET_KOTS = true,               -- use on cooldown
+      ITEM_TRINKET_SLAYERS_CREST = true,      -- use on cooldown
+
+      RACIAL_BERSERKING_FURY = true,          -- Racial
+      RACIAL_BLOOD_FURY = true,               -- Racial
+      RACIAL_STONEFORM_FURY = true,           -- Racial
+    }
+
+    if defaults then
+        for k, v in configs do
+            Fury_Configuration[k] = v
+        end
+    else
+        for k, v in configs do
+            if Fury_Configuration[k] == nil then
+                Fury_Configuration[k] = v
+            end
+        end
+    end
+end
+
 local function Fury_Configuration_Init()
 
-    FURY_VERSION = "1.17.3"
+    FURY_VERSION = "1.17.4"
 
     if not Fury_Configuration then
         Fury_Configuration = { }
@@ -24,243 +102,11 @@ local function Fury_Configuration_Init()
     if not Fury_ImmuneDisarm then
         Fury_ImmuneDisarm = { }
     end
-
-    if Fury_Configuration["Enabled"] == nil then
-        Fury_Configuration["Enabled"] = true --Set to false to disable the addon
-    end
-    if Fury_Configuration["Debug"] == nil then
-        Fury_Configuration["Debug"] = false --Set to true to enable debugging feedback
-    end
-    if Fury_Configuration["StanceChangeRage"] == nil then
-        Fury_Configuration["StanceChangeRage"] = 25 --Set this to the amount of rage allowed to be wasted when switching stances
-    end
-    if Fury_Configuration["MaximumRage"] == nil then
-        Fury_Configuration["MaximumRage"] = 60 --Set this to the maximum amount of rage allowed when using abilities to increase rage
-    end
-    if Fury_Configuration["BloodrageHealth"] == nil then
-        Fury_Configuration["BloodrageHealth"] = 50 --Set this to the minimum percent of health to have when using Bloodrage
-    end
-    if Fury_Configuration["DeathWishHealth"] == nil then
-        Fury_Configuration["DeathWishHealth"] = 60 --Set this to the minimum percent of health to have when using Death Wish
-    end
-    if Fury_Configuration["NextAttackRage"] == nil then
-        Fury_Configuration["NextAttackRage"] = 30 --Set this to the minimum rage to have to use next attack abilities (Cleave and Heroic Strike)
-    end
-    if Fury_Configuration["FlurryTriggerRage"] == nil then
-        Fury_Configuration["FlurryTriggerRage"] = 52 --Set this to the minimum rage to have to use Hamtring to trigger Flurry
-    end
-    if Fury_Configuration["BerserkHealth"] == nil then
-        Fury_Configuration["BerserkHealth"] = 60 --Set this to the minimum percent of health to have when using Berserk
-    end
-    if Fury_Configuration["HamstringHealth"] == nil then
-        Fury_Configuration["HamstringHealth"] = 40 --Set this to the maximum percent of health allowed when using Hamstring on NPCs
-    end
-    if Fury_Configuration["AutoAttack"] == nil then
-        Fury_Configuration["AutoAttack"] = true --Set to false to disable auto-attack
-    end
-    if Fury_Configuration["PrimaryStance"] == nil then
-        Fury_Configuration["PrimaryStance"] = false --Set this to the stance to fall back to after performing an attack requiring another stance
-    end
-    if Fury_Configuration["DemoDiff"] == nil then
-        Fury_Configuration["DemoDiff"] = 7 -- When level difference is greater don't do Demoralizing Shout
-    end
-    if Fury_Configuration[MODE_HEADER_AOE] == nil then
-        Fury_Configuration[MODE_HEADER_AOE] = false -- Disable auto use of aoe (Disables OP, HS, BT, Exe, Enablse Cleave, Whirlwind)
-    end
-    --[[
-    if WarriorButtonStandard_Configuration["InstantBuildTime"] == nil then
-        WarriorButtonStandard_Configuration["InstantBuildTime"] = 2 --Set the time to spend building rage for upcoming 31 point instant attacks
-    end
-    if WarriorButtonStandard_Configuration["RageBuffer"] == nil then
-        WarriorButtonStandard_Configuration["RageBuffer"] = 10 --Set the minimum amount of rage to protect for emergency abilities
-    end
-    if WarriorButtonStandard_Configuration["InterruptTimer"] == nil then
-        WarriorButtonStandard_Configuration["InterruptTimer"] = 2 --Set the time to attempt to interrupt spells after they begin casting
-    end
-    if WarriorButtonStandard_Configuration["InstantBuildTime"] == nil then
-        WarriorButtonStandard_Configuration["InstantBuildTime"] = 2 --Set the time to spend building rage for upcoming 31 point instant attacks
-    end
-    if WarriorButtonStandard_Configuration["AoETime"] == nil then
-        WarriorButtonStandard_Configuration["AoETime"] = 1 --Set the frequency of multiple target checks in seconds
-    end
-    if WarriorButtonStandard_Configuration["StanceTime"] == nil then
-        WarriorButtonStandard_Configuration["StanceTime"] = 2 --Set the minimum delay between stance changes
-    end
-    if WarriorButtonStandard_Configuration["MaxCycles"] == nil then
-        WarriorButtonStandard_Configuration["MaxCycles"] = 10 --Set the maximum number of function calls per second
-    end
-    ]]--
-    if Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY] == nil then
-        Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY] = true --Set to false to disable use of ability
-    end
-    if Fury_Configuration[RACIAL_BERSERKING_FURY] == nil then
-        Fury_Configuration[RACIAL_BERSERKING_FURY] = true -- Racial
-    end
-    if Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] == nil then
-        Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true -- Used to counter fears
-    end
-    if Fury_Configuration[ABILITY_BLOOD_FURY] == nil then
-        Fury_Configuration[ABILITY_BLOOD_FURY] = true
-    end
-    if Fury_Configuration[ABILITY_BLOODRAGE_FURY] == nil then
-        Fury_Configuration[ABILITY_BLOODRAGE_FURY] = true -- Gives extra rage
-    end
-    if Fury_Configuration[ABILITY_BLOODTHIRST_FURY] == nil then
-        Fury_Configuration[ABILITY_BLOODTHIRST_FURY] = true -- Fury main attack
-    end
-    if Fury_Configuration[ABILITY_CHARGE_FURY] == nil then
-        Fury_Configuration[ABILITY_CHARGE_FURY] = true -- Charge when out of combat
-    end
-    if Fury_Configuration[ABILITY_CLEAVE_FURY] == nil then
-        Fury_Configuration[ABILITY_CLEAVE_FURY] = false -- Cleave to lower threat and on used in aoe situations
-    end
-    if Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] == nil then
-        Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true -- Decreases enemy attack power
-    end
-    if Fury_Configuration[ABILITY_DISARM_FURY] == nil then
-        Fury_Configuration[ABILITY_DISARM_FURY] = true -- Used in pvp agains hard hitters
-    end
-    if Fury_Configuration[ABILITY_EXECUTE_FURY] == nil then
-        Fury_Configuration[ABILITY_EXECUTE_FURY] = true -- Execute
-    end
-    if Fury_Configuration[ABILITY_HAMSTRING_FURY] == nil then
-        Fury_Configuration[ABILITY_HAMSTRING_FURY] = true -- Hamstring
-    end
-    if Fury_Configuration[ABILITY_PIERCING_HOWL_FURY] == nil then
-        Fury_Configuration[ABILITY_PIERCING_HOWL_FURY] = true -- Piercing Howl
-    end
-    if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] == nil then
-        Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true -- HS, to dump rage and at low levels
-    end
-    if Fury_Configuration[ABILITY_INTERCEPT_FURY] == nil then
-        Fury_Configuration[ABILITY_INTERCEPT_FURY] = true -- in combat charge
-    end
-    if Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] == nil then
-        Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] = true -- Arms main attack
-    end
-    if Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY] == nil then
-        Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY] = true -- Sweeping Strikes
-    end
-    if Fury_Configuration[ABILITY_OVERPOWER_FURY] == nil then
-        Fury_Configuration[ABILITY_OVERPOWER_FURY] = true -- Counterattack dodge
-    end
-    if Fury_Configuration[ABILITY_PUMMEL_FURY] == nil then
-        Fury_Configuration[ABILITY_PUMMEL_FURY] = true -- Counter spellcast
-    end
-    if Fury_Configuration[ABILITY_REND_FURY] == nil then
-        Fury_Configuration[ABILITY_REND_FURY] = true -- Counter rogues vanish
-    end
-    if Fury_Configuration[ABILITY_SHIELD_BASH_FURY] == nil then
-        Fury_Configuration[ABILITY_SHIELD_BASH_FURY] = true -- Prot
-    end
-    if Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] == nil then
-        Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true -- Prot
-    end
-    if Fury_Configuration[ABILITY_DEATH_WISH_FURY] == nil then
-        Fury_Configuration[ABILITY_DEATH_WISH_FURY] = true -- Deth wish on cooldown
-    end
-    if Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY] == nil then
-        Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY] = true -- Aoe for arms
-    end
-    if Fury_Configuration[ABILITY_THUNDER_CLAP_FURY] == nil then
-        Fury_Configuration[ABILITY_THUNDER_CLAP_FURY] = true -- slow enemies
-    end
-    if Fury_Configuration[ABILITY_WHIRLWIND_FURY] == nil then
-        Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true -- Fury rotation and aoe
-    end
-    if Fury_Configuration[ITEM_CONS_JUJU_FLURRY] == nil then
-        Fury_Configuration[ITEM_CONS_JUJU_FLURRY] = false -- use on cooldown
-    end
-    if Fury_Configuration[ITEM_CONS_JUJU_POWER] == nil then
-        Fury_Configuration[ITEM_CONS_JUJU_POWER] = false -- use on cooldown
-    end
-    if Fury_Configuration[ITEM_CONS_JUJU_MIGHT] == nil then
-        Fury_Configuration[ITEM_CONS_JUJU_MIGHT] = false -- use on cooldown
-    end
-    if Fury_Configuration[ITEM_CONS_JUJU_CHILL] == nil then
-        Fury_Configuration[ITEM_CONS_JUJU_CHILL] = true -- use on cooldown for bosses with frost dmg
-    end
-    if Fury_Configuration[ITEM_CONS_JUJU_EMBER] == nil then
-        Fury_Configuration[ITEM_CONS_JUJU_EMBER] = true -- use on cooldown for bosses with fire dmg
-    end
-    if Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] == nil then
-        Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = false -- use on cooldown
-    end
-    if Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] == nil then
-        Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] = true -- use on cooldown
-    end
-    if Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] == nil then
-        Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] = true -- use on cooldown
-    end
-    if Fury_Configuration[ITEM_TRINKET_KOTS] == nil then
-        Fury_Configuration[ITEM_TRINKET_KOTS] = true -- use on cooldown
-    end
-    if Fury_Configuration[MODE_HEADER_DEBUFF] == nil then
-        Fury_Configuration[MODE_HEADER_DEBUFF] = false -- use when have debuff <type>
-    end
-    if Fury_Configuration[ABILITY_REVENGE_FURY] == nil then
-        Fury_Configuration[ABILITY_REVENGE_FURY] = false
-    end
-     if Fury_Configuration["ExecuteSwap"] == nil then
-         Fury_Configuration["ExecuteSwap"] = true
-     end
-     if Fury_Configuration["ExecuteSwapped"] == nil then
-         Fury_Configuration["ExecuteSwapped"] = false
-     end
+    setup(false) -- Set to value if nil
 end
 
 local function Fury_Configuration_Default()
-    Fury_Configuration["Enabled"] = true
-    Fury_Configuration["Debug"] = false
-    Fury_Configuration["StanceChangeRage"] = 10
-    Fury_Configuration["MaximumRage"] = 60
-    Fury_Configuration["BloodrageHealth"] = 50
-    Fury_Configuration["DeathwishHealth"] = 60
-    Fury_Configuration["NextAttackRage"] = 40
-    Fury_Configuration["FlurryTriggerRage"] = 52
-    Fury_Configuration["BerserkHealth"] = 60
-    Fury_Configuration["HamstringHealth"] = 40
-    Fury_Configuration["DemoDiff"] = 7
-    Fury_Configuration["AutoAttack"] = true
-    Fury_Configuration["PrimaryStance"] = false
-    Fury_Configuration["DebugChannel"] = nil
-    Fury_Configuration[MODE_HEADER_AOE] = false
-    Fury_Configuration[MODE_HEADER_DEBUFF] = false
-    Fury_Configuration[ABILITY_BATTLE_SHOUT_FURY] = true
-    Fury_Configuration[RACIAL_BERSERKING_FURY] = true
-    Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY] = true
-    Fury_Configuration[ABILITY_BLOODRAGE_FURY] = true
-    Fury_Configuration[ABILITY_BLOODTHIRST_FURY] = true
-    Fury_Configuration[ABILITY_CHARGE_FURY] = true
-    Fury_Configuration[ABILITY_CLEAVE_FURY] = false
-    Fury_Configuration[ABILITY_DEATH_WISH_FURY] = true
-    Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true
-    Fury_Configuration[ABILITY_DISARM_FURY] = true
-    Fury_Configuration[ABILITY_EXECUTE_FURY] = true
-    Fury_Configuration[ABILITY_HAMSTRING_FURY] = true
-    Fury_Configuration[ABILITY_PIERCING_HOWL_FURY] = true
-    Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
-    Fury_Configuration[ABILITY_INTERCEPT_FURY] = true
-    Fury_Configuration[ABILITY_MORTAL_STRIKE_FURY] = true
-    Fury_Configuration[ABILITY_SWEEPING_STRIKES_FURY] = true
-    Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
-    Fury_Configuration[ABILITY_PUMMEL_FURY] = true
-    Fury_Configuration[ABILITY_REND_FURY] = true
-    Fury_Configuration[ABILITY_REVENGE_FURY] = false
-    Fury_Configuration[ABILITY_SHIELD_BASH_FURY] = true
-    Fury_Configuration[ABILITY_SHIELD_SLAM_FURY] = true
-    Fury_Configuration[ABILITY_WHIRLWIND_FURY] = true
-    Fury_Configuration[ITEM_CONS_JUJU_FLURRY] = false
-    Fury_Configuration[ITEM_CONS_JUJU_MIGHT] = false
-    Fury_Configuration[ITEM_CONS_JUJU_POWER] = false
-    Fury_Configuration[ITEM_CONS_JUJU_CHILL] = true
-    Fury_Configuration[ITEM_CONS_JUJU_EMBER] = false
-    Fury_Configuration[ITEM_CONS_OIL_OF_IMMOLATION] = false
-    Fury_Configuration[ITEM_TRINKET_EARTHSTRIKE] = true
-    Fury_Configuration[ITEM_TRINKET_KOTS] = true
-    Fury_Configuration[ITEM_TRINKET_SLAYERS_CREST] = true
-    Fury_Configuration["ExecuteSwap"] = true
-    Fury_Configuration["ExecuteSwapped"] = false
+    setup(true) -- Setup to defaults
 end
 
 --------------------------------------------------
@@ -871,8 +717,8 @@ local function Fury_TreatDebuff(unit)
             local slot = IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION)
             UseInventoryItem(slot)
 
-        elseif UnitRace(unit) == RACE_DWARF and SpellReadyIn(ABILITY_STONEFORM_FURY) == 0 then
-            CastSpellByName(ABILITY_STONEFORM_FURY)
+        elseif UnitRace(unit) == RACE_DWARF and Fury_Configuration[RACIAL_STONEFORM_FURY] and SpellReadyIn(RACIAL_STONEFORM_FURY) == 0 then
+            CastSpellByName(RACIAL_STONEFORM_FURY)
 
         elseif allowCombatCooldown and ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
             Print(ITEM_CONS_JUNGLE_REMEDY)
@@ -1534,14 +1380,14 @@ function Fury()
 
         -- 39, Blood Fury (Orc racial ability)
         elseif FuryRacialBloodFury
-          and Fury_Configuration[ABILITY_BLOOD_FURY]
+          and Fury_Configuration[RACIAL_BLOOD_FURY]
           and FuryAttack == true
           and ActiveStance() ~= 2
           and FuryCombat
           and (UnitHealth("player") / UnitHealthMax("player") * 100) >= tonumber(Fury_Configuration["DeathWishHealth"])
-          and SpellReadyIn(ABILITY_BLOOD_FURY) == 0 then
+          and SpellReadyIn(RACIAL_BLOOD_FURY) == 0 then
             Debug("39. Blood Fury")
-            CastSpellByName(ABILITY_BLOOD_FURY)
+            CastSpellByName(RACIAL_BLOOD_FURY)
 
         -- 40, Death Wish
         elseif FuryDeathWish
