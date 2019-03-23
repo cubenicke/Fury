@@ -76,7 +76,7 @@ local function updateConfiguration(defaults)
       RACIAL_STONEFORM_FURY = true,           -- Racial
     }
 
-    for k, v in configs do
+    for k, v in pairs(configs) do
         if defaults or Fury_Configuration[k] == nil then
             Fury_Configuration[k] = v
         end
@@ -172,7 +172,7 @@ local function HasDebuffType(unit, type)
     local id = 1
     while UnitDebuff(unit, id) do
         local _,_,debuffType = UnitDebuff(unit, id)
-        if debuffType ==  type then
+        if type and debuffType ==  type then
             return true
         end
         id = id + 1
@@ -729,7 +729,7 @@ local function Fury_TreatDebuffPlayer()
         allowCombatCooldown = false -- Save for Shadow/frost Protection Potion
     end
     -- add Restorative Potion (magic, poison curse or disease)
-    if HasDebuffType(unit, ITEM_DEBUFF_TYPE_POISON) then
+    if HasDebuffType("player", ITEM_DEBUFF_TYPE_POISON) then
         if UnitName("target") == BOSS_NAX_GROBBULUS_FURY then
             return false
         end
@@ -737,7 +737,7 @@ local function Fury_TreatDebuffPlayer()
             local slot = IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION)
             UseInventoryItem(slot)
 
-        elseif UnitRace(unit) == RACE_DWARF and Fury_Configuration[RACIAL_STONEFORM_FURY] and SpellReadyIn(RACIAL_STONEFORM_FURY) == 0 then
+        elseif UnitRace("player") == RACE_DWARF and Fury_Configuration[RACIAL_STONEFORM_FURY] and SpellReadyIn(RACIAL_STONEFORM_FURY) == 0 then
             CastSpellByName(RACIAL_STONEFORM_FURY)
 
         elseif allowCombatCooldown and ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
@@ -765,8 +765,8 @@ local function Fury_TreatDebuffPlayer()
 
         end
         Print(ITEM_DEBUFF_TYPE_POISON)
-    elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_DISEASE) then
-        if UnitRace(unit) == RACE_DWARF and SpellReadyIn(ABILITY_STONEFORM_FURY) == 0 then
+    elseif HasDebuffType("player", ITEM_DEBUFF_TYPE_DISEASE) then
+        if UnitRace("player") == RACE_DWARF and SpellReadyIn(ABILITY_STONEFORM_FURY) == 0 then
             CastSpellByName(ABILITY_STONEFORM_FURY)
 
         elseif allowCombatCooldown and ItemReady(ITEM_CONS_JUNGLE_REMEDY) then
@@ -781,7 +781,7 @@ local function Fury_TreatDebuffPlayer()
             return false
         end
         Print(ITEM_DEBUFF_TYPE_DISEASE)
-    elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_CURSE) then
+    elseif HasDebuffType("player", ITEM_DEBUFF_TYPE_CURSE) then
         if allowCombatCooldown and ItemReady(ITEM_CONS_PURIFICATION_POTION) then
             Print(ITEM_CONS_PURIFICATION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
@@ -794,7 +794,7 @@ local function Fury_TreatDebuffPlayer()
             return false
         end
         Print(ITEM_DEBUFF_TYPE_CURSE)
-    elseif HasDebuffType(unit, ITEM_DEBUFF_TYPE_MAGIC) then
+    elseif HasDebuffType("player", ITEM_DEBUFF_TYPE_MAGIC) then
         
         if allowCombatCooldown and ItemReady(ITEM_CONS_RESTORATIVE_POTION) then
             Print(ITEM_CONS_RESTORATIVE_POTION_POTION)
@@ -1962,6 +1962,31 @@ local function toggleOption(option, text)
 end
 
 --------------------------------------------------
+-- Help
+local function doHelp(commands, options)
+    Print(options)
+    if options == nil or options == "" then
+        local cmds = ""
+        cmds = SLASH_FURY_HELP
+        for k,_ in pairs(commands) do
+            if cmds ~= "" and cmds ~= SLASH_FURY_HELP then
+                cmds = cmds..", "
+            end
+            cmds = cmds..k
+            if string.len(cmds) > 80 then
+                Print(cmds)
+                cmds = ""
+            end
+        end
+        Print(cmds)
+    elseif commands[options] ~= nil then
+        Print(commands[options].help)
+    else
+        Print(HELP_UNKNOWN)
+    end
+end
+
+--------------------------------------------------
 -- Handle incomming slash commands
 function Fury_SlashCommand(msg)
     local _, _, command, options = string.find(msg, "([%w%p]+)%s*(.*)$")
@@ -1971,288 +1996,292 @@ function Fury_SlashCommand(msg)
     if not (UnitClass("player") == CLASS_WARRIOR_FURY) then
         return
     end
+    local commands = {
+        ["ability"] = { help = HELP_ABILITY, fn = function(options)
+                if options == ABILITY_HEROIC_STRIKE_FURY
+                  and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
+                    Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
+                    Print(ABILITY_HEROIC_STRIKE_FURY .. " "..TEXT_FURY_ENABLED..".")
+                    if Fury_Configuration[ABILITY_CLEAVE_FURY] then
+                        Fury_Configuration[ABILITY_CLEAVE_FURY] = false
+                        Print(ABILITY_CLEAVE_FURY .. " "..TEXT_FURY_DISABLED..".")
+                    end
+                elseif options == ABILITY_CLEAVE_FURY
+                  and not Fury_Configuration[ABILITY_CLEAVE_FURY] then
+                    Fury_Configuration[ABILITY_CLEAVE_FURY] = true
+                    Print(ABILITY_CLEAVE_FURY .. " "..TEXT_FURY_ENABLED..".")
+                    if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
+                        Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = falses
+                        Print(ABILITY_HEROIC_STRIKE_FURY .. " "..TEXT_FURY_DISABLED..".")
+                    end
+                elseif Fury_Configuration[options] then
+                    Fury_Configuration[options] = false
+                    Print(options .. " "..TEXT_FURY_DISABLED..".")
+                elseif Fury_Configuration[options] == false then
+                    Fury_Configuration[options] = true
+                    Print(options .. " "..TEXT_FURY_ENABLED..".")
+                else
+                    Print(options .. " "..TEXT_FURY_NOT_FOUND..".")
+                end
+            end },
+
+        ["aoe"] = { help = HELP_AOE, fn = function(options)
+                toggleOption(MODE_HEADER_AOE, MODE_HEADER_AOE)
+            end },
+
+        ["attack"] = { help = HELP_ATTACK, fn = function(options)
+                toggleOption("AutoAttack", SLASH_FURY_AUTOATTACK)
+            end },
+
+        ["attackrage"] = { help = HELP_ATTACKRAGE, fn = function(options)
+                setOptionRange("NextAttackRage", SLASH_FURY_ATTACKRAGE, options, 0 , 100)
+            end },
+
+        ["berserk"] = { help = HELP_BERSERK, fn = function(options)
+                setOptionRange("BerserkHealth", SLASH_FURY_TROLL, options, 1, 100)
+            end },
+
+        ["block"] = { help = HELP_BLOCK, fn = function(options)
+                Fury_Block()
+            end },
+
+        ["bloodrage"] = { help = HELP_BLOODRAGE, fn = function(options)
+                setOptionRange("BloodrageHealth", SLASH_FURY_BLOODRAGE, options, 1, 100)
+            end },
+
+        ["charge"] = { help = HELP_CHARGE, fn = function(options)
+                Fury_Charge()
+            end },
+
+        ["cons"] = { help = HELP_CONS, fn = function(options)
+                printEnabledOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
+                printEnabledOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
+                printEnabledOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
+                printEnabledOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
+                printEnabledOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
+                printEnabledOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+                printEnabledOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+            end },
+
+        ["dance"] = { help = HELP_DANCE, fn = function(options)
+                setOptionRange("StanceChangeRage", SLASH_FURY_DANCE, options, 0, 100)
+            end },
+
+        ["deathwish"] = { help = HELP_DEATHWISH, fn = function(options)
+                setOptionRange("DeathWishHealth", SLASH_FURY_DEATHWISH, options, 1, 100)
+            end },
+
+        ["debuff"] = { help = HELP_DEBUFF, function(options)
+                toggleOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+            end },
+
+        ["debug"] = { help = HELP_DEBUG, fn = function(options)
+                toggleOption("Debug", SLASH_FURY_DEBUG)
+            end },
+
+        ["default"] = { help = HEL_DEFAULT, fn = function(options)
+                updateConfiguration(true) -- Set configurtion to default
+            end },
+
+        ["demodiff"] = { help = HELP_DEMODIFF, fn = function(options)
+                setOptionRange("DemoDiff", SLASH_FURY_DEMODIFF, options, -3, 60)
+            end },
+
+        ["distance"] = { help = HELP_DISTANCE, fn = function(options)
+                if UnitCanAttack("player", "target") then
+                    Print(TEXT_FURY_DISTANCE.." "..Fury_Distance().." "..TEXT_FURY_YARDS)
+                else
+                    Print(TEXT_FURY_NO_ATTACKABLE_TARGET)
+                end
+            end },
+
+        ["earthstrike"] = { help = HELP_EARTHSTRIKE, function(options)
+                toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
+            end },
+
+        ["executeswap"] = { help = HELP_EXECUTESWAP, fn = function(options)
+                toggleOption("ExecuteSwap", "Execute Swap")
+            end },
+
+        ["flurrytrigger"] = { help = HELP_FLURRYTRIGGER, fn = function(options)
+                setOptionRange("FlurryTriggerRage", SLASH_FURY_FLURRYTRIGGER, options, 0, 100)
+            end },
+
+        ["hamstring"] = { help = HELP_HAMSTRING, fn = function(options)
+                setOptionRange("HamstringHealth", SLASH_FURY_HAMSTRING, options, 1, 100)
+            end },
+
+        ["help"] = { help = HELP_HELP, fn = nil },
+
+        ["juju"] = { help = HELP_JUJU, fn = function(options)
+                local juju = {
+                    flurry = function()
+                            toggleOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
+                        end,
+                    chill = function()
+                            toggleOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
+                        end,
+                    might = function()
+                            toggleOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
+                        end,
+                    ember = function()
+                            toggleOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
+                        end,
+                    power = function()
+                            toggleOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
+                        end
+                    }
+                if juju[options] then
+                    juju[options]()
+                else
+                    Print(HELP_JUJU)
+                end
+            end },
+
+        ["kots"] = { help = HELP_KOTS, fn = function(options)
+                toggleOption(ITEM_TRINKET_KOTS, ITEM_TRINKET_KOTS)
+            end },
+
+        ["log"] = { help = HELP_LOG, fn = function(options)
+                if options == "on" then
+                    LogToFile(true)
+                else
+                    LogToFile(false)
+                end
+            end },
+
+        ["ooi"] = { help = HELP_OOI, fn = function(options)
+                toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+            end },
+
+        ["prot"] = { help = HELP_PROT, fn = function()
+                if Fury_Configuration["PrimaryStance"] == 2 then
+                    Fury_Configuration["PrimaryStance"] = Fury_Configuration["ProtOldStance"]
+                    Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
+                    Fury_Configuration[ABILITY_REVENGE_FURY] = false
+                    Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
+                    Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = false
+                    Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_DISABLED .. ".")
+                else
+                    if Fury_Configuration["PrimaryStance"] == 2 then
+                        Fury_Configuration["ProtOldStance"] = 3
+                    else
+                        Fury_Configuration["ProtOldStance"] = Fury_Configuration["PrimaryStance"]
+                    end
+                    Fury_Configuration["PrimaryStance"] = 2
+                    Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
+                    Fury_Configuration[ABILITY_REVENGE_FURY] = true
+                    Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
+                    Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true
+                    Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_ENABLED .. ".")
+                end
+            end },
+
+        ["rage"] = { help = HELP_RAGE, fn = function(options)
+                setOptionRange("MaximumRage", SLASH_FURY_RAGE, options, 0, 100)
+            end },
+
+        ["shoot"] = { help = HELP_SHOOT, fn = function(options)
+                Fury_Shoot()
+            end },
+
+        slayer = { help = HELP_SLAYERS_CREST, fn = function(options)
+                toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
+            end },
+        ["slayer's"] = { help = HELP_SLAYERS_CREST, fn = function(options)
+                toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
+            end },
+
+        ["stance"] = { help = HELP_STANCE, fn = function(options)
+                if options == ABILITY_BATTLE_STANCE_FURY
+                  or options == "1" then
+                    Fury_Configuration["PrimaryStance"] = 1
+                    Print(SLASH_FURY_STANCE .. ABILITY_BATTLE_STANCE_FURY .. ".")
+                elseif options == ABILITY_DEFENSIVE_STANCE_FURY
+                  or options == "2" then
+                    Fury_Configuration["PrimaryStance"] = 2
+                    Print(SLASH_FURY_STANCE .. ABILITY_DEFENSIVE_STANCE_FURY .. ".")
+                elseif options == ABILITY_BERSERKER_STANCE_FURY
+                  or options == "3" then
+                    Fury_Configuration["PrimaryStance"] = 3
+                    Print(SLASH_FURY_STANCE .. ABILITY_BERSERKER_STANCE_FURY .. ".")
+                elseif options == "default" then
+                    Fury_Configuration["PrimaryStance"] = false
+                    Print(SLASH_FURY_STANCE .. TEXT_FURY_DEFAULT .. ".")
+                else
+                    Fury_Configuration["PrimaryStance"] = 0
+                    Print(SLASH_FURY_NOSTANCE .. TEXT_FURY_DISABLED .. ".")
+                end
+            end },
+
+        ["talents"] = { help = HELP_TALENTS, fn = function(options)
+                Print(CHAT_TALENTS_RESCAN_FURY)
+                Fury_InitDistance()
+                Fury_ScanTalents()
+            end },
+
+        ["threat"] = { help = HELP_THREAT, fn = function(options)
+                -- If HS then use cleave, if cleave then use HS
+                if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
+                    Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = false
+                    Fury_Configuration[ABILITY_CLEAVE_FURY] = true
+                    Print(SLASH_FURY_LOWTHREAT)
+                else
+                    Fury_Configuration[ABILITY_CLEAVE_FURY] = false
+                    Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
+                    Print(SLASH_FURY_HIGHTHREAT)
+                end
+            end },
+
+        ["toggle"] = { help = HELP_TOGGLE, fn = function(options)
+                toggleOption("Enabled", BINDING_HEADER_FURY)
+            end },
+
+        ["unit"] = { help = HELP_UNIT, fn = function(options)
+                if options ~= nil
+                  and options ~= "" then
+                    target = options
+                elseif UnitName("target") ~= nil then
+                    target = "target"
+                else
+                    target = "player"
+                end
+                Print(TEXT_FURY_NAME .. (UnitName(target) or "")..TEXT_FURY_CLASS..(UnitClass(target) or "").. TEXT_FURY_CLASSIFICATION .. (UnitClassification(target) or ""))
+                if UnitRace(target) then
+                    Print(TEXT_FURY_RACE .. (UnitRace(target) or ""))
+                else
+                    Print(TEXT_FURY_TYPE .. (UnitCreatureType(target) or ""))
+                end
+                PrintEffects(target)
+            end },
+
+        ["version"] = { help = HELP_VERSION, fn = function(options)
+                Print(SLASH_FURY_VERSION.." "..FURY_VERSION)
+            end },
+
+        ["where"] = { help = HELP_WHERE, fn = function(options)
+        
+                Print(TEXT_FURY_MAP_ZONETEXT .. (GetMinimapZoneText() or ""))
+                Print(TEXT_FURY_REAL_ZONETEXT .. (GetRealZoneText() or ""))
+                Print(TEXT_FURY_SUB_ZONETEXT .. (GetSubZoneText() or ""))
+                Print(TEXT_FURY_PVP_INFO .. (GetZonePVPInfo() or ""))
+                Print(TEXT_FURY_ZONETEXT .. (GetZoneText() or ""))
+            end },
+
+        }
+
     if command == nil
       or command == "" then
         Fury()
-
-    elseif command == "charge" then
-        Fury_Charge()
-
-    elseif command == "block" then
-        Fury_Block()
-
-    elseif command == "shoot" then
-        Fury_Shoot()
-
-    elseif command == "aoe" then
-        toggleOption(MODE_HEADER_AOE, MODE_HEADER_AOE)
-
-    elseif command == "toggle" then
-        toggleOption("Enabled", BINDING_HEADER_FURY)
-
-    elseif command == "debug" then
-        toggleOption("Debug", SLASH_FURY_DEBUG)
-
-    elseif command == "attack" then
-        toggleOption("AutoAttack", SLASH_FURY_AUTOATTACK)
-
-    elseif command == "dance" then
-        setOptionRange("StanceChangeRage", SLASH_FURY_DANCE, options, 0, 100)
-
-    elseif command == "rage" then
-        setOptionRange("MaximumRage", SLASH_FURY_RAGE, options, 0, 100)
-
-    elseif command == "attackrage" then
-        setOptionRange("NextAttackRage", SLASH_FURY_ATTACKRAGE, options, 0 , 100)
-
-    elseif command == "flurrytrigger" then
-        setOptionRange("FlurryTriggerRage", SLASH_FURY_FLURRYTRIGGER, options, 0, 100)
-
-    elseif command == "bloodrage" then
-        setOptionRange("BloodrageHealth", SLASH_FURY_BLOODRAGE, options, 1, 100)
-
-    elseif command == "demodiff" then
-        setOptionRange("DemoDiff", SLASH_FURY_DEMODIFF, options, -3, 60)
-
-    elseif command == "deathwish" then
-        setOptionRange("DeathWishHealth", SLASH_FURY_DEATHWISH, options, 1, 100)
-
-    elseif command == "hamstring" then
-        setOptionRange("HamstringHealth", SLASH_FURY_HAMSTRING, options, 1, 100)
-
-    elseif command == "berserk" then
-        setOptionRange("BerserkHealth", SLASH_FURY_TROLL, options, 1, 100)
-
-    elseif command == "threat" then
-        -- If HS then use cleave, if cleave then use HS
-        if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
-            Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = false
-            Fury_Configuration[ABILITY_CLEAVE_FURY] = true
-            Print(SLASH_FURY_LOWTHREAT)
-        else
-            Fury_Configuration[ABILITY_CLEAVE_FURY] = false
-            Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
-            Print(SLASH_FURY_HIGHTHREAT)
-        end
-
-    elseif command == "prot" then
-        if Fury_Configuration["PrimaryStance"] == 2 then
-            Fury_Configuration["PrimaryStance"] = Fury_Configuration["ProtOldStance"]
-            Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
-            Fury_Configuration[ABILITY_REVENGE_FURY] = false
-            Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
-            Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = false
-            Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_DISABLED .. ".")
-        else
-            if Fury_Configuration["PrimaryStance"] == 2 then
-                Fury_Configuration["ProtOldStance"] = 3
-            else
-                Fury_Configuration["ProtOldStance"] = Fury_Configuration["PrimaryStance"]
-            end
-            Fury_Configuration["PrimaryStance"] = 2
-            Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
-            Fury_Configuration[ABILITY_REVENGE_FURY] = true
-            Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
-            Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true
-            Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_ENABLED .. ".")
-        end
-
-    elseif command == "stance" then
-        if options == ABILITY_BATTLE_STANCE_FURY
-          or options == "1" then
-            Fury_Configuration["PrimaryStance"] = 1
-            Print(SLASH_FURY_STANCE .. ABILITY_BATTLE_STANCE_FURY .. ".")
-        elseif options == ABILITY_DEFENSIVE_STANCE_FURY
-          or options == "2" then
-            Fury_Configuration["PrimaryStance"] = 2
-            Print(SLASH_FURY_STANCE .. ABILITY_DEFENSIVE_STANCE_FURY .. ".")
-        elseif options == ABILITY_BERSERKER_STANCE_FURY
-          or options == "3" then
-            Fury_Configuration["PrimaryStance"] = 3
-            Print(SLASH_FURY_STANCE .. ABILITY_BERSERKER_STANCE_FURY .. ".")
-        elseif options == "default" then
-            Fury_Configuration["PrimaryStance"] = false
-            Print(SLASH_FURY_STANCE .. TEXT_FURY_DEFAULT .. ".")
-        else
-            Fury_Configuration["PrimaryStance"] = 0
-            Print(SLASH_FURY_NOSTANCE .. TEXT_FURY_DISABLED .. ".")
-        end
-
-    elseif command == "juju" then
-        if options == "flurry" then
-            toggleOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
-        elseif options == "chill" then
-            toggleOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
-        elseif options == "might" then
-            toggleOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
-        elseif options == "ember" then
-            toggleOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
-        elseif options == "power" then
-            toggleOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
-        else
-            Print(HELP_JUJU)
-        end
-
-    elseif command == "ooi" then
-        toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
-
-    elseif command == "debuff" then
-        toggleOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
-
-    elseif command == "earthstrike" then
-        toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
-
-    elseif command == "slayer" or (command == "slayer's" and options == "crest") then
-        toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
-
-    elseif command == "kots" then
-        toggleOption(ITEM_TRINKET_KOTS, ITEM_TRINKET_KOTS)
-
-    elseif command == "executeswap" then
-        toggleOption("ExecuteSwap", "Execute Swap")
-
-    elseif command == "distance" then
-        if UnitCanAttack("player", "target") then
-            Print(TEXT_FURY_DISTANCE.." "..Fury_Distance().." "..TEXT_FURY_YARDS)
-        else
-            Print(TEXT_FURY_NO_ATTACKABLE_TARGET)
-        end
-
-    elseif command == "cons" then
-        printEnabledOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
-        printEnabledOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
-        printEnabledOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
-        printEnabledOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
-        printEnabledOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
-        printEnabledOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
-        printEnabledOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
-
-    elseif command == "talents" then
-        Print(CHAT_TALENTS_RESCAN_FURY)
-        Fury_InitDistance()
-        Fury_ScanTalents()
-
-    elseif command == "where" then
-        Print(TEXT_FURY_MAP_ZONETEXT .. (GetMinimapZoneText() or ""))
-        Print(TEXT_FURY_REAL_ZONETEXT .. (GetRealZoneText() or ""))
-        Print(TEXT_FURY_SUB_ZONETEXT .. (GetSubZoneText() or ""))
-        Print(TEXT_FURY_PVP_INFO .. (GetZonePVPInfo() or ""))
-        Print(TEXT_FURY_ZONETEXT .. (GetZoneText() or ""))
-
-    elseif command == "unit" then
-        if options ~= nil
-          and options ~= "" then
-            target = options
-        elseif UnitName("target") ~= nil then
-            target = "target"
-        else
-            target = "player"
-        end
-        Print(TEXT_FURY_NAME .. (UnitName(target) or "")..TEXT_FURY_CLASS..(UnitClass(target) or "").. TEXT_FURY_CLASSIFICATION .. (UnitClassification(target) or ""))
-        if UnitRace(target) then
-            Print(TEXT_FURY_RACE .. (UnitRace(target) or ""))
-        else
-            Print(TEXT_FURY_TYPE .. (UnitCreatureType(target) or ""))
-        end
-        PrintEffects(target)
-
-    elseif command == "ability" then
-        if options == ABILITY_HEROIC_STRIKE_FURY
-          and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
-            Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
-            Print(ABILITY_HEROIC_STRIKE_FURY .. " "..TEXT_FURY_ENABLED..".")
-            if Fury_Configuration[ABILITY_CLEAVE_FURY] then
-                Fury_Configuration[ABILITY_CLEAVE_FURY] = false
-                Print(ABILITY_CLEAVE_FURY .. " "..TEXT_FURY_DISABLED..".")
-            end
-        elseif options == ABILITY_CLEAVE_FURY
-          and not Fury_Configuration[ABILITY_CLEAVE_FURY] then
-            Fury_Configuration[ABILITY_CLEAVE_FURY] = true
-            Print(ABILITY_CLEAVE_FURY .. " "..TEXT_FURY_ENABLED..".")
-            if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
-                Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = falses
-                Print(ABILITY_HEROIC_STRIKE_FURY .. " "..TEXT_FURY_DISABLED..".")
-            end
-        elseif Fury_Configuration[options] then
-            Fury_Configuration[options] = false
-            Print(options .. " "..TEXT_FURY_DISABLED..".")
-        elseif Fury_Configuration[options] == false then
-            Fury_Configuration[options] = true
-            Print(options .. " "..TEXT_FURY_ENABLED..".")
-        else
-            Print(options .. " "..TEXT_FURY_NOT_FOUND..".")
-        end
-
-    elseif command == "log" then
-        if options == "on" then
-            LogToFile(true)
-        else
-            LogToFile(false)
-        end
-
-    elseif command == "default" then
-        updateConfiguration(true) -- Set configurtion to default
-
-    elseif command == "version" then
-        Print(SLASH_FURY_VERSION.." "..FURY_VERSION)
-
-    elseif command == "help" then
-        local helps = {
-          ["ability"] = HELP_ABILITY,
-          ["aoe"] = HELP_AOE,
-          ["attack"] = HELP_ATTACK,
-          ["attackrage"] = HELP_ATTACKRAGE,
-          ["berserk"] = HELP_BERSERK,
-          ["block"] = HELP_BLOCK,
-          ["bloodrage"] = HELP_BLOODRAGE,
-          ["charge"] = HELP_CHARGE,
-          ["cons"] = HELP_CONS,
-          ["dance"] = HELP_DANCE,
-          ["debuff"] = HELP_DEBUFF,
-          ["debug"] = HELP_DEBUG,
-          ["default"] = HEL_DEFAULT,
-          ["demodiff"] = HELP_DEMODIFF,
-          ["distance"] = HELP_DISTANCE,
-          ["earthstrike"] = HELP_EARTHSTRIKE,
-          ["executeswap"] = HELP_EXECUTESWAP,
-          ["flurrytrigger"] = HELP_FLURRYTRIGGER,
-          ["hamstring"] = HELP_HAMSTRING,
-          ["help"] = HELP_HELP,
-          ["juju"] = HELP_JUJU,
-          ["kots"] = HELP_KOTS,
-          ["log"] = HELP_LOG,
-          ["ooi"] = HELP_OOI,
-          ["rage"] = HELP_RAGE,
-          ["shoot"] = HELP_SHOOT,
-          ["slayer's"] = HELP_SLAYERS_CREST,
-          ["stance"] = HELP_STANCE,
-          ["talents"] = HELP_TALENTS,
-          ["threat"] = HELP_THREAT,
-          ["toggle"] = HELP_TOGGLE,
-          ["unit"] = HELP_UNIT,
-          ["where"] = HELP_WHERE
-        }
-        if options == nil or options == "" then
-            local cmds = ""
-            cmds = SLASH_FURY_HELP
-            for k,_ in pairs(helps) do
-                if cmds ~= "" and cmds ~= SLASH_FURY_HELP then
-                    cmds = cmds..", "
-                end
-                cmds = cmds..k
-                if string.len(cmds) > 80 then
-                    Print(cmds)
-                    cmds = ""
-                end
-            end
-            Print(cmds)
-        elseif helps[options] ~= nil then
-            Print(helps[options])
-        else
-            Print(HELP_UNKNOWN)
-        end
     else
-        Print(SLASH_FURY_HELP)
+        local cmd = commands[command]
+        if cmd and cmd.fn ~= nil then
+            cmd.fn(options)
+        elseif command == "help" then
+            doHelp(commands, options)
+        else
+            doHelp(commands, "")
+        end
     end
 end
 
@@ -2449,15 +2478,11 @@ function Fury_OnEvent(event)
             FuryFlurryStart = GetTime()
         end
 
-    elseif event == "PLAYER_TARGET_CHANGED"
-      or (event == "CHARACTER_POINTS_CHANGED"
-      and arg1 == -1) then
+    elseif event == "PLAYER_TARGET_CHANGED" then
         -- Reset Overpower and interrupts, check to see if talents are being calculated
-        if event == "PLAYER_TARGET_CHANGED" then
-            Fury_SetEnemies(1)
-            FuryOverpower = nil
-            FurySpellInterrupt = nil
-        end
+        Fury_SetEnemies(1)
+        FuryOverpower = nil
+        FurySpellInterrupt = nil
         if not FuryTalents
           and UnitClass("player") == CLASS_WARRIOR_FURY then
             if Fury_Configuration["DebugChannel"] then
@@ -2465,7 +2490,16 @@ function Fury_OnEvent(event)
             end
             Fury_InitDistance()
             Fury_ScanTalents()
-        end
+         end
+
+      elseif event == "CHARACTER_POINTS_CHANGED"
+        and arg1 == -1
+        and UnitClass("player") == CLASS_WARRIOR_FURY then
+            if Fury_Configuration["DebugChannel"] then
+                LogToFile(true)
+            end
+            Fury_InitDistance()
+            Fury_ScanTalents()
 
     elseif event == "PLAYER_REGEN_DISABLED" then
         FuryCombat = true
