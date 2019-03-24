@@ -309,6 +309,7 @@ local function Fury_InitDistance()
                   or string.find(t, "INV_Sword_48") -- Execute
                   or string.find(t, "ability_warrior_savageblow") -- Mortal Strike
                   or string.find(t, "INV_Shield_05") -- Shield Slam
+                  or string.find(t, "Ability_ShockWave") -- Hamtstring
                   or string.find(t, "Spell_Nature_Bloodlust") then -- Bloodthirst
                     yard05 = i
                     Debug("5 yard: "..t)
@@ -677,7 +678,7 @@ end
 --------------------------------------------------
 
 local function Fury_SetEnemies(count)
-    for i=5,1,-1 do
+    for i = 5, 1, -1 do
         WWEnemies.Hist[i] = WWEnemies.Hist[i - 1]
     end
     WWEnemies.Hist[0] = Enemies
@@ -2071,7 +2072,7 @@ function Fury_SlashCommand(msg)
                 setOptionRange("DeathWishHealth", SLASH_FURY_DEATHWISH, options, 1, 100)
             end },
 
-        ["debuff"] = { help = HELP_DEBUFF, function(options)
+        ["debuff"] = { help = HELP_DEBUFF, fn = function(options)
                 toggleOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
             end },
 
@@ -2095,7 +2096,7 @@ function Fury_SlashCommand(msg)
                 end
             end },
 
-        ["earthstrike"] = { help = HELP_EARTHSTRIKE, function(options)
+        ["earthstrike"] = { help = HELP_EARTHSTRIKE, fn = function(options)
                 toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
             end },
 
@@ -2275,10 +2276,12 @@ function Fury_SlashCommand(msg)
         Fury()
     else
         local cmd = commands[command]
-        if cmd and cmd.fn ~= nil then
+        if cmd ~= nil and cmd.fn ~= nil then
             cmd.fn(options)
         elseif command == "help" then
             doHelp(commands, options)
+        elseif cmd then
+            Print(HELP_UNKNOWN..command)
         else
             doHelp(commands, "")
         end
