@@ -1467,9 +1467,9 @@ function Fury()
         -- 47, Swap back to normal weapons
         elseif Fury_Configuration["ExecuteSwapped"]
           and Outfitter_ExecuteCommand
-          and ((UnitHealth("target") / UnitHealthMax("target") * 100) > 21)
+          and (((UnitHealth("target") / UnitHealthMax("target") * 100) > 21)
           or (UnitHealth("target") == 0)
-          or not FuryCombat then
+          or not FuryCombat) then
             Debug("47. unwear Execute weapon")
             Outfitter_ExecuteCommand("unwear Execute")
             Fury_Configuration["ExecuteSwapped"] = false
