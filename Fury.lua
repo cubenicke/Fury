@@ -612,6 +612,7 @@ local function Fury_RunnerDetect(arg1, arg2)
     -- Thanks to HateMe
     if arg1 == CHAT_RUNNER_FURY then
         Fury_Runners[arg2] = true
+        FuryFleeing = true
     end
 end
 --------------------------------------------------
@@ -1284,6 +1285,7 @@ function Fury()
           and not HasDebuff("target", "Ability_Druid_DemoralizingRoar")
           and UnitMana("player") >= 10
           and not UnitIsPlayer("target")
+          and not FuryFleeing
           and (UnitClass("target") == CLASS_WARRIOR_FURY
           or UnitClass("target") == CLASS_ROGUE_FURY)
           and UnitLevel("Player") - UnitLevel("Target") < Fury_Configuration["DemoDiff"]
@@ -2515,6 +2517,7 @@ function Fury_OnEvent(event)
         -- Reset Overpower and interrupts, check to see if talents are being calculated
         Fury_SetEnemies(1)
         FuryOverpower = nil
+        FuryFleeing = nil
         FurySpellInterrupt = nil
         if not FuryTalents
           and UnitClass("player") == CLASS_WARRIOR_FURY then
