@@ -22,7 +22,7 @@ local function updateConfiguration(defaults)
       {"DebugChannel", nil},      -- Channel to log to
       {"DemoDiff", 7},            -- When level difference is greater don't do Demoralizing Shout
       {"Enabled", true},          -- Set to false to disable the addon
-      {"ExecuteSwap ", false},    -- Swap weapon at execute
+      {"ExecuteSwap", false},     -- Swap weapon at execute
       {"ExecuteSwapped", false},  -- If execute outfit is equipped
       {"FlurryTriggerRage", 52},  -- Set this to the minimum rage to have to use Hamtring to trigger Flurry
       {"HamstringHealth", 40},    -- Set this to the maximum percent of health allowed when using Hamstring on NPCs
