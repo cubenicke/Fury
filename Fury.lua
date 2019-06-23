@@ -1343,7 +1343,7 @@ function Fury()
             FuryLastStanceCast = GetTime()
             if FuryOldStance == ActiveStance()
               or Fury_Configuration["PrimaryStance"] == ActiveStance() then
-                Debug("31. Variables cleared (Dance done)")
+                Debug("33. Variables cleared (Dance done)")
                 FuryOldStance = nil
                 FuryDanceDone = nil
             end
@@ -2019,6 +2019,33 @@ local function doHelp(commands, options)
         Print(HELP_UNKNOWN)
     end
 end
+--------------------------------------------------
+local tankmode = {
+ {"PrimaryStance", 2 },
+ {ABILITY_SUNDER_ARMOR_FURY, true },
+ {ABILITY_REVENGE_FURY, true },
+ {ABILITY_OVERPOWER_FURY, false },
+ {ABILITY_DEMORALIZING_SHOUT_FURY, true }
+}
+
+function Fury_Togglemode(mode, prefix)
+    if Fury_Configuration[prefix] == true then
+        -- Enable damage setup
+        Fury_Configuration[prefix] = false
+        for i, k in mode do
+            Fury_Configuration[k[1]] = Fury_Configuration[prefix..k[1]]
+        end
+        Print(prefix .. " " .. TEXT_FURY_DISABLED .. ".")
+    else
+        -- Enable Tank setup
+        Fury_Configuration[prefix] = true
+        for i, k in mode do
+            Fury_Configuration[prefix..k[1]] = Fury_Configuration[k[1]]
+            Fury_Configuration[k[1]] = k[2]
+        end
+        Print(prefix .. " " .. TEXT_FURY_ENABLED .. ".")
+    end
+end
 
 --------------------------------------------------
 -- Handle incomming slash commands
@@ -2189,26 +2216,7 @@ function Fury_SlashCommand(msg)
             end },
 
         ["prot"] = { help = HELP_PROT, fn = function()
-                if Fury_Configuration["PrimaryStance"] == 2 then
-                    Fury_Configuration["PrimaryStance"] = Fury_Configuration["ProtOldStance"]
-                    Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = false
-                    Fury_Configuration[ABILITY_REVENGE_FURY] = false
-                    Fury_Configuration[ABILITY_OVERPOWER_FURY] = true
-                    Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = false
-                    Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_DISABLED .. ".")
-                else
-                    if Fury_Configuration["PrimaryStance"] == 2 then
-                        Fury_Configuration["ProtOldStance"] = 3
-                    else
-                        Fury_Configuration["ProtOldStance"] = Fury_Configuration["PrimaryStance"]
-                    end
-                    Fury_Configuration["PrimaryStance"] = 2
-                    Fury_Configuration[ABILITY_SUNDER_ARMOR_FURY] = true
-                    Fury_Configuration[ABILITY_REVENGE_FURY] = true
-                    Fury_Configuration[ABILITY_OVERPOWER_FURY] = false
-                    Fury_Configuration[ABILITY_DEMORALIZING_SHOUT_FURY] = true
-                    Print(MODE_HEADER_PROT .. " " .. TEXT_FURY_ENABLED .. ".")
-                end
+                Fury_Togglemode(tankmode, MODE_HEADER_PROT)
             end },
 
         ["rage"] = { help = HELP_RAGE, fn = function(options)
