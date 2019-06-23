@@ -1336,7 +1336,7 @@ function Fury()
             if not Fury_Configuration["PrimaryStance"] then
                 Debug("33. Old Stance (" .. FuryOldStance .. ")")
                 CastShapeshiftForm(FuryOldStance)
-            else
+            elseif Fury_Configuration["PrimaryStance"] ~= 0 then
                 Debug("33. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
                 CastShapeshiftForm(Fury_Configuration["PrimaryStance"])
             end
@@ -1615,6 +1615,7 @@ local function Fury_Charge()
     local dist = Fury_Distance()
     if not UnitExists("target") and not FuryCombat then
         if Fury_Configuration["PrimaryStance"]
+           and Fury_Configuration["PrimaryStance"] ~= 0
            and ActiveStance() ~= Fury_Configuration["PrimaryStance"] then
             CastShapeshiftForm(Fury_Configuration["PrimaryStance"])
             FuryLastStanceCast = GetTime()
