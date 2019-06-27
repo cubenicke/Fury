@@ -469,6 +469,9 @@ end
 --------------------------------------------------
 -- Detect if a suitable weapon (not a skinning knife/mining pick and not broken) is present
 local function Weapon()
+    if HasDebuff("player", "Ability_Warrior_Disarm") then
+        return nil
+    end
     local item = GetInventoryItemLink("player", 16)
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
