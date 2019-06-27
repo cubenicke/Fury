@@ -18,6 +18,7 @@ Toggle WW - Stops using Whirlwind during normal rotation, toggle it in CC situat
 Toggle DW - Enable it a bit into fights when you want your first Death Wish to fire off (Also controls Orc racial Blood Fury).  
 Toggle AoE - Just use AoE attacks  
 Toggle Auto Attack - When in raiding it's important to have same target.  
+Toggle Demoralizing Shout - Usable when not pulling close mobs  
 
 ### Usage as Macros
 Some commands exists as key bindings, but for most commands one has to write a macro to make them usable during combat.
