@@ -933,7 +933,9 @@ function Fury()
           and not Fury_Configuration[MODE_HEADER_AOE]
           and UnitMana("player") >= 5
           and (ActiveStance() == 1
-          or ((Fury_Configuration["PrimaryStance"] ~= 2
+          or (((Fury_Configuration["PrimaryStance"] ~= 2
+          and (UnitHealth("target") / UnitHealthMax("target") * 100) > 20
+          and not (Flurry and HasBuff("player", "Ability_GhoulFrenzy")))
           or UnitIsPlayer("target"))
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
           and Fury_Configuration["PrimaryStance"] ~= 0))
