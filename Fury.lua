@@ -220,7 +220,8 @@ local res = {
     ["nature"] = {
         BOSS_NAX_HEIGAN_THE_UNCLEAN_FURY,
         BOSS_NAX_LOATHEB_FURY,
-        BOSS_AQ40_PRINCESS_HUHURAN_FURY
+        BOSS_AQ40_PRINCESS_HUHURAN_FURY,
+        BOSS_AQ40_VISCIDUS_FURY,
     },
     ["shadow"] = {
         BOSS_NAX_LOATHEB_FURY,
