@@ -26,6 +26,9 @@
 	<Binding name="FURY_AUTOATTACK" header = "Fury">
 		Fury_SlashCommand("attack")
 	</Binding>
+	<Binding name="FURY_TANKMODE" header = "Fury">
+		Fury_SlashCommand("prot")
+	</Binding>
 	<Binding name="FURY_DEMOSHOUT" header = "Fury">
 		Fury_SlashCommand("ability Demoralizing Shout")
 	</Binding>
