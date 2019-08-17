@@ -24,7 +24,7 @@ local function updateConfiguration(defaults)
       {"Enabled", true},          -- Set to false to disable the addon
       {"ExecuteSwap", false},     -- Swap weapon at execute
       {"ExecuteSwapped", false},  -- If execute outfit is equipped
-      {"FlurryTriggerRage", 52},  -- Set this to the minimum rage to have to use Hamtring to trigger Flurry
+      {"FlurryTriggerRage", 52},  -- Set this to the minimum rage to use Hamtring to trigger Flurry
       {"HamstringHealth", 40},    -- Set this to the maximum percent of health allowed when using Hamstring on NPCs
       {"InstantBuildTime", 2},    -- Set the time to spend building rage for upcoming 31 point instant attacks
       {"MaximumRage", 60},        -- Set this to the maximum amount of rage allowed when using abilities to increase rage
@@ -34,7 +34,7 @@ local function updateConfiguration(defaults)
 
       {MODE_HEADER_PROT, false },              -- Use threat and defensive abilities
       {MODE_HEADER_AOE, false},                -- Disable auto use of aoe (Disables OP, HS, BT, Exe, Enablse Cleave, Whirlwind)
-      {MODE_HEADER_DEBUFF, false},             -- use when have debuff <type>
+      {MODE_HEADER_DEBUFF, false},             -- use cures when player have a debuff
 
       {ABILITY_BATTLE_SHOUT_FURY, true},       -- Set to false to disable use of ability
       {ABILITY_BERSERKER_RAGE_FURY, true},     -- Used to counter fears
@@ -43,7 +43,7 @@ local function updateConfiguration(defaults)
       {ABILITY_CHARGE_FURY, true},             -- Charge when out of combat
       {ABILITY_CLEAVE_FURY, false},            -- Cleave to lower threat and on used in aoe situations
       {ABILITY_DEMORALIZING_SHOUT_FURY, true}, -- Decreases enemy attack power
-      {ABILITY_DISARM_FURY, true},             -- Used in pvp agains hard hitters
+      {ABILITY_DISARM_FURY, true},             -- Used in pvp against hard hitters
       {ABILITY_EXECUTE_FURY, true},            -- Execute
       {ABILITY_HAMSTRING_FURY, true},          -- Hamstring
       {ABILITY_PIERCING_HOWL_FURY, true},      -- Piercing Howl
@@ -56,12 +56,12 @@ local function updateConfiguration(defaults)
       {ABILITY_REND_FURY, true},               -- Counter rogues vanish
       {ABILITY_SHIELD_BASH_FURY, true},        -- Prot
       {ABILITY_SHIELD_SLAM_FURY, true},        -- Prot
-      {ABILITY_DEATH_WISH_FURY, true},         -- Deth wish on cooldown
+      {ABILITY_DEATH_WISH_FURY, true},         -- Death wish on cooldown
       {ABILITY_THUNDER_CLAP_FURY, true},       -- slow enemies
       {ABILITY_WHIRLWIND_FURY, true},          -- Fury rotation and aoe
       {ABILITY_REVENGE_FURY, false},           -- Prot
 
-      {ITEM_CONS_JUJU_CHILL, true},           -- use on cooldown for bosses with frost dmg
+      {ITEM_CONS_JUJU_CHILL, true},            -- use on cooldown for bosses with frost dmg
       {ITEM_CONS_JUJU_EMBER, true},            -- use on cooldown for bosses with fire dmg
       {ITEM_CONS_JUJU_FLURRY, false},          -- use on cooldown
       {ITEM_CONS_JUJU_MIGHT, false},           -- use on cooldown
@@ -214,7 +214,7 @@ local function PrintEffects(unit)
 end
 
 --------------------------------------------------
--- list of targets requiring resistances
+-- list of targets where resistance is useful
 local res = {
     ["fire"] = {
         BOSS_NAX_GRAND_WIDOW_FAERLINA_FURY,
@@ -332,7 +332,7 @@ local function Fury_InitDistance()
             end
         end
     end
-    -- Print if any distance check spell is missing
+    -- Print message if any distance check spell is missing
     if not yard30 or not yard08 then
         Print(CHAT_MISSING_SPELL_SHOOT_THROW_FURY)
     end
@@ -398,7 +398,7 @@ local function SpellReadyIn(spellname)
             return remaining
         end
     end
-    return 86400
+    return 86400 -- return max time (i.e not ready)
 end
 
 --------------------------------------------------
@@ -496,6 +496,9 @@ end
 --------------------------------------------------
 -- Detect if a shield is present
 local function Shield()
+    if HasDebuff("player", "Ability_Warrior_Disarm") then
+        return nil
+    end
     local item = GetInventoryItemLink("player", 17)
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
@@ -1159,8 +1162,8 @@ function Fury()
           and not FuryDanceDone
           and (Fury_Configuration["PrimaryStance"] ~= 3
           or FuryBerserkerStance)
-          and FuryLastStanceCast
-          and FuryLastStanceCast + 1 <= GetTime()
+          and ((FuryLastStanceCast and FuryLastStanceCast + 1 <= GetTime())
+          or not FuryLastStanceCast)
           and Fury_Configuration["PrimaryStance"] ~= ActiveStance()
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
           and Fury_Configuration["PrimaryStance"] ~= 0 then
