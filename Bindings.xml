@@ -1,35 +1,35 @@
 <Bindings>
-	<Binding name="FURY" header="FURY">
+	<Binding name = "FURY" header = "FURY">
 		Fury()
 	</Binding>
-	<Binding name="FURY_AOE" header="FURY">
+	<Binding name = "FURY_AOE" header = "FURY">
 		Fury_SlashCommand("aoe")
 	</Binding>
-	<Binding name="FURY_WW" header="FURY">
+	<Binding name = "FURY_WW" header = "FURY">
 		Fury_SlashCommand("ability Whirlwind")
 	</Binding>
-	<Binding name="FURY_THREAT" header="FURY">
+	<Binding name = "FURY_THREAT" header = "FURY">
 		Fury_SlashCommand("threat")
 	</Binding>
-	<Binding name="FURY_DW" header="FURY">
+	<Binding name = "FURY_DW" header = "FURY">
 		Fury_SlashCommand("ability Death Wish")
 	</Binding>
-	<Binding name="FURY_CHARGE" header="FURY">
+	<Binding name = "FURY_CHARGE" header = "FURY">
 		Fury_SlashCommand("charge")
 	</Binding>
-	<Binding name="FURY_BLOCK" header="FURY">
+	<Binding name = "FURY_BLOCK" header = "FURY">
 		Fury_SlashCommand("block")
 	</Binding>
-	<Binding name="FURY_SHOOT" header="FURY">
+	<Binding name = "FURY_SHOOT" header = "FURY">
 		Fury_SlashCommand("shoot")
 	</Binding>
-	<Binding name="FURY_AUTOATTACK" header = "Fury">
+	<Binding name = "FURY_AUTOATTACK" header = "FURY">
 		Fury_SlashCommand("attack")
 	</Binding>
-	<Binding name="FURY_TANKMODE" header = "Fury">
+	<Binding name = "FURY_TANKMODE" header = "FURY">
 		Fury_SlashCommand("prot")
 	</Binding>
-	<Binding name="FURY_DEMOSHOUT" header = "Fury">
+	<Binding name = "FURY_DEMOSHOUT" header = "FURY">
 		Fury_SlashCommand("ability Demoralizing Shout")
 	</Binding>
 </Bindings>
