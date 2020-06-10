@@ -11,7 +11,7 @@
 --
 --------------------------------------------------
 -- Setup configuration to default or only new ones
-local function updateConfiguration(defaults)
+local function UpdateConfiguration(defaults)
     local configs = {
 
       {"AutoAttack", true},       -- Set to false to disable auto-attack
@@ -99,7 +99,7 @@ local function Fury_Configuration_Init()
     if not Fury_ImmuneDisarm then
         Fury_ImmuneDisarm = { }
     end
-    updateConfiguration(false) -- Set to value if nil
+    UpdateConfiguration(false) -- Set to value if nil
 end
 
 --------------------------------------------------
@@ -1959,7 +1959,7 @@ end
 --
 --------------------------------------------------
 -- Helper to set option to value
-local function setOptionRange(option, text, value, vmin, vmax)
+local function SetOptionRange(option, text, value, vmin, vmax)
     if value ~= "" then
         if tonumber(value) < vmin then
             value = vmin
@@ -1975,7 +1975,7 @@ end
 
 --------------------------------------------------
 -- Print option if it is enabled
-local function printEnabledOption(option, text)
+local function PrintEnabledOption(option, text)
     if Fury_Configuration[option] == true then
         Print(text .. " " .. TEXT_FURY_ENABLED .. ".")
     end
@@ -1983,7 +1983,7 @@ end
 
 --------------------------------------------------
 -- Helper to toggle option
-local function toggleOption(option, text)
+local function ToggleOption(option, text)
     if Fury_Configuration[option] == true then
         Fury_Configuration[option] = false
         Print(text .. " " .. TEXT_FURY_DISABLED .. ".")
@@ -1998,7 +1998,7 @@ end
 
 --------------------------------------------------
 -- Help
-local function doHelp(commands, options)
+local function DoHelp(commands, options)
     Print(options)
     if options == nil or options == "" then
         local cmds = ""
@@ -2088,19 +2088,19 @@ function Fury_SlashCommand(msg)
             end },
 
         ["aoe"] = { help = HELP_AOE, fn = function(options)
-                toggleOption(MODE_HEADER_AOE, MODE_HEADER_AOE)
+                ToggleOption(MODE_HEADER_AOE, MODE_HEADER_AOE)
             end },
 
         ["attack"] = { help = HELP_ATTACK, fn = function(options)
-                toggleOption("AutoAttack", SLASH_FURY_AUTOATTACK)
+                ToggleOption("AutoAttack", SLASH_FURY_AUTOATTACK)
             end },
 
         ["attackrage"] = { help = HELP_ATTACKRAGE, fn = function(options)
-                setOptionRange("NextAttackRage", SLASH_FURY_ATTACKRAGE, options, 0 , 100)
+                SetOptionRange("NextAttackRage", SLASH_FURY_ATTACKRAGE, options, 0 , 100)
             end },
 
         ["berserk"] = { help = HELP_BERSERK, fn = function(options)
-                setOptionRange("BerserkHealth", SLASH_FURY_TROLL, options, 1, 100)
+                SetOptionRange("BerserkHealth", SLASH_FURY_TROLL, options, 1, 100)
             end },
 
         ["block"] = { help = HELP_BLOCK, fn = function(options)
@@ -2108,7 +2108,7 @@ function Fury_SlashCommand(msg)
             end },
 
         ["bloodrage"] = { help = HELP_BLOODRAGE, fn = function(options)
-                setOptionRange("BloodrageHealth", SLASH_FURY_BLOODRAGE, options, 1, 100)
+                SetOptionRange("BloodrageHealth", SLASH_FURY_BLOODRAGE, options, 1, 100)
             end },
 
         ["charge"] = { help = HELP_CHARGE, fn = function(options)
@@ -2116,37 +2116,37 @@ function Fury_SlashCommand(msg)
             end },
 
         ["cons"] = { help = HELP_CONS, fn = function(options)
-                printEnabledOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
-                printEnabledOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
-                printEnabledOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
-                printEnabledOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
-                printEnabledOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
-                printEnabledOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
-                printEnabledOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+                PrintEnabledOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
+                PrintEnabledOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
+                PrintEnabledOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
+                PrintEnabledOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
+                PrintEnabledOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
+                PrintEnabledOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+                PrintEnabledOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
             end },
 
         ["dance"] = { help = HELP_DANCE, fn = function(options)
-                setOptionRange("StanceChangeRage", SLASH_FURY_DANCE, options, 0, 100)
+                SetOptionRange("StanceChangeRage", SLASH_FURY_DANCE, options, 0, 100)
             end },
 
         ["deathwish"] = { help = HELP_DEATHWISH, fn = function(options)
-                setOptionRange("DeathWishHealth", SLASH_FURY_DEATHWISH, options, 1, 100)
+                SetOptionRange("DeathWishHealth", SLASH_FURY_DEATHWISH, options, 1, 100)
             end },
 
         ["debuff"] = { help = HELP_DEBUFF, fn = function(options)
-                toggleOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
+                ToggleOption(MODE_HEADER_DEBUFF, MODE_HEADER_DEBUFF)
             end },
 
         ["debug"] = { help = HELP_DEBUG, fn = function(options)
-                toggleOption("Debug", SLASH_FURY_DEBUG)
+                ToggleOption("Debug", SLASH_FURY_DEBUG)
             end },
 
         ["default"] = { help = HEL_DEFAULT, fn = function(options)
-                updateConfiguration(true) -- Set configurtion to default
+                UpdateConfiguration(true) -- Set configurtion to default
             end },
 
         ["demodiff"] = { help = HELP_DEMODIFF, fn = function(options)
-                setOptionRange("DemoDiff", SLASH_FURY_DEMODIFF, options, -3, 60)
+                SetOptionRange("DemoDiff", SLASH_FURY_DEMODIFF, options, -3, 60)
             end },
 
         ["distance"] = { help = HELP_DISTANCE, fn = function(options)
@@ -2158,19 +2158,19 @@ function Fury_SlashCommand(msg)
             end },
 
         ["earthstrike"] = { help = HELP_EARTHSTRIKE, fn = function(options)
-                toggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
+                ToggleOption(ITEM_TRINKET_EARTHSTRIKE, ITEM_TRINKET_EARTHSTRIKE)
             end },
 
         ["executeswap"] = { help = HELP_EXECUTESWAP, fn = function(options)
-                toggleOption("ExecuteSwap", "Execute Swap")
+                ToggleOption("ExecuteSwap", "Execute Swap")
             end },
 
         ["flurrytrigger"] = { help = HELP_FLURRYTRIGGER, fn = function(options)
-                setOptionRange("FlurryTriggerRage", SLASH_FURY_FLURRYTRIGGER, options, 0, 100)
+                SetOptionRange("FlurryTriggerRage", SLASH_FURY_FLURRYTRIGGER, options, 0, 100)
             end },
 
         ["hamstring"] = { help = HELP_HAMSTRING, fn = function(options)
-                setOptionRange("HamstringHealth", SLASH_FURY_HAMSTRING, options, 1, 100)
+                SetOptionRange("HamstringHealth", SLASH_FURY_HAMSTRING, options, 1, 100)
             end },
 
         ["help"] = { help = HELP_HELP, fn = nil },
@@ -2178,19 +2178,19 @@ function Fury_SlashCommand(msg)
         ["juju"] = { help = HELP_JUJU, fn = function(options)
                 local juju = {
                     flurry = function()
-                            toggleOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
+                            ToggleOption(ITEM_CONS_JUJU_FLURRY, ITEM_CONS_JUJU_FLURRY)
                         end,
                     chill = function()
-                            toggleOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
+                            ToggleOption(ITEM_CONS_JUJU_CHILL, ITEM_CONS_JUJU_CHILL)
                         end,
                     might = function()
-                            toggleOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
+                            ToggleOption(ITEM_CONS_JUJU_MIGHT, ITEM_CONS_JUJU_MIGHT)
                         end,
                     ember = function()
-                            toggleOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
+                            ToggleOption(ITEM_CONS_JUJU_EMBER, ITEM_CONS_JUJU_EMBER)
                         end,
                     power = function()
-                            toggleOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
+                            ToggleOption(ITEM_CONS_JUJU_POWER, ITEM_CONS_JUJU_POWER)
                         end
                     }
                 if juju[options] then
@@ -2201,7 +2201,7 @@ function Fury_SlashCommand(msg)
             end },
 
         ["kots"] = { help = HELP_KOTS, fn = function(options)
-                toggleOption(ITEM_TRINKET_KOTS, ITEM_TRINKET_KOTS)
+                ToggleOption(ITEM_TRINKET_KOTS, ITEM_TRINKET_KOTS)
             end },
 
         ["log"] = { help = HELP_LOG, fn = function(options)
@@ -2213,7 +2213,7 @@ function Fury_SlashCommand(msg)
             end },
 
         ["ooi"] = { help = HELP_OOI, fn = function(options)
-                toggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
+                ToggleOption(ITEM_CONS_OIL_OF_IMMOLATION, ITEM_CONS_OIL_OF_IMMOLATION)
             end },
 
         ["prot"] = { help = HELP_PROT, fn = function()
@@ -2221,7 +2221,7 @@ function Fury_SlashCommand(msg)
             end },
 
         ["rage"] = { help = HELP_RAGE, fn = function(options)
-                setOptionRange("MaximumRage", SLASH_FURY_RAGE, options, 0, 100)
+                SetOptionRange("MaximumRage", SLASH_FURY_RAGE, options, 0, 100)
             end },
 
         ["shoot"] = { help = HELP_SHOOT, fn = function(options)
@@ -2229,10 +2229,10 @@ function Fury_SlashCommand(msg)
             end },
 
         slayer = { help = HELP_SLAYERS_CREST, fn = function(options)
-                toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
+                ToggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
             end },
         ["slayer's"] = { help = HELP_SLAYERS_CREST, fn = function(options)
-                toggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
+                ToggleOption(ITEM_TRINKET_SLAYERS_CREST, ITEM_TRINKET_SLAYERS_CREST)
             end },
 
         ["stance"] = { help = HELP_STANCE, fn = function(options)
@@ -2277,7 +2277,7 @@ function Fury_SlashCommand(msg)
             end },
 
         ["toggle"] = { help = HELP_TOGGLE, fn = function(options)
-                toggleOption("Enabled", BINDING_HEADER_FURY)
+                ToggleOption("Enabled", BINDING_HEADER_FURY)
             end },
 
         ["unit"] = { help = HELP_UNIT, fn = function(options)
@@ -2321,11 +2321,11 @@ function Fury_SlashCommand(msg)
         if cmd ~= nil and cmd.fn ~= nil then
             cmd.fn(options)
         elseif command == "help" then
-            doHelp(commands, options)
+            DoHelp(commands, options)
         elseif cmd then
             Print(HELP_UNKNOWN..command)
         else
-            doHelp(commands, "")
+            DoHelp(commands, "")
         end
     end
 end
