@@ -702,7 +702,7 @@ local function Fury_SetEnemies(count)
 end
 --------------------------------------------------
 
-local function addEnemyCount(Enemies)
+local function AddEnemyCount(Enemies)
     Fury_SetEnemies(Enemies)
     Debug("Enemies "..Enemies)
     if Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE] then
@@ -863,10 +863,10 @@ function Fury()
 
         -- 4, Add number of enemies
         if WWEnemies.CleaveCount ~= nil and (GetTime() - WWEnemies.CleaveTime ) > 1 then
-            addEnemyCount(WWEnemies.CleaveCount)
+            AddEnemyCount(WWEnemies.CleaveCount)
             WWEnemies.CleaveCount = nil
         elseif WWEnemies.WWCount ~= nil and (GetTime() - WWEnemies.WWTime) > 1 then
-            addEnemyCount(WWEnemies.WWCount)
+            AddEnemyCount(WWEnemies.WWCount)
             WWEnemies.WWCount = nil
         end
 
