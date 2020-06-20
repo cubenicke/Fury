@@ -183,7 +183,7 @@ end
 
 --------------------------------------------------
 
-local function ShapeShift(stance)
+local function DoShapeShift(stance)
     CastShapeshiftForm(stance)
     FuryLastStanceCast = GetTime()
     Debug("New Stance "..tostring(stance))
@@ -854,7 +854,7 @@ function Fury()
             end
         end
 
-        -- 3, Spell interrupt
+        -- 3, Spell interrupts
         if FurySpellInterrupt then
             if (GetTime() - FurySpellInterrupt) > 2 then
                 FurySpellInterrupt = nil
@@ -927,7 +927,7 @@ function Fury()
                 if not FuryOldStance then
                     FuryOldStance = ActiveStance()
                 end
-                ShapeShift(1)
+                DoShapeShift(1)
             else
                 Debug("11. Execute")
                 if FuryOldStance == ActiveStance() then
@@ -956,7 +956,7 @@ function Fury()
                 if not FuryOldStance then
                     FuryOldStance = ActiveStance()
                 end
-                ShapeShift(1)
+                DoShapeShift(1)
             else
                 Debug("12. Overpower")
                 CastSpellByName(ABILITY_OVERPOWER_FURY)
@@ -985,7 +985,7 @@ function Fury()
                 if UnitName("target") == BOSS_NAX_KEL_THUZAD_FURY then
                     SendChatMessage(CHAT_KICKED_FURY ,"SAY" ,"common")
                 end
-                ShapeShift(3)
+                DoShapeShift(3)
             else
                 Debug("13. Pummel")
             end
@@ -1013,7 +1013,7 @@ function Fury()
                     FuryOldStance = ActiveStance()
                 end
                 Debug("14. Battle Stance (Shield Bash)")
-                ShapeShift(1)
+                DoShapeShift(1)
                 CastSpellByName(ABILITY_SHIELD_BASH_FURY)
             else
                 Debug("14. Shield Bash (interrupt)")
@@ -1052,9 +1052,9 @@ function Fury()
                 end
                 Debug("15. Berserker Stance (Hamstring)")
                 if Fury_Configuration["PrimaryStance"] == 3 then
-                    ShapeShift(3);
+                    DoShapeShift(3);
                 else
-                    ShapeShift(1);
+                    DoShapeShift(1);
                 end
             end
             CastSpellByName(ABILITY_HAMSTRING_FURY)
@@ -1081,7 +1081,7 @@ function Fury()
                     FuryOldStance = ActiveStance()
                 end
                 Debug("16. Battle Stance (Rend)")
-                ShapeShift(1)
+                DoShapeShift(1)
             end
             CastSpellByName(ABILITY_REND_FURY)
 
@@ -1107,7 +1107,7 @@ function Fury()
           and Fury_Distance() >= 8 then
             if ActiveStance() ~= 2 then
                 Debug("18. Defensive Stance (Rooted)")
-                ShapeShift(2)
+                DoShapeShift(2)
             else
                 if FuryOldStance == 2 then
                     FuryDanceDone = true
@@ -1146,7 +1146,7 @@ function Fury()
                 if not FuryOldStance then
                     FuryOldStance = ActiveStance()
                 end
-                ShapeShift(3)
+                DoShapeShift(3)
             else
                 Debug("19. Berserker Rage")
                 if FuryOldStance ~= 3 then
@@ -1169,7 +1169,7 @@ function Fury()
           and Fury_Configuration["PrimaryStance"] ~= 0 then
             -- Initiate stance dance
             Debug("20. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
-            ShapeShift(Fury_Configuration["PrimaryStance"])
+            DoShapeShift(Fury_Configuration["PrimaryStance"])
 
         -- Disarm (PVP only)
         elseif Fury_Configuration[ABILITY_DISARM_FURY]
@@ -1191,7 +1191,7 @@ function Fury()
                     FuryOldStance = ActiveStance()
                 end
                 Debug("21. Defensive Stance (Disarm)")
-                ShapeShift(2)
+                DoShapeShift(2)
             else
                 Debug("21. Disarm")
                 if FuryOldStance ~= 2 then
@@ -1247,7 +1247,7 @@ function Fury()
                     FuryOldStance = ActiveStance()
                 end
                 Debug("25. Berserker Stance (Whirlwind)")
-                ShapeShift(3)
+                DoShapeShift(3)
             else
                 Debug("25. Whirlwind")
                 if FuryOldStance ~= 3 then
@@ -1344,10 +1344,10 @@ function Fury()
             -- Initiate stance dance
             if not Fury_Configuration["PrimaryStance"] then
                 Debug("33. Old Stance (" .. FuryOldStance .. ")")
-                ShapeShift(FuryOldStance)
+                DoShapeShift(FuryOldStance)
             elseif Fury_Configuration["PrimaryStance"] ~= 0 then
                 Debug("33. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
-                ShapeShift(Fury_Configuration["PrimaryStance"])
+                DoShapeShift(Fury_Configuration["PrimaryStance"])
             end
             if FuryOldStance == ActiveStance()
               or Fury_Configuration["PrimaryStance"] == ActiveStance() then
@@ -1594,7 +1594,7 @@ local function Fury_Block()
                 FuryOldStance = ActiveStance()
             end
             Debug("B1. Defensive Stance (Block")
-            ShapeShift(2)
+            DoShapeShift(2)
         end
     end
     if Fury_Configuration[ABILITY_SHIELD_BLOCK_FURY]
@@ -1625,7 +1625,7 @@ local function Fury_Charge()
         if Fury_Configuration["PrimaryStance"]
            and Fury_Configuration["PrimaryStance"] ~= 0
            and ActiveStance() ~= Fury_Configuration["PrimaryStance"] then
-            ShapeShift(Fury_Configuration["PrimaryStance"])
+            DoShapeShift(Fury_Configuration["PrimaryStance"])
         end
         Debug("No target")
         return
@@ -1653,7 +1653,7 @@ local function Fury_Charge()
                     FuryOldStance = ActiveStance()
                 end
                 Debug("C1.Arms Stance, Thunder Clap")
-                ShapeShift(1)
+                DoShapeShift(1)
             else
                 Debug("C1.Thunder Clap")
                 if FuryOldStance == 1 then
@@ -1704,7 +1704,7 @@ local function Fury_Charge()
             elseif FuryOldStance == 3 then
                 FuryDanceDone = true
             end
-            ShapeShift(3)
+            DoShapeShift(3)
 
         end
     else
@@ -1751,7 +1751,7 @@ local function Fury_Charge()
                 if FuryOldStance == nil then
                     FuryOldStance = ActiveStance()
                 end
-                ShapeShift(3)
+                DoShapeShift(3)
 
             else
                 if FuryOldStance == 3 then
@@ -1795,7 +1795,7 @@ local function Fury_Charge()
                 FuryOldStance = nil
                 FuryDanceDone = true
             end
-            ShapeShift(1)
+            DoShapeShift(1)
         end
     end
 end
