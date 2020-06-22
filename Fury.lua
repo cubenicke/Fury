@@ -387,8 +387,13 @@ end
 --------------------------------------------------
 -- Check remaining cooldown on spell (0 - Ready)
 local function IsSpellReadyIn(spellname)
+<<<<<<< HEAD
     local ready, start, durtion = IsSpellReady(spellname)
     if ready then
+=======
+    local id = SpellId(spellname)
+    if id then
+>>>>>>> bc4742e... Reworked SpellReady
         local start, duration = GetSpellCooldown(id, 0)
         if start == 0 and duration == 0 and FuryLastSpellCast + 1 <= GetTime() then
             return 0
@@ -406,8 +411,12 @@ end
 local function IsSpellReady(spellname)
     return IsSpellReadyIn(spellname) == 0
  end
+<<<<<<< HEAD
  
  
+=======
+
+>>>>>>> bc4742e... Reworked SpellReady
 --------------------------------------------------
 -- Detect if unit has specific number of debuffs
 local function HasDebuff(unit, texturename, amount)
@@ -1006,7 +1015,7 @@ function Fury()
           and FurySpellInterrupt
           and not Fury_Configuration[MODE_HEADER_AOE]
           and UnitMana("player") >= 10
-          and Shield()
+          and HasShield()
           and (not UnitIsPlayer("target")
           or (UnitIsPlayer("target")
           and (UnitClass("target") ~= CLASS_ROGUE_FURY
@@ -1269,7 +1278,7 @@ function Fury()
         -- Shield Slam
         elseif Fury_Configuration[ABILITY_SHIELD_SLAM_FURY]
           and FuryShieldSlam
-          and Shield()
+          and HasShield()
           and UnitMana("player") >= 20
           and IsSpellReady(ABILITY_SHIELD_SLAM_FURY) then
             Debug("26. Shield Slam")
@@ -1333,7 +1342,7 @@ function Fury()
 
         -- Shield Block
         elseif Fury_Configuration[ABILITY_SHIELD_BLOCK_FURY]
-          and Shield()
+          and HasShield()
           and FuryCombat
           and GetActiveStance() == 2
           and UnitName("targettarget") == UnitName("player")
