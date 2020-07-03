@@ -387,13 +387,8 @@ end
 --------------------------------------------------
 -- Check remaining cooldown on spell (0 - Ready)
 local function IsSpellReadyIn(spellname)
-<<<<<<< HEAD
-    local ready, start, durtion = IsSpellReady(spellname)
-    if ready then
-=======
     local id = SpellId(spellname)
     if id then
->>>>>>> bc4742e... Reworked SpellReady
         local start, duration = GetSpellCooldown(id, 0)
         if start == 0 and duration == 0 and FuryLastSpellCast + 1 <= GetTime() then
             return 0
@@ -411,12 +406,7 @@ end
 local function IsSpellReady(spellname)
     return IsSpellReadyIn(spellname) == 0
  end
-<<<<<<< HEAD
- 
- 
-=======
 
->>>>>>> bc4742e... Reworked SpellReady
 --------------------------------------------------
 -- Detect if unit has specific number of debuffs
 local function HasDebuff(unit, texturename, amount)
