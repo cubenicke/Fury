@@ -406,8 +406,7 @@ end
 local function IsSpellReady(spellname)
     return IsSpellReadyIn(spellname) == 0
  end
- 
- 
+
 --------------------------------------------------
 -- Detect if unit has specific number of debuffs
 local function HasDebuff(unit, texturename, amount)
