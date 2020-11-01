@@ -2499,7 +2499,7 @@ function Fury_OnEvent(event)
                 FlurryCombatTotal = FlurryCombatTotal + (GetTime() - FuryFlurryStart)
                 FuryFlurryStart = nil
             end
-            if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FlurryCombatTotal > 0) then
+            if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FuryCombatTotal > 0) then
                 local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
                 Debug(TEXT_FURY_FLURRY..p.."%")
                 FlurryCombatTotal = 0
