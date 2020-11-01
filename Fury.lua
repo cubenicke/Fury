@@ -112,7 +112,7 @@ local function Print(msg)
     if not DEFAULT_CHAT_FRAME then
         return
     end
-    DEFAULT_CHAT_FRAME:AddMessage(BINDING_HEADER_FURY .. ": "..(msg or ""))
+    DEFAULT_CHAT_FRAME:AddMessage(BINDING_HEADER_FURY..": "..(msg or ""))
 end
 
 --------------------------------------------------
@@ -127,7 +127,7 @@ local function Debug(msg)
     end
     if Fury_Configuration["DebugChannel"] and UnitLevel("player") >= 10 then
         if GetTime() > FuryLastLog + 0.1 then
-            SendChatMessage(msg .. (FuryLogMsg or ""), "CHANNEL", nil, Fury_Configuration["DebugChannel"])
+            SendChatMessage(msg..(FuryLogMsg or ""), "CHANNEL", nil, Fury_Configuration["DebugChannel"])
             FuryLastLog = GetTime()
             FuryLogMsg = nil
         else
@@ -882,7 +882,7 @@ function Fury()
             Dismount()
             FuryMount = nil
 
-        -- 6, Use Berserker rage to interrupt fears and ....
+        -- 6, Use Berserker rage to interrupt fears and....
         elseif Fury_Configuration[ABILITY_BERSERKER_RAGE_FURY]
           and (FuryIncapacitate
           or FuryFear)
@@ -1174,7 +1174,7 @@ function Fury()
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
           and Fury_Configuration["PrimaryStance"] ~= 0 then
             -- Initiate stance dance
-            Debug("20. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
+            Debug("20. Primary Stance ("..Fury_Configuration["PrimaryStance"]..")")
             DoShapeShift(Fury_Configuration["PrimaryStance"])
 
         -- Disarm (PVP only)
@@ -1349,10 +1349,10 @@ function Fury()
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"]) then
             -- Initiate stance dance
             if not Fury_Configuration["PrimaryStance"] then
-                Debug("33. Old Stance (" .. FuryOldStance .. ")")
+                Debug("33. Old Stance ("..FuryOldStance..")")
                 DoShapeShift(FuryOldStance)
             elseif Fury_Configuration["PrimaryStance"] ~= 0 then
-                Debug("33. Primary Stance (" .. Fury_Configuration["PrimaryStance"] .. ")")
+                Debug("33. Primary Stance ("..Fury_Configuration["PrimaryStance"]..")")
                 DoShapeShift(Fury_Configuration["PrimaryStance"])
             end
             if FuryOldStance == GetActiveStance()
@@ -1976,14 +1976,14 @@ local function SetOptionRange(option, text, value, vmin, vmax)
     else
         value = Fury_Configuration[option]
     end
-    Print(text .. value .. ".")
+    Print(text..value..".")
 end
 
 --------------------------------------------------
 -- Print option if it is enabled
 local function PrintEnabledOption(option, text)
     if Fury_Configuration[option] == true then
-        Print(text .. " " .. TEXT_FURY_ENABLED .. ".")
+        Print(text.." "..TEXT_FURY_ENABLED..".")
     end
 end
 
@@ -1992,10 +1992,10 @@ end
 local function ToggleOption(option, text)
     if Fury_Configuration[option] == true then
         Fury_Configuration[option] = false
-        Print(text .. " " .. TEXT_FURY_DISABLED .. ".")
+        Print(text.." "..TEXT_FURY_DISABLED..".")
     elseif Fury_Configuration[option] == false then
         Fury_Configuration[option] = true
-        Print(text .. " " .. TEXT_FURY_ENABLED .. ".")
+        Print(text.." "..TEXT_FURY_ENABLED..".")
     else
         return false
     end
@@ -2042,7 +2042,7 @@ function Fury_Togglemode(mode, prefix)
         for i, k in mode do
             Fury_Configuration[k[1]] = Fury_Configuration[prefix..k[1]]
         end
-        Print(prefix .. " " .. TEXT_FURY_DISABLED .. ".")
+        Print(prefix.." "..TEXT_FURY_DISABLED..".")
     else
         -- Enable Tank setup
         Fury_Configuration[prefix] = true
@@ -2050,7 +2050,7 @@ function Fury_Togglemode(mode, prefix)
             Fury_Configuration[prefix..k[1]] = Fury_Configuration[k[1]]
             Fury_Configuration[k[1]] = k[2]
         end
-        Print(prefix .. " " .. TEXT_FURY_ENABLED .. ".")
+        Print(prefix.." "..TEXT_FURY_ENABLED..".")
     end
 end
 
@@ -2069,27 +2069,27 @@ function Fury_SlashCommand(msg)
                 if options == ABILITY_HEROIC_STRIKE_FURY
                   and not Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
                     Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = true
-                    Print(ABILITY_HEROIC_STRIKE_FURY .. " "..TEXT_FURY_ENABLED..".")
+                    Print(ABILITY_HEROIC_STRIKE_FURY.." "..TEXT_FURY_ENABLED..".")
                     if Fury_Configuration[ABILITY_CLEAVE_FURY] then
                         Fury_Configuration[ABILITY_CLEAVE_FURY] = false
-                        Print(ABILITY_CLEAVE_FURY .. " "..TEXT_FURY_DISABLED..".")
+                        Print(ABILITY_CLEAVE_FURY.." "..TEXT_FURY_DISABLED..".")
                     end
                 elseif options == ABILITY_CLEAVE_FURY
                   and not Fury_Configuration[ABILITY_CLEAVE_FURY] then
                     Fury_Configuration[ABILITY_CLEAVE_FURY] = true
-                    Print(ABILITY_CLEAVE_FURY .. " "..TEXT_FURY_ENABLED..".")
+                    Print(ABILITY_CLEAVE_FURY.." "..TEXT_FURY_ENABLED..".")
                     if Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] then
                         Fury_Configuration[ABILITY_HEROIC_STRIKE_FURY] = falses
-                        Print(ABILITY_HEROIC_STRIKE_FURY .. " "..TEXT_FURY_DISABLED..".")
+                        Print(ABILITY_HEROIC_STRIKE_FURY.." "..TEXT_FURY_DISABLED..".")
                     end
                 elseif Fury_Configuration[options] then
                     Fury_Configuration[options] = false
-                    Print(options .. " "..TEXT_FURY_DISABLED..".")
+                    Print(options.." "..TEXT_FURY_DISABLED..".")
                 elseif Fury_Configuration[options] == false then
                     Fury_Configuration[options] = true
-                    Print(options .. " "..TEXT_FURY_ENABLED..".")
+                    Print(options.." "..TEXT_FURY_ENABLED..".")
                 else
-                    Print(options .. " "..TEXT_FURY_NOT_FOUND..".")
+                    Print(options.." "..TEXT_FURY_NOT_FOUND..".")
                 end
             end },
 
@@ -2245,21 +2245,21 @@ function Fury_SlashCommand(msg)
                 if options == ABILITY_BATTLE_STANCE_FURY
                   or options == "1" then
                     Fury_Configuration["PrimaryStance"] = 1
-                    Print(SLASH_FURY_STANCE .. ABILITY_BATTLE_STANCE_FURY .. ".")
+                    Print(SLASH_FURY_STANCE..ABILITY_BATTLE_STANCE_FURY..".")
                 elseif options == ABILITY_DEFENSIVE_STANCE_FURY
                   or options == "2" then
                     Fury_Configuration["PrimaryStance"] = 2
-                    Print(SLASH_FURY_STANCE .. ABILITY_DEFENSIVE_STANCE_FURY .. ".")
+                    Print(SLASH_FURY_STANCE..ABILITY_DEFENSIVE_STANCE_FURY..".")
                 elseif options == ABILITY_BERSERKER_STANCE_FURY
                   or options == "3" then
                     Fury_Configuration["PrimaryStance"] = 3
-                    Print(SLASH_FURY_STANCE .. ABILITY_BERSERKER_STANCE_FURY .. ".")
+                    Print(SLASH_FURY_STANCE..ABILITY_BERSERKER_STANCE_FURY..".")
                 elseif options == "default" then
                     Fury_Configuration["PrimaryStance"] = false
-                    Print(SLASH_FURY_STANCE .. TEXT_FURY_DEFAULT .. ".")
+                    Print(SLASH_FURY_STANCE..TEXT_FURY_DEFAULT..".")
                 else
                     Fury_Configuration["PrimaryStance"] = 0
-                    Print(SLASH_FURY_NOSTANCE .. TEXT_FURY_DISABLED .. ".")
+                    Print(SLASH_FURY_NOSTANCE..TEXT_FURY_DISABLED..".")
                 end
             end },
 
@@ -2295,11 +2295,11 @@ function Fury_SlashCommand(msg)
                 else
                     target = "player"
                 end
-                Print(TEXT_FURY_NAME .. (UnitName(target) or "")..TEXT_FURY_CLASS..(UnitClass(target) or "").. TEXT_FURY_CLASSIFICATION .. (UnitClassification(target) or ""))
+                Print(TEXT_FURY_NAME..(UnitName(target) or "")..TEXT_FURY_CLASS..(UnitClass(target) or "")..TEXT_FURY_CLASSIFICATION..(UnitClassification(target) or ""))
                 if UnitRace(target) then
-                    Print(TEXT_FURY_RACE .. (UnitRace(target) or ""))
+                    Print(TEXT_FURY_RACE..(UnitRace(target) or ""))
                 else
-                    Print(TEXT_FURY_TYPE .. (UnitCreatureType(target) or ""))
+                    Print(TEXT_FURY_TYPE..(UnitCreatureType(target) or ""))
                 end
                 PrintEffects(target)
             end },
@@ -2310,11 +2310,11 @@ function Fury_SlashCommand(msg)
 
         ["where"] = { help = HELP_WHERE, fn = function(options)
         
-                Print(TEXT_FURY_MAP_ZONETEXT .. (GetMinimapZoneText() or ""))
-                Print(TEXT_FURY_REAL_ZONETEXT .. (GetRealZoneText() or ""))
-                Print(TEXT_FURY_SUB_ZONETEXT .. (GetSubZoneText() or ""))
-                Print(TEXT_FURY_PVP_INFO .. (GetZonePVPInfo() or ""))
-                Print(TEXT_FURY_ZONETEXT .. (GetZoneText() or ""))
+                Print(TEXT_FURY_MAP_ZONETEXT..(GetMinimapZoneText() or ""))
+                Print(TEXT_FURY_REAL_ZONETEXT..(GetRealZoneText() or ""))
+                Print(TEXT_FURY_SUB_ZONETEXT..(GetSubZoneText() or ""))
+                Print(TEXT_FURY_PVP_INFO..(GetZonePVPInfo() or ""))
+                Print(TEXT_FURY_ZONETEXT..(GetZoneText() or ""))
             end },
 
         }
@@ -2498,7 +2498,7 @@ function Fury_OnEvent(event)
             end
             if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FlurryCombatTotal > 0) then
                 local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-                Debug(TEXT_FURY_FLURRY .. p .. "%")
+                Debug(TEXT_FURY_FLURRY..p.."%")
                 FlurryCombatTotal = 0
                 FuryCombatTotal = 0
             end
@@ -2571,7 +2571,7 @@ function Fury_OnEvent(event)
         FuryFlurryStart = nil
         if FuryFlurry and (FlurryCombatTotal > 0) then
             local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
-            Debug(TEXT_FURY_FLURRY .. p .. "%")
+            Debug(TEXT_FURY_FLURRY..p.."%")
             FlurryCombatTotal = 0
             FuryCombatTotal = 0
         end
@@ -2605,7 +2605,7 @@ function Fury_OnEvent(event)
         local _,_,name = string.find(arg1, CHAT_DISARM_IMMUNE_FURY)
         if name ~= nil then
             Fury_ImmuneDisarm[name] = true
-            Print(TEXT_FURY_IMMUNE_TO_DISARM1 .. name .. TEXT_FURY_IMMUNE_TO_DISARM2)
+            Print(TEXT_FURY_IMMUNE_TO_DISARM1..name..TEXT_FURY_IMMUNE_TO_DISARM2)
         end
     end
 end
