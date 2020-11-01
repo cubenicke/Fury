@@ -570,63 +570,66 @@ local function HamstringCost()
     return 10 - i
 end
 --------------------------------------------------
-
-local function HasAntiStealthDebuff()
-    --Detect anti-stealth debuffs
-    --Rend, Deep Wounds, Serpent Sting, Immolate, Curse of Agony , Garrote, Rupture, Deadly Poison, Fireball, Ignite, Pyroblast, Corruption, Siphon Life, Faerie Fire, Moonfire, Rake, Rip, Pounce, Insect Swarm, Holy Fire, Wyvern Sting, Devouring Plague
-    if HasDebuff("target", "Ability_Gouge")
-      or HasDebuff("target", "Ability_Backstab")
-      or HasDebuff("target", "Ability_Hunter_Quickshot")
-      or HasDebuff("target", "Spell_Fire_Immolation")
-      or HasDebuff("target", "Spell_Shadow_CurseOfSargeras")
-      or HasDebuff("target", "Ability_Rogue_Garrote")
-      or HasDebuff("target", "Ability_Rogue_Rupture")
-      or HasDebuff("target", "Ability_Rogue_DualWeild")
-      or HasDebuff("target", "Spell_Shadow_ShadowWordPain")
-      or HasDebuff("target", "Spell_Fire_FlameBolt")
-      or HasDebuff("target", "Spell_Fire_Incinerate")
-      or HasDebuff("target", "Spell_Fire_Fireball02")
-      or HasDebuff("target", "Spell_Shadow_AbominationExplosion")
-      or HasDebuff("target", "Spell_Shadow_Requiem")
-      or HasDebuff("target", "Spell_Nature_FaerieFire")
-      or HasDebuff("target", "Spell_Nature_StarFall")
-      or HasDebuff("target", "Ability_Druid_Disembowel")
-      -- or HasDebuff("target", "Ability_GhoulFrenzy") -- triggered on fury warrs Flurry
-      or HasDebuff("target", "Ability_Druid_SurpriseAttack")
-      or HasDebuff("target", "Spell_Nature_InsectSwarm")
-      or HasDebuff("target", "Spell_Holy_SearingLight")
-      or HasDebuff("target", "INV_Spear_02")
-      or HasDebuff("target", "Spell_Shadow_BlackPlague") then
-        return true
+local function CheckDebuffs(unit, list)
+    for _, v in pairs(list) do
+        if HasDebuff(unit, v) then
+            return true
+        end
     end
     return nil
 end
 --------------------------------------------------
+local function HasAntiStealthDebuff()
+    --Detect anti-stealth debuffs
+    --Rend, Deep Wounds, Serpent Sting, Immolate, Curse of Agony , Garrote, Rupture, Deadly Poison, Fireball, Ignite, Pyroblast, Corruption, Siphon Life, Faerie Fire, Moonfire, Rake, Rip, Pounce, Insect Swarm, Holy Fire, Wyvern Sting, Devouring Plague
+    return CheckDebuffs("target", {
+        "Ability_Gouge",
+        "Ability_Hunter_Quickshot",
+        "Spell_Fire_Immolation",
+        "Spell_Shadow_CurseOfSargeras",
+        "Ability_Rogue_Garrote",
+        "Ability_Rogue_Rupture",
+        "Ability_Rogue_DualWeild",
+        "Spell_Shadow_ShadowWordPain",
+        "Spell_Fire_FlameBolt",
+        "Spell_Fire_Incinerate",
+        "Spell_Fire_Fireball02",
+        "Spell_Shadow_AbominationExplosion",
+        "Spell_Shadow_Requiem",
+        "Spell_Nature_FaerieFire",
+        "Spell_Nature_StarFall",
+        "Ability_Druid_Disembowel",
+        -- "Ability_GhoulFrenzy", -- triggered on fury warrs Flurry
+        "Ability_Druid_SurpriseAttack",
+        "Spell_Nature_InsectSwarm",
+        "Spell_Holy_SearingLight",
+        "INV_Spear_02",
+        "Spell_Shadow_BlackPlague"
+    })
+end
+--------------------------------------------------
 
 local function HasImmobilizingDebuff()
-    -- Detect immobilizing buffs
-    if HasDebuff("player", "Spell_Frost_FrostNova")
-      or HasDebuff("player", "spell_Nature_StrangleVines") then
-        return true
-    end
-    return nil
+    return CheckDebuffs("player", {
+        "Spell_Frost_FrostNova",
+        "spell_Nature_StrangleVines"
+    })
 end
 --------------------------------------------------
 
 local function SnareDebuff(unit)
     -- Detect snaring debuffs
     -- Hamstring, Wing Clip, Curse of Exhaustion, Crippling Poison, Frostbolt, Cone of Cold, Frost Shock, Piercing Howl
-    if HasDebuff(unit, "Ability_ShockWave")
-      or HasDebuff(unit, "Ability_Rogue_Trip")
-      or HasDebuff(unit, "Spell_Shadow_GrimWard")
-      or HasDebuff(unit, "Ability_PoisonSting")
-      or HasDebuff(unit, "Spell_Frost_FrostBolt02")
-      or HasDebuff(unit, "Spell_Frost_Glacier")
-      or HasDebuff(unit, "Spell_Shadow_DeathScream")
-      or HasDebuff(unit, "Spell_Frost_FrostShock") then
-        return true
-    end
-    return nil
+    return CheckDebuffs(unit, {
+        "Ability_ShockWave",
+        "Ability_Rogue_Trip",
+        "Spell_Shadow_GrimWard",
+        "Ability_PoisonSting",
+        "Spell_Frost_FrostBolt02",
+        "Spell_Frost_Glacier",
+        "Spell_Shadow_DeathScream",
+        "Spell_Frost_FrostShock"
+    })
 end
 --------------------------------------------------
 
