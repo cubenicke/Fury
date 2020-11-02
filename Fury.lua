@@ -2362,7 +2362,9 @@ function Fury_OnLoad()
         "CHAT_MSG_SPELL_SELF_DAMAGE",
         "PLAYER_AURAS_CHANGED",
         "PLAYER_ENTER_COMBAT",
+        "PLAYER_ENTERING_WORLD",
         "PLAYER_LEAVE_COMBAT",
+        "PLAYER_LEVEL_UP",
         "PLAYER_REGEN_DISABLED",
         "PLAYER_REGEN_ENABLED",
         "PLAYER_TARGET_CHANGED",
@@ -2547,8 +2549,10 @@ function Fury_OnEvent(event)
             Fury_ScanTalents()
          end
 
-      elseif event == "CHARACTER_POINTS_CHANGED"
-        and arg1 == -1
+      elseif (event == "CHARACTER_POINTS_CHANGED"
+        and arg1 == -1)
+        or event == "PLAYER_LEVEL_UP"
+        or event == "PLAYER_ENTERING_WORLD"
         and UnitClass("player") == CLASS_WARRIOR_FURY then
             if Fury_Configuration["DebugChannel"] then
                 LogToFile(true)
