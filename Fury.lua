@@ -78,7 +78,8 @@ local function DoUpdateConfiguration(defaults)
     }
 
     for _, v in pairs(configs) do
-        if defaults or Fury_Configuration[v[1]] == nil then
+        if defaults
+          or Fury_Configuration[v[1]] == nil then
             Fury_Configuration[v[1]] = v[2]
         end
     end
@@ -118,14 +119,17 @@ end
 --------------------------------------------------
 -- Output debug info to console
 local function Debug(msg)
-    if (msg or "") == "" then
+    if (msg
+      or "") == "" then
         FuryRageDumped = nil
         return
     end
-    if Fury_Configuration and Fury_Configuration["Debug"] then
+    if Fury_Configuration
+      and Fury_Configuration["Debug"] then
         Print(msg)
     end
-    if Fury_Configuration["DebugChannel"] and UnitLevel("player") >= 10 then
+    if Fury_Configuration["DebugChannel"]
+      and UnitLevel("player") >= 10 then
         if GetTime() > FuryLastLog + 0.1 then
             SendChatMessage(msg..(FuryLogMsg or ""), "CHANNEL", nil, Fury_Configuration["DebugChannel"])
             FuryLastLog = GetTime()
@@ -171,9 +175,13 @@ end
 -- Check if unit has debuff of specific type
 local function HasDebuffType(unit, type)
     local id = 1
+    if not type then
+        return nil
+    end
     while UnitDebuff(unit, id) do
         local _,_,debuffType = UnitDebuff(unit, id)
-        if type and debuffType ==  type then
+        if type
+          and debuffType ==  type then
             return true
         end
         id = id + 1
@@ -334,7 +342,8 @@ local function Fury_InitDistance()
         end
     end
     -- Print message if any distance check spell is missing
-    if not yard30 or not yard08 then
+    if not yard30
+      or not yard08 then
         Print(CHAT_MISSING_SPELL_SHOOT_THROW_FURY)
     end
     if not yard25 then
@@ -353,16 +362,21 @@ end
 local function Fury_Distance()
     if not UnitCanAttack("player", "target") then
         return 100 -- invalid target
-    elseif yard05 and IsActionInRange(yard05) == 1 then
+    elseif yard05
+      and IsActionInRange(yard05) == 1 then
         return 5 -- 0 - 5 yards
-    elseif yard10 and IsActionInRange(yard10) == 1 then
-        if yard08 and IsActionInRange(yard08) == 0 then
+    elseif yard10
+      and IsActionInRange(yard10) == 1 then
+        if yard08
+          and IsActionInRange(yard08) == 0 then
             return 7 -- 6 - 7 yards
         end
         return 10 -- 8 - 10 yards
-    elseif yard25 and IsActionInRange(yard25) == 1 then
+    elseif yard25
+      and IsActionInRange(yard25) == 1 then
         return 25 -- 11 - 25 yards
-    elseif yard30 and IsActionInRange(yard30) == 1 then
+    elseif yard30
+      and IsActionInRange(yard30) == 1 then
         return 30 -- 26 - 30 yards
     end
     return 100 -- 31 - <na> yards
@@ -391,7 +405,9 @@ local function IsSpellReadyIn(spellname)
     local id = SpellId(spellname)
     if id then
         local start, duration = GetSpellCooldown(id, 0)
-        if start == 0 and duration == 0 and FuryLastSpellCast + 1 <= GetTime() then
+        if start == 0
+          and duration == 0
+          and FuryLastSpellCast + 1 <= GetTime() then
             return 0
         end
         local remaining = duration - (GetTime() - start)
@@ -415,7 +431,8 @@ local function HasDebuff(unit, texturename, amount)
     while UnitDebuff(unit, id) do
         local debuffTexture, debuffAmount = UnitDebuff(unit, id)
         if string.find(debuffTexture, texturename) then
-            if (amount or 1) <= debuffAmount then
+            if (amount
+              or 1) <= debuffAmount then
                 return true
             else
                 return false
@@ -493,7 +510,9 @@ local function HasWeapon()
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
         local itemName, itemLink, _, _, itemType = GetItemInfo(itemCode)
-        if itemLink ~= "item:7005:0:0:0" and itemLink ~= "item:2901:0:0:0" and not GetInventoryItemBroken("player", 16) then
+        if itemLink ~= "item:7005:0:0:0" -- Skining knife
+          and itemLink ~= "item:2901:0:0:0" -- Mining pick
+          and not GetInventoryItemBroken("player", 16) then
             return true
         end
     end
@@ -510,7 +529,8 @@ local function HasShield()
     if item then
         local _, _, itemCode = strfind(item, "(%d+):")
         local _, _, _, _, _, itemType = GetItemInfo(itemCode)
-        if itemType == ITEM_TYPE_SHIELDS_FURY and not GetInventoryItemBroken("player", 17) then
+        if itemType == ITEM_TYPE_SHIELDS_FURY
+          and not GetInventoryItemBroken("player", 17) then
             return true
         end
     end
@@ -525,7 +545,8 @@ local function IsTrinketEquipped(name)
         if item then
             local _, _, itemCode = strfind(item, "(%d+):")
             local itemName = GetItemInfo(itemCode)
-            if itemName == name and GetInventoryItemCooldown("player", slot) == 0 then
+            if itemName == name
+              and GetInventoryItemCooldown("player", slot) == 0 then
                 return slot
             end
         end
@@ -651,7 +672,8 @@ local function ItemExists(itemName)
                 local itemLink = GetContainerItemLink(bag,slot)
                 local _, _, itemParse = strfind(itemLink, "(%d+):")
                 local queryName, _, _, _, _, _ = GetItemInfo(itemParse)
-                if queryName and queryName ~= "" then
+                if queryName
+                  and queryName ~= "" then
                     if queryName == itemName then
                         return true
                     end
@@ -715,7 +737,8 @@ end
 local function AddEnemyCount(Enemies)
     Fury_SetEnemies(Enemies)
     Debug("Enemies "..Enemies)
-    if Enemies < 2 and Fury_Configuration[MODE_HEADER_AOE] then
+    if Enemies < 2
+      and Fury_Configuration[MODE_HEADER_AOE] then
         Print(TEXT_FURY_DISABLING_AOE)
         Fury_Configuration[MODE_HEADER_AOE] = false
     end
@@ -765,10 +788,13 @@ local function Fury_TreatDebuffPlayer()
             local slot = IsTrinketEquipped(ITEM_TRINKET_HEART_OF_NOXXION)
             UseInventoryItem(slot)
 
-        elseif UnitRace("player") == RACE_DWARF and Fury_Configuration[RACIAL_STONEFORM_FURY] and IsSpellReady(RACIAL_STONEFORM_FURY) then
+        elseif UnitRace("player") == RACE_DWARF
+          and Fury_Configuration[RACIAL_STONEFORM_FURY]
+          and IsSpellReady(RACIAL_STONEFORM_FURY) then
             CastSpellByName(RACIAL_STONEFORM_FURY)
 
-        elseif allowCombatCooldown and IsItemReady(ITEM_CONS_JUNGLE_REMEDY) then
+        elseif allowCombatCooldown
+          and IsItemReady(ITEM_CONS_JUNGLE_REMEDY) then
             Print(ITEM_CONS_JUNGLE_REMEDY)
             UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
 
@@ -780,11 +806,13 @@ local function Fury_TreatDebuffPlayer()
             Print(ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE)
             UseContainerItemByNameOnPlayer(ITEM_CONS_ELIXIR_OF_POISION_RESISTANCE)
 
-        elseif allowCombatCooldown and IsItemReady(ITEM_CONS_PURIFICATION_POTION) then
+        elseif allowCombatCooldown
+          and IsItemReady(ITEM_CONS_PURIFICATION_POTION) then
             Print(ITEM_CONS_PURIFICATION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
 
-        elseif allowCombatCooldown and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+        elseif allowCombatCooldown
+          and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
             Print(ITEM_CONS_RESTORATIVE_POTION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
 
@@ -794,14 +822,17 @@ local function Fury_TreatDebuffPlayer()
         end
         Print(ITEM_DEBUFF_TYPE_POISON)
     elseif HasDebuffType("player", ITEM_DEBUFF_TYPE_DISEASE) then
-        if UnitRace("player") == RACE_DWARF and IsSpellReady(ABILITY_STONEFORM_FURY) then
+        if UnitRace("player") == RACE_DWARF
+          and IsSpellReady(ABILITY_STONEFORM_FURY) then
             CastSpellByName(ABILITY_STONEFORM_FURY)
 
-        elseif allowCombatCooldown and IsItemReady(ITEM_CONS_JUNGLE_REMEDY) then
+        elseif allowCombatCooldown
+          and IsItemReady(ITEM_CONS_JUNGLE_REMEDY) then
             Print(ITEM_CONS_JUNGLE_REMEDY)
             UseContainerItemByNameOnPlayer(ITEM_CONS_JUNGLE_REMEDY)
 
-        elseif allowCombatCooldown and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+        elseif allowCombatCooldown
+          and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
             Print(ITEM_CONS_RESTORATIVE_POTION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
 
@@ -810,11 +841,13 @@ local function Fury_TreatDebuffPlayer()
         end
         Print(ITEM_DEBUFF_TYPE_DISEASE)
     elseif HasDebuffType("player", ITEM_DEBUFF_TYPE_CURSE) then
-        if allowCombatCooldown and IsItemReady(ITEM_CONS_PURIFICATION_POTION) then
+        if allowCombatCooldown
+          and IsItemReady(ITEM_CONS_PURIFICATION_POTION) then
             Print(ITEM_CONS_PURIFICATION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_PURIFICATION_POTION)
 
-        elseif allowCombatCooldown and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+        elseif allowCombatCooldown
+          and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
             Print(ITEM_CONS_RESTORATIVE_POTION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
 
@@ -824,7 +857,8 @@ local function Fury_TreatDebuffPlayer()
         Print(ITEM_DEBUFF_TYPE_CURSE)
     elseif HasDebuffType("player", ITEM_DEBUFF_TYPE_MAGIC) then
         
-        if allowCombatCooldown and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
+        if allowCombatCooldown
+          and IsItemReady(ITEM_CONS_RESTORATIVE_POTION) then
             Print(ITEM_CONS_RESTORATIVE_POTION_POTION)
             UseContainerItemByNameOnPlayer(ITEM_CONS_RESTORATIVE_POTION_POTION)
 
@@ -853,7 +887,8 @@ function Fury()
         local debuffImmobilizing = HasImmobilizingDebuff()
 
         -- 1, Auto attack closest target
-        if Fury_Configuration["AutoAttack"] and not FuryAttack then
+        if Fury_Configuration["AutoAttack"]
+          and not FuryAttack then
             AttackTarget()
         end
 
@@ -872,10 +907,12 @@ function Fury()
         end
 
         -- 4, Add number of enemies
-        if WWEnemies.CleaveCount ~= nil and (GetTime() - WWEnemies.CleaveTime ) > 1 then
+        if WWEnemies.CleaveCount ~= nil
+          and (GetTime() - WWEnemies.CleaveTime ) > 1 then
             AddEnemyCount(WWEnemies.CleaveCount)
             WWEnemies.CleaveCount = nil
-        elseif WWEnemies.WWCount ~= nil and (GetTime() - WWEnemies.WWTime) > 1 then
+        elseif WWEnemies.WWCount ~= nil
+          and (GetTime() - WWEnemies.WWTime) > 1 then
             AddEnemyCount(WWEnemies.WWCount)
             WWEnemies.WWCount = nil
         end
@@ -908,14 +945,18 @@ function Fury()
             UseInventoryItem(8)
 
         -- 9, PVP Trinket, Horde
-        elseif (FuryFear or FuryIncapacitate or debuffImmobilizing)
+        elseif (FuryFear
+          or FuryIncapacitate
+          or debuffImmobilizing)
           and IsTrinketEquipped(ITEM_TRINKET_INSIGNIA_OF_THE_HORDE_FURY) then
             slot = IsTrinketEquipped(ITEM_TRINKET_INSIGNIA_OF_THE_HORDE_FURY)
             Debug("9. Insignia of the Horde")
             UseInventoryItem(slot)
 
         -- PVP Trinket, Alliance
-        elseif (FuryFear or FuryIncapacitate or debuffImmobilizing)
+        elseif (FuryFear
+          or FuryIncapacitate
+          or debuffImmobilizing)
           and IsTrinketEquipped(ITEM_TRINKET_INSIGNIA_OF_THE_ALLIANCE_FURY) then
             slot = IsTrinketEquipped(ITEM_TRINKET_INSIGNIA_OF_THE_ALLIANCE_FURY)
             Debug("10. Insignia of the Alliance")
@@ -1041,7 +1082,9 @@ function Fury()
           or (Fury_Runners[UnitName("target")]
           and (UnitHealth("target") / UnitHealthMax("target") * 100) <= tonumber(Fury_Configuration["HamstringHealth"])))
           and HasWeapon()
-          and (not SnareDebuff("target") or (FuryImpHamstring and UnitMana("player") < 30))
+          and (not SnareDebuff("target")
+          or (FuryImpHamstring
+          and UnitMana("player") < 30))
           and FuryAttack == true
           and not HasBuff("target", "INV_Potion_04")
           and not HasBuff("target", "Spell_Holy_SealOfValor")
@@ -1172,7 +1215,8 @@ function Fury()
           and not FuryDanceDone
           and (Fury_Configuration["PrimaryStance"] ~= 3
           or FuryBerserkerStance)
-          and ((FuryLastStanceCast and FuryLastStanceCast + 1 <= GetTime())
+          and ((FuryLastStanceCast
+          and FuryLastStanceCast + 1 <= GetTime())
           or not FuryLastStanceCast)
           and Fury_Configuration["PrimaryStance"] ~= GetActiveStance()
           and UnitMana("player") <= (FuryTacticalMastery + Fury_Configuration["StanceChangeRage"])
@@ -1631,7 +1675,8 @@ end
 
 local function Fury_Charge()
     local dist = Fury_Distance()
-    if not UnitExists("target") and not FuryCombat then
+    if not UnitExists("target") and
+      not FuryCombat then
         if Fury_Configuration["PrimaryStance"]
            and Fury_Configuration["PrimaryStance"] ~= 0
            and GetActiveStance() ~= Fury_Configuration["PrimaryStance"] then
@@ -1648,7 +1693,8 @@ local function Fury_Charge()
         FuryMount = nil
     end
     if FuryCombat then
-        if Fury_Configuration["AutoAttack"] and not FuryAttack then
+        if Fury_Configuration["AutoAttack"]
+          and not FuryAttack then
             -- Auto attack closest target
             AttackTarget()
         end
@@ -2010,11 +2056,13 @@ end
 -- Help
 local function DoHelp(commands, options)
     Print(options)
-    if options == nil or options == "" then
+    if options == nil
+      or options == "" then
         local cmds = ""
         cmds = SLASH_FURY_HELP
         for k,_ in pairs(commands) do
-            if cmds ~= "" and cmds ~= SLASH_FURY_HELP then
+            if cmds ~= ""
+              and cmds ~= SLASH_FURY_HELP then
                 cmds = cmds..", "
             end
             cmds = cmds..k
@@ -2328,7 +2376,8 @@ function Fury_SlashCommand(msg)
         Fury()
     else
         local cmd = commands[command]
-        if cmd ~= nil and cmd.fn ~= nil then
+        if cmd ~= nil
+          and cmd.fn ~= nil then
             cmd.fn(options)
         elseif command == "help" then
             DoHelp(commands, options)
@@ -2577,7 +2626,8 @@ function Fury_OnEvent(event)
         FuryDanceDone = nil
         FuryOldStance = nil
         FuryFlurryStart = nil
-        if FuryFlurry and (FlurryCombatTotal > 0) then
+        if FuryFlurry
+          and (FlurryCombatTotal > 0) then
             local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
             Debug(TEXT_FURY_FLURRY..p.."%")
             FlurryCombatTotal = 0
