@@ -184,9 +184,10 @@ end
 --------------------------------------------------
 
 local function DoShapeShift(stance)
+    local stances = {ABILITY_BATTLE_STANCE_FURY, ABILITY_DEFENSIVE_STANCE_FURY, ABILITY_BERSERKER_STANCE_FURY}
     CastShapeshiftForm(stance)
     FuryLastStanceCast = GetTime()
-    Debug("New Stance "..tostring(stance))
+    Debug("Changed to "..stances[stance])
 end
 
 --------------------------------------------------
