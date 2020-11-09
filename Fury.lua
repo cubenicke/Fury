@@ -312,7 +312,7 @@ local function Fury_InitDistance()
                 if string.find(t, "Ability_Marksmanship") -- Shoot
                   or string.find(t, "Ability_Throw") then -- Throw
                     yard08 = i
-                    Debug("08 yard: "..t)
+                    Debug("8 yard: "..t)
                     found = found + 1
                 end
             end
@@ -2481,13 +2481,10 @@ function Fury_OnEvent(event)
     elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE"
       and string.find(arg1, CHAT_INTERRUPT1_FURY)
       or event == "CHAT_MSG_COMBAT_SELF_MISSES"
-      and string.find(arg1, CHAT_INTERRUPT2_FURY)
-      or event == "CHAT_MSG_COMBAT_SELF_MISSES"
-      and string.find(arg1, CHAT_INTERRUPT3_FURY)
-      or event == "CHAT_MSG_COMBAT_SELF_MISSES"
-      and string.find(arg1, CHAT_INTERRUPT4_FURY)
-      or event == "CHAT_MSG_COMBAT_SELF_MISSES"
-      and string.find(arg1, CHAT_INTERRUPT5_FURY) then
+      and (string.find(arg1, CHAT_INTERRUPT2_FURY)
+      or string.find(arg1, CHAT_INTERRUPT3_FURY)
+      or string.find(arg1, CHAT_INTERRUPT4_FURY)
+      or string.find(arg1, CHAT_INTERRUPT5_FURY)) then
         -- Check to see if Pummel/Shield Bash is used
         FurySpellInterrupt = nil
 
@@ -2546,12 +2543,16 @@ function Fury_OnEvent(event)
           or arg1 == CHAT_TERRIFYING_SCREECH2_FURY
           or arg1 == CHAT_HOWL_OF_TERROR2_FURY then
             FuryFear = nil
+
         elseif arg1 == CHAT_LOST_FLURRY_FURY then
             if FuryFlurryStart then
                 FlurryCombatTotal = FlurryCombatTotal + (GetTime() - FuryFlurryStart)
                 FuryFlurryStart = nil
             end
-            if FuryAttackEnd and FuryFlurry and (FlurryCombatTotal > 0) and (FuryCombatTotal > 0) then
+            if FuryAttackEnd
+              and FuryFlurry
+              and (FlurryCombatTotal > 0) 
+              and (FuryCombatTotal > 0) then
                 local p = math.floor(FlurryCombatTotal / FuryCombatTotal * 100)
                 Debug(TEXT_FURY_FLURRY..p.."%")
                 FlurryCombatTotal = 0
