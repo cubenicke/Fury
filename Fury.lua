@@ -130,12 +130,15 @@ local function Debug(msg)
     end
     if Fury_Configuration["DebugChannel"]
       and UnitLevel("player") >= 10 then
-        if GetTime() > FuryLastLog + 0.1 then
-            SendChatMessage(msg..(FuryLogMsg or ""), "CHANNEL", nil, Fury_Configuration["DebugChannel"])
-            FuryLastLog = GetTime()
-            FuryLogMsg = nil
-        else
-            FuryLogMsg = (FuryLogMsg or "")..", "..msg
+        local channelId = GetChannelName(Fury_Configuration["DebugChannel"])
+        if channelId and channelId > 0 then
+            if GetTime() > FuryLastLog + 0.1 then
+                SendChatMessage(msg..(FuryLogMsg or ""), "CHANNEL", nil, channelId)
+                FuryLastLog = GetTime()
+                FuryLogMsg = nil
+            else
+                FuryLogMsg = (FuryLogMsg or "")..", "..msg
+            end
         end
     end
     FuryRageDumped = nil
@@ -150,17 +153,11 @@ local function LogToFile(enable)
         if Fury_Configuration["DebugChannel"] == nil then
             local channel = "Fury_"..tostring(GetTime() * 1000)
             JoinChannelByName(channel, "test", nil, 1)
-            local id, _ = GetChannelName(channel)
-            Fury_Configuration["DebugChannel"] = id
+            Fury_Configuration["DebugChannel"] = channel
         else
-            local _, channel = GetChannelName(Fury_Configuration["DebugChannel"])
-            if channel ~= nil then
-                Print("Joining channel : "..channel)
-                JoinChannelByName(channel, "test", nil, 1)
-            else
-                Fury_Configuration["DebugChannel"] = nil
-                LogToFile(enable)
-            end
+            local channel = Fury_Configuration["DebugChannel"]
+            Print("Joining channel : "..channel)
+            JoinChannelByName(channel, "test", nil, 1)
         end
         Print(TEXT_FURY_LOGGING_CHANNEL_ON)
     else
